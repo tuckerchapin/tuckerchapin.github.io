@@ -1,0 +1,55 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, sans-serif;
+	font-weight: 300;
+	cursor: default;
+}
+
+a {
+	text-decoration: none;
+	color: #FFF;
+}
+
+a:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+body {	
+	width: calc(100% - 100px);
+	height: calc(100% - 200px);
+	background: #424242;
+	color: #FFF;
+	padding-top: 200px;
+	padding-left: 100px;
+	font-size: 18px;
+}
+
+#name-title {
+	font-family: serif;
+	font-size: 25px;
+	margin-bottom: 8px;
+}
+
+#contact-link-container {
+	color: #757575;
+	margin-bottom: 8px;
+	font-size: 18px;
+}
+
+#project-label {
+	float: left;
+	color: #757575;
+	font-size: 18px;
+}
+
+#project-container {
+	float: left;
+	color: #757575;
+	font-size: 18px;
+}
+
+.project-capsule {
+	margin-bottom: 8px;
+}
