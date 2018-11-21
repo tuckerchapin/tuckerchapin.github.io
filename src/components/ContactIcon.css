@@ -1,0 +1,9 @@
+.icon-link {
+
+}
+
+.contact-icon {
+    width: 15vmin;
+    filter: invert(100%);
+    opacity: .5;
+}

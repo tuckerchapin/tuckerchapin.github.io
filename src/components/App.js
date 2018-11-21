@@ -30,7 +30,7 @@ class App extends Component {
                         {content.projects.map((project, i) => <Project key={i} {...project}/>)}
                     </div>
                 </div>
-                <div id="mobile-contact">
+                <div id="mobile-contacts">
                     {content.contacts.map((contact, i) => <ContactIcon key={i} {...contact}/>)}
                 </div>
             </div>

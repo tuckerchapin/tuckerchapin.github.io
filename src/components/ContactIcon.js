@@ -8,7 +8,7 @@ class ContactIcon extends Component {
     render() {
         return (
             <a className="icon-link" href={this.props.link} target="_blank" rel="noopener noreferrer">
-                <img src={this.props.title}/>
+                <img className="contact-icon" src={"/icons/" + this.props.title + ".svg"}/>
             </a>
         );
     }
