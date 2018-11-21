@@ -14,15 +14,13 @@ a {
 body {
     margin: 0;
     padding: 0;
-}
-
-body, #app-container {
-    background-color: var(--bgblack);
-    overflow: hidden;
-    user-select: none;
-    color: var(--white);
-    font-family: 'Montserrat', sans-serif;
-
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    overflow: hidden;
+    user-select: none;
+
+    background-color: var(--bgblack);
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
 }
