@@ -25,3 +25,9 @@ body, #app-container {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+/* @media screen and (orientation:portrait) {
+    body {
+        position: fixed;
+    }
+} */

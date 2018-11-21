@@ -17,7 +17,7 @@ class Project extends Component {
 
         return (
             <div>
-                <a className="project-title" href={this.props.link} target="_blank">{this.props.title}</a>
+                <a className="project-title" href={this.props.link} target="_blank" rel="noopener noreferrer">{this.props.title}</a>
                 <span className="project-description">{this.props.description}</span>
             </div>
         );
