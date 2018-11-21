@@ -8,18 +8,18 @@ const content = {
             title: "Github",
             link: "https://github.com/tuckerchapin",
         },
-        {
-            title: "Facebook",
-            link: "https://www.facebook.com/tuckerchapin",
-        },
+        // {
+        //     title: "Facebook",
+        //     link: "https://www.facebook.com/tuckerchapin",
+        // },
         {
             title: "LinkedIn",
             link: "https://www.linkedin.com/in/tuckerchapin",
         },
-        {
-            title: "Twitter",
-            link: "https://twitter.com/tuckerchapin",
-        },
+        // {
+        //     title: "Twitter",
+        //     link: "https://twitter.com/tuckerchapin",
+        // },
     ],
     projects: [
         {

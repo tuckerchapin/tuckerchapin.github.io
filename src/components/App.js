@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Project from './Project';
 import Contact from './Contact';
+import ContactIcon from './ContactIcon';
 
 import '../styles/global.css';
 import '../styles/fonts.css';
@@ -28,6 +29,9 @@ class App extends Component {
                     <div id="projects">
                         {content.projects.map((project, i) => <Project key={i} {...project}/>)}
                     </div>
+                </div>
+                <div id="mobile-contact">
+                    {content.contacts.map((contact, i) => <ContactIcon key={i} {...contact}/>)}
                 </div>
             </div>
         );
