@@ -1,0 +1,18 @@
+.contact-title {
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.25em;
+    font-weight: 300;
+    line-height: 1.5em;
+    margin-left: 10px;
+    text-transform: lowercase;
+}
+
+    .contact-title:first-of-type {
+        margin-left: 0;
+    }
+
+    .contact-title:hover {
+        text-decoration: underline;
+        text-decoration-color: var(--offwhite);
+    }

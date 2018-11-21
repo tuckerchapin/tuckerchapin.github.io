@@ -1,0 +1,28 @@
+a {
+    text-decoration: none;
+    color:
+}
+
+:root {
+    --teal: #00afa7;
+    --pink: #d7699e;
+    --bgblack: #222;
+    --white: #fff;
+    --offwhite: #808080;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body, #app-container {
+    background-color: var(--bgblack);
+    overflow: hidden;
+    user-select: none;
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
