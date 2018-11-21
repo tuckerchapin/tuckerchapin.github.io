@@ -12,7 +12,7 @@
         filter: blur(20px) saturate(4);
     }
 
-    #contacts, #projects {
+    #contacts, #projects, #header-container {
         display: none;
     }
 
