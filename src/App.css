@@ -2,18 +2,20 @@
     --teal: #00afa7;
     --pink: #d7699e;
     --bgblack: #222;
+    --white: #fff;
+    --offwhite: #808080;
 }
 
 body, #app-container {
     background-color: var(--bgblack);
     overflow: hidden;
     user-select: none;
-    color: white;
+    color: var(--white);
 }
 
 #app-container {
     display: flex;
-    flex-direction: row;
+    /* flex-direction: row; */
 }
 
 #logo-container {
@@ -31,7 +33,7 @@ body, #app-container {
 }
 
 #info-container {
-
+    margin-left: 20px;
 }
 
 #title-container {
