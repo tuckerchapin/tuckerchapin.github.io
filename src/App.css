@@ -1,7 +1,14 @@
+:root {
+    --teal: #00afa7;
+    --pink: #d7699e;
+    --bgblack: #222;
+}
+
 body, #app-container {
-    background-color: #222;
+    background-color: var(--bgblack);
     overflow: hidden;
     user-select: none;
+    color: white;
 }
 
 #app-container {
@@ -12,7 +19,7 @@ body, #app-container {
 #logo-container {
     width: 200px;
     height: 200px;
-    padding: 25px;
+    padding: 20px;
     position: relative;
 }
 
@@ -23,16 +30,28 @@ body, #app-container {
     filter: saturate(2);
 }
 
+#info-container {
+
+}
+
+#title-container {
+    position: relative;
+}
+
+.title {
+    color: var(--pink);
+    position: absolute;
+    filter: saturate(2);
+    font-size: 50px;
+    width: max-content;
+}
+
 .glow {
     filter: blur(10px) saturate(4);
 }
 
 #info-container {
-
-}
-
-.title {
-    color: #FFF;
+    padding-top: 20px;
 }
 
 /* #row1{
