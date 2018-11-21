@@ -1,0 +1,12 @@
+.contact-title {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.5em;
+    color: var(--white);
+    font-size: 1.25em;
+    margin-right: 10px;
+    text-transform: lowercase;
+}
+
+    .contact-title:hover {
+        text-decoration: underline;
+    }
