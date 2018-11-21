@@ -1,4 +1,10 @@
 @media screen and (orientation:portrait) {
+    #app-container {
+        position: fixed;
+        height: 100%;
+        width: 100%;
+    }
+
     .logo {
         width: 80%;
         position: absolute;
