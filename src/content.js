@@ -50,7 +50,7 @@ const content = {
             title: "Clever Domain",
             description: "generate a trendy domain name",
             link: "http://cleverdoma.in",
-            disabled: false,
+            disabled: true,
         },
         {
             title: "SideGuide",
