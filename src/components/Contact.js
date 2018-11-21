@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-import '../global.css';
-import '../fonts.css';
+import '../styles/global.css';
+import '../styles/fonts.css';
 import './Contact.css';
 
 class Contact extends Component {

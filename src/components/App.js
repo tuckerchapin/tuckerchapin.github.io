@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 
-import Project from './components/Project';
-import Contact from './components/Contact';
+import Project from './Project';
+import Contact from './Contact';
 
-import './global.css';
-import './fonts.css';
+import '../styles/global.css';
+import '../styles/fonts.css';
 import './App.css';
 
-import content from './content.js';
+import content from '../content.js';
 
 class App extends Component {
     render() {
