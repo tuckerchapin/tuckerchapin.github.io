@@ -5,7 +5,8 @@ import Contact from './Contact';
 
 import '../styles/global.css';
 import '../styles/fonts.css';
-import './App.css';
+import './App.landscape.css';
+import './App.portrait.css';
 
 import content from '../content.js';
 
