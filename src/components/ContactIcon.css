@@ -3,7 +3,7 @@
 }
 
 .contact-icon {
-    width: 15vmin;
+    width: 10vmin;
     filter: invert(100%);
-    opacity: .5;
+    opacity: var(--opacity);
 }

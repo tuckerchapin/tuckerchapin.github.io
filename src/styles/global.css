@@ -8,6 +8,7 @@ a {
     --bgblack: #222;
     --white: #fff;
     --offwhite: #808080;
+    --opacity: .2;
 }
 
 body {
@@ -25,9 +26,3 @@ body, #app-container {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
-/* @media screen and (orientation:portrait) {
-    body {
-        position: fixed;
-    }
-} */
