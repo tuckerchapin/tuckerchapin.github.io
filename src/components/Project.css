@@ -11,6 +11,7 @@
 
     .project-title:hover {
         text-decoration: underline;
+        text-decoration-color: var(--offwhite);
     }
 
 .project-title.disabled {
