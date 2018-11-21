@@ -9,7 +9,7 @@
     }
 
     .glow {
-        filter: blur(10px) saturate(4);
+        filter: blur(20px) saturate(4);
     }
 
     #contacts, #projects, #header-container {
