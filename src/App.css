@@ -1,55 +1,54 @@
-* {
-	margin: 0;
-	padding: 0;
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, sans-serif;
-	font-weight: 300;
-	cursor: default;
+body, #app-container {
+    background-color: #222;
+    overflow: hidden;
+    user-select: none;
 }
 
-a {
-	text-decoration: none;
-	color: #FFF;
+#app-container {
+    display: flex;
+    flex-direction: row;
 }
 
-a:hover {
-	text-decoration: underline;
-	cursor: pointer;
+#logo-container {
+    width: 200px;
+    height: 200px;
+    padding: 25px;
+    position: relative;
 }
 
-body {
-	width: calc(100% - 100px);
-	height: calc(100% - 200px);
-	background: #424242;
-	color: #FFF;
-	padding-top: 200px;
-	padding-left: 100px;
-	font-size: 18px;
+.logo {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    filter: saturate(2);
 }
 
-#name-title {
-	font-family: serif;
-	font-size: 25px;
-	margin-bottom: 8px;
+.glow {
+    filter: blur(10px) saturate(4);
 }
 
-#contact-link-container {
-	color: #757575;
-	margin-bottom: 8px;
-	font-size: 18px;
+#info-container {
+
 }
 
-#project-label {
-	float: left;
-	color: #757575;
-	font-size: 18px;
+.title {
+    color: #FFF;
 }
 
-#project-container {
-	float: left;
-	color: #757575;
-	font-size: 18px;
+/* #row1{
+    display:flex;
+    flex-direction:row;
+justify-content: space-around;
 }
 
-.project-capsule {
-	margin-bottom: 8px;
+#column1{
+    display:flex;
+    flex-direction:column;
+
 }
+
+
+#column2{
+    display:flex;
+    flex-direction:column;
+} */
