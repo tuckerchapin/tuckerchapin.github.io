@@ -23,6 +23,12 @@ const content = {
     ],
     projects: [
         {
+            title: "BetterVRV",
+            description: "a suite of improvements to the VRV player and experience",
+            link: "https://chrome.google.com/webstore/detail/bettervrv/dhghipbelapdpgpdfmkebjnnokhpeock",
+            disabled: false,
+        },
+        {
             title: "Forza Horizon Season",
             description: "what season is it in Edinburgh in Forza Horizon 4",
             link: "http://whatseasonisitinhorizon.com/",
