@@ -25,7 +25,7 @@ const content = {
         {
             title: "BetterVRV",
             description: "a suite of improvements to the VRV player and experience",
-            link: "https://chrome.google.com/webstore/detail/bettervrv/dhghipbelapdpgpdfmkebjnnokhpeock",
+            link: "http://tuckerchap.in/BetterVRV/",
             disabled: false,
         },
         {
