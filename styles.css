@@ -132,6 +132,7 @@ body {
       "projects"
       "logo";
     grid-template-columns: 1fr;
+    grid-template-rows: min-content;
     margin-top: 0;
     row-gap: 20px;
     padding: 20px;
