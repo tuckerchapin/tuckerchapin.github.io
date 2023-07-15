@@ -68,12 +68,36 @@ body {
     width: var(--logo__size);
     height: var(--logo__size);
     position: absolute;
-    filter: saturate(2);
+    animation-duration: 1s;
+    animation-name: neonflicker;
+    animation-fill-mode: both;
   }
 
   .glow {
+    animation-duration: 1s;
+    animation-name: neonglowflicker;
+    animation-fill-mode: both;
+  }
+
+/* @keyframes neonflicker {
+  9.999%, 12%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    filter: saturate(2);
+  }
+
+  0%, 11.999%, 20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    filter: saturate(0);
+  }
+}
+
+@keyframes neonglowflicker {
+  9.999%, 12%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
     filter: blur(10px) saturate(4);
   }
+
+  0%, 11.999%, 20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    filter: blur(0px) saturate(0);
+  }
+} */
 
 #contacts {
   grid-area: contacts;
