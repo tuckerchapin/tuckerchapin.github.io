@@ -1,3 +1,0 @@
-# tuckerchap.in
-
-Personal website.
