@@ -1,6 +1,5 @@
 <html>
   <head>
-    <link rel="stylesheet" href="styles.css">
     <title>Tucker Chapin</title>
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -378,6 +377,169 @@
       
       [hidden] {
         display: none;
+      }
+    </style>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,500;1,300&display=swap');
+      
+      :root {
+        --bg-black: hsl(0, 0%, 13%);
+        --app__background: var(--bg-black);
+        --app__color: white;
+        --logo__size: 150px;
+        --link__underline: grey;
+      
+        --contact: white;
+      
+        --project__title: white;
+        --project__description: grey;
+      }
+      
+      html {
+        height: 100%;
+        background-color: var(--app__background);
+      }
+      
+      body {
+        display: grid;
+        grid-template-columns: auto;
+        font-family: Montserrat, sans-serif;
+        background-color: var(--app__background);
+        font-size: 1em;
+      }
+      
+      @media (min-width: 1000px) {
+        body {
+          justify-content: center;
+          grid-template-columns: 1000px;
+        }
+      }
+      
+      #app {
+        display: grid;
+        grid-template-areas:
+          "title title contacts"
+          "logo projects projects";
+        grid-template-columns: min-content 1fr min-content;
+        grid-template-rows: min-content 1fr;
+        row-gap: 40px;
+        column-gap: 20px;
+        margin-top: 80px;
+        padding: 0 20px;
+        background-color: var(--app__background);
+        color: var(--app__color);
+      }
+      
+      #title {
+        grid-area: title;
+        font-size: 2.5em;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      
+      #logo-container {
+        grid-area: logo;
+        position: relative;
+        width: var(--logo__size);
+        height: var(--logo__size);
+        padding: 0 30px;
+      }
+      
+        .logo {
+          width: var(--logo__size);
+          height: var(--logo__size);
+          position: absolute;
+          animation-duration: 1s;
+          animation-name: neonflicker;
+          animation-fill-mode: both;
+        }
+      
+        .glow {
+          animation-duration: 1s;
+          animation-name: neonglowflicker;
+          animation-fill-mode: both;
+        }
+      
+      #contacts {
+        grid-area: contacts;
+        align-self: flex-end;
+        display: grid;
+        grid-template-columns: repeat(3, min-content);
+        column-gap: 10px;
+        align-items: baseline;
+      }
+      
+        .contact {
+          font-size: 1.25em;
+          font-weight: 300;
+          color: var(--contact);
+          text-transform: lowercase;
+          text-decoration: none;
+        }
+      
+      #projects {
+        grid-area: projects;
+        display: grid;
+        grid-template-columns: 1fr;
+        row-gap: 8px;
+        align-content: flex-start;
+        align-items: baseline;
+      }
+      
+      .project {
+      
+      }
+      
+        .project .title {
+          color: var(--project__title);
+          font-size: 1.25em;
+          text-decoration: none;
+        }
+      
+        .project .description {
+          color: var(--project__description);
+          font-weight: 300;
+          font-style: italic;
+        }
+      
+      .project .title:hover,
+      .contact:hover {
+        text-decoration: underline;
+        text-decoration-color: var(--link__underline);
+      }
+      
+      @media (max-width: 800px) {
+        #app {
+          display: grid;
+          grid-template-areas:
+            "title"
+            "contacts"
+            "projects"
+            "logo";
+          grid-template-columns: 1fr;
+          grid-template-rows: repeat(4, min-content);
+          margin-top: 0;
+          row-gap: 20px;
+          padding: 20px;
+        }
+      
+        #contacts {
+          justify-self: right;
+        }
+      
+        #logo-container {
+          margin-top: 20px;
+          justify-self: center;
+        }
+      
+        #projects {
+          row-gap: 10px;
+        }
+      
+        .project {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
