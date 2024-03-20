@@ -1,0 +1,30 @@
+name: Issue Body to File
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  copy_issue_body:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Copy issue body to file
+        uses: actions/github-script@v0.9.0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const issue_number = context.issue.number;
+            const issue_body = context.payload.issue.body;
+            const fs = require('fs');
+            fs.writeFileSync(`./issue_${issue_number}.txt`, issue_body);
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Add issue body to file"
+          git push
