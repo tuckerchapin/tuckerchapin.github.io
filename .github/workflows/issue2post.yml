@@ -17,10 +17,10 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           # https://docs.github.com/en/rest/issues/issues#get-an-issue
           script: |
-            const issue_number = context.issue.number;
-            const issue_body = context.payload.issue.body;
-            console.log('number', issue_number)
-            console.log('body', issue_body)
+            const context_issue = JSON.stringify(context.issue);
+            const context_payload = JSON.stringify(context.payload.issue.body);
+            console.log(context_issue)
+            console.log(context_payload)
             const fs = require('fs');
             fs.writeFileSync(`./issue_${issue_number}.txt`, issue_body);
 
