@@ -18,7 +18,6 @@ jobs:
           # https://docs.github.com/en/rest/issues/issues#get-an-issue
           script: |
             const fs = require('fs');
-            fs.mkdirSync(`./post/${context.issue.number}.json`, { recursive: true });
             fs.writeFileSync(`./post/${context.issue.number}.json`, JSON.stringify(context.payload.issue));
             console.log(JSON.stringify(context));
             process.env.ISSUE_NUMBER = context.issue.number;
