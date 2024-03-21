@@ -17,17 +17,15 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           # https://docs.github.com/en/rest/issues/issues#get-an-issue
           script: |
-            const context_issue = JSON.stringify(context.issue);
-            const context_payload = JSON.stringify(context.payload.issue);
-            console.log(context_issue)
-            console.log(context_payload)
             const fs = require('fs');
-            fs.writeFileSync(`./issue_${context.issue.number}.txt`, context_payload);
+            fs.writeFileSync(`./post/${context.issue.number}.json`, JSON.stringify(context.payload.issue));
+            console.log(JSON.stringify(context));
+            process.env.ISSUE_NUMBER = context.issue.number;
 
       - name: Commit and push
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Issue to Post"
           git add .
-          git commit -m "Add issue body to file"
+          git commit -m "Add issue $ISSUE_NUMBER body to file"
           git push
