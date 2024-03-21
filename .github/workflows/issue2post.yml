@@ -18,11 +18,11 @@ jobs:
           # https://docs.github.com/en/rest/issues/issues#get-an-issue
           script: |
             const context_issue = JSON.stringify(context.issue);
-            const context_payload = JSON.stringify(context.payload.issue.body);
+            const context_payload = JSON.stringify(context.payload.issue);
             console.log(context_issue)
             console.log(context_payload)
             const fs = require('fs');
-            fs.writeFileSync(`./issue_${issue_number}.txt`, issue_body);
+            fs.writeFileSync(`./issue_${context.issue.number}.txt`, context_payload);
 
       - name: Commit and push
         run: |
