@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: posts
 
       - name: Dump issue to JSON
         id: dump-issue-json
@@ -26,7 +28,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Issue to Post"
-          git checkout posts
           git add .
           git commit -m "Add issue ${{steps.dump-issue-json.outputs.result}} body to file"
           git push
