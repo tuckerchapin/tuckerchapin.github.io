@@ -21,6 +21,7 @@ jobs:
             fs.writeFileSync(`./post/${context.issue.number}.json`, JSON.stringify(context.payload.issue));
             console.log('context', JSON.stringify(context));
             return context.issue.number;
+          result-encoding: string
       - name: Commit and push
         run: |
           git config --local user.email "action@github.com"
