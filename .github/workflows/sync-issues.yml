@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          ref: issues
 
       - name: Dump issue to JSON
         id: dump-issue
@@ -21,7 +19,7 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const path = `${context.issue.number}.json`;
+            const path = `issues/${context.issue.number}.json`;
             const fs = require('fs');
             fs.writeFileSync(path, JSON.stringify(context.payload.issue));
             // console.log('context', JSON.stringify(context));
