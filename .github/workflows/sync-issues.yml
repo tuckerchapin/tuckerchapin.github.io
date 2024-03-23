@@ -4,7 +4,7 @@ on:
   issues:
     types: [opened, edited, deleted, transferred, pinned, unpinned, closed, reopened, assigned, unassigned, labeled, unlabeled, locked, unlocked, milestoned, demilestoned]
 
-run-name: "Sync issue: ${{ github.event.action }} #${{ github.event.issue.number }}"
+run-name: "Sync issue #${{ github.event.issue.number }}"
 
 jobs:
   sync-issues:
