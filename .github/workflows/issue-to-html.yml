@@ -1,9 +1,9 @@
 name: Issue to HTML
 
-on:
-  push:
-    paths:
-      - issues/*.json
+on: push
+  # push:
+  #   paths:
+  #     - issues/*.json
 
 jobs:
   issue-to-html-job:
