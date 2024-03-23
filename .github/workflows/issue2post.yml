@@ -41,4 +41,5 @@ jobs:
           echo "targets0: ${{ steps.dump-issue-json.outputs.targets[0] }}"
           echo "targets1: ${{ steps.dump-issue-json.outputs.targets[1] }}"
           echo "targets*: ${{ steps.dump-issue-json.outputs.targets[*] }}"
+          echo "targets*join: ${{ join(steps.dump-issue-json.outputs.targets[*], ', ') }}"
           git push
