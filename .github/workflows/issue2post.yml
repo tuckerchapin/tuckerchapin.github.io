@@ -1,4 +1,4 @@
-name: Sync Issue With Files
+name: Sync issues
 # run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
 on:
   issues:
