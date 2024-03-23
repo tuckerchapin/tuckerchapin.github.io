@@ -23,8 +23,9 @@ jobs:
             fs.writeFileSync(`./post/${context.issue.number}.json`, JSON.stringify(context.payload.issue));
             console.log('context', JSON.stringify(context));
             output = {
-              'issue': context.issue.number,
-              'reason': context.payload.action,
+              'issue-number': context.issue.number,
+              'action': context.payload.action,
+              'targets': Object.fromKeys(context.payload.changes).map((key, change) => key),
             };
             console.log('output', output);
             return output;
@@ -34,7 +35,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "Issue to Post"
           git add .
-          git commit -m "${{ steps.dump-issue-json.outputs.result.reason }} issue ${{ steps.dump-issue-json.outputs.result.issue }}.json"
-          echo "output"
-          echo "${{ join(steps.dump-issue-json.outputs.*, ', ') }}"
+          git commit -m "${{ steps.dump-issue-json.outputs.action }} issue ${{ steps.dump-issue-json.outputs.issue-number }}.json"
+          echo "output: ${{ join(steps.dump-issue-json.outputs.*, ', ') }}"
+          echo "output: ${{ join(steps.dump-issue-json.outputs.targets, ', ') }}"
           git push
