@@ -25,7 +25,7 @@ jobs:
             output = {
               'issue-number': context.issue.number,
               'action': context.payload.action,
-              'targets': Object.fromKeys(context.payload.changes).map((key, change) => key),
+              'targets': Object.keys(context.payload.changes),
             };
             console.log('output', output);
             return output;
