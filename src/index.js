@@ -1,4 +1,5 @@
 const marked = require("marked").marked
 console.log('Hello, world!')
-console.log("marked", await marked("I am using __markdown__."))
+const markdown = await marked("I am using __markdown__.");
+console.log("marked", markdown)
 console.log('hmm thats weird that it exited')
