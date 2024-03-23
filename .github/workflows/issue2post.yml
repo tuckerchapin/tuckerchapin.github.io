@@ -35,7 +35,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "Issue to Post"
           git add .
-          echo "commit-msg ${{ steps.dump-issue-json.outputs.commit-msg }}"
-          echo "result ${{ steps.dump-issue-json.outputs.result }}"
-          git commit -m "${{ steps.dump-issue-json.outputs.commit-msg }}"
+          git commit -m "${{ steps.dump-issue-json.outputs.result }}"
           git push
