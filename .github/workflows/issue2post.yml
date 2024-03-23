@@ -22,15 +22,19 @@ jobs:
             const fs = require('fs');
             fs.writeFileSync(`./post/${context.issue.number}.json`, JSON.stringify(context.payload.issue));
             console.log('context', JSON.stringify(context));
-            return {
+            output = {
               'issue': context.issue.number,
               'reason': context.payload.action,
             };
+            console.log('output', output);
+            return output;
           # result-encoding: string
       - name: Commit and push
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Issue to Post"
           git add .
-          git commit -m "${{steps.dump-issue-json.outputs.result.reason}} issue ${{steps.dump-issue-json.outputs.result.issue}}.json"
+          git commit -m "${{ steps.dump-issue-json.outputs.result.reason }} issue ${{ steps.dump-issue-json.outputs.result.issue }}.json"
+          echo "output"
+          echo "${{ steps.dump-issue-json.outputs.* }}"
           git push
