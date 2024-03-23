@@ -2459,6 +2459,8 @@ const lexer = _Lexer.lex;
 ;// CONCATENATED MODULE: ./src/index.js
 
 console.log('Hello, world!')
+console.log("marked", marked("I am using __markdown__."))
+console.log('hmm thats weird that it exited')
 module.exports = __webpack_exports__;
 /******/ })()
 ;
