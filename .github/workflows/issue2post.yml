@@ -36,5 +36,5 @@ jobs:
           git add .
           git commit -m "${{ steps.dump-issue-json.outputs.result.reason }} issue ${{ steps.dump-issue-json.outputs.result.issue }}.json"
           echo "output"
-          echo "${{ steps.dump-issue-json.outputs.* }}"
+          echo "${{ join(steps.dump-issue-json.outputs.*, ', ') }}"
           git push
