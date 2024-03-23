@@ -5,7 +5,7 @@ on:
     types: [opened, edited, deleted, transferred, pinned, unpinned, closed, reopened, assigned, unassigned, labeled, unlabeled, locked, unlocked, milestoned, demilestoned]
 # https://github.com/actions/github-script?tab=readme-ov-file#result-encoding
 jobs:
-  sync-issue-with-files:
+  sync-issues:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -24,7 +24,7 @@ jobs:
             fs.writeFileSync(path, JSON.stringify(context.payload.issue));
             console.log('context', JSON.stringify(context));
             const output =  {
-              'commit-msg': `Issue sync: ${context.payload.action} issue #${context.issue.number}${context.payload.changes ? Object.keys(context.payload.changes).join(', ') : ''}`
+              'commit-msg': `Issue sync: ${context.payload.action} #${context.issue.number}${context.payload.changes ? ' ' + Object.keys(context.payload.changes).join(', ') : ''}`
             };
             console.log('output', JSON.stringify(output));
             return output;
