@@ -27,7 +27,8 @@ jobs:
               'commit-msg': `Issue sync: ${context.payload.action} issue #${context.issue.number}${context.payload.changes ? ' ' + Object.keys(context.payload.changes).join(', ') : ''}`
             };
             console.log('output', JSON.stringify(output));
-            return output;
+            return `Issue sync: ${context.payload.action} issue #${context.issue.number}${context.payload.changes ? ' ' + Object.keys(context.payload.changes).join(', ') : ''}`;
+          result-encoding: string
 
       - name: Commit and push
         run: |
