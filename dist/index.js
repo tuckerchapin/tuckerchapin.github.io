@@ -2456,11 +2456,12 @@ const lexer = _Lexer.lex;
 
 //# sourceMappingURL=marked.esm.js.map
 
+;// CONCATENATED MODULE: external "fs"
+const external_fs_namespaceObject = require("fs");
 ;// CONCATENATED MODULE: ./src/index.js
 
-console.log('Hello, world!')
-console.log("marked", marked("I am using __markdown__."))
-console.log('hmm thats weird that it exited')
+
+
 module.exports = __webpack_exports__;
 /******/ })()
 ;
