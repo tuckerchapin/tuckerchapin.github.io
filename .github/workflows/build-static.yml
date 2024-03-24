@@ -32,7 +32,6 @@ jobs:
           else
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "::warning title=Nothing to commit::Not rebuilding or deploying."
-            echo "Nothing to commit"
           fi
 
       - name: Commit and push
