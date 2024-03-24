@@ -39,7 +39,7 @@ jobs:
         id: check-diff
         run: |
           if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
-            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "::warning title=No changes to commit::Not rebuilding or deploying."
