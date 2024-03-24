@@ -1,7 +1,8 @@
 import { marked } from 'marked'
 import fs from 'fs'
 import core from '@actions/core'
-import github from '@actions/github'
+// import github from '@actions/github'
+import slugify from 'slugify'
 
 // TODO handle startup, no issues folder
 
@@ -11,15 +12,39 @@ if (!fs.existsSync('issues')) {
 }
 
 const issueFiles = fs.readdirSync('issues')
+const blogFiles = fs.readdirSync('blog')
+
 for (const issueFile of issueFiles) {
-  const content = JSON.parse(fs.readFileSync(`issues/${issueFile}`, 'utf8'))
-  if (content.body) {
-    const html = `<html><body>${marked(content.body)}</body></html>`
+  // read in the issue file
+  const issue = JSON.parse(fs.readFileSync(`issues/${issueFile}`, 'utf8'))
+
+  // clean up other conflicting files sharing this post id
+  for (const blogFile of blogFiles) {
+    if (blogFile.startsWith(`${issue.number}-`)) {
+      fs.unlinkSync(`blog/${blogFile}`);
+    }
+  }
+
+  // if there's no body issue, skip and don't produce html output
+  if (issue.body) {
+    // TODO shite templating
+    const html = `<html><body>${marked(issue.body)}</body></html>`
+
+    // if the blog folder doesn't exit, create it
     if (!fs.existsSync('blog')) fs.mkdirSync('blog')
-    fs.writeFileSync(`blog/${issueFile}.html`, html)
-    console.log(issueFile, `blog/${issueFile}.html`)
+
+    // slugify and create the post title
+    const slug = slugify(issue.title, {
+      lower: true,
+      strict: true
+    })
+
+    // write out the blog post
+    const fileName = `${issue.number}-${slug}.html`
+    fs.writeFileSync(`blog/${fileName}`, html)
+    console.log(`issue ${('#' + issue.number).padStart(4)} -> blog/${fileName} created`)
   } else {
-    console.log(issueFile, 'no body')
+    console.log(`issue ${('#' + issue.number).padStart(4)} -> has no body, no output`)
   }
 }
 
