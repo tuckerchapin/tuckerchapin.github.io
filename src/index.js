@@ -28,7 +28,7 @@ for (const issueFile of issueFiles) {
   }
 
   // if there's no body issue, skip and don't produce html output
-  if (issue.body) {
+  if (issue.body && issue.closed) {
     // TODO shite templating
     const html = `<html><body>${marked(issue.body)}</body></html>`
 
