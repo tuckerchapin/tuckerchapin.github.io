@@ -28972,7 +28972,7 @@ var slugify = __nccwpck_require__(9013);
 
 
 // TODO handle startup, no issues folder
-
+// probably want to remove this, migrate the issues to a different branch or something?
 if (!external_fs_.existsSync('issues')) {
   console.log('No issues/ folder found. Exiting.')
   process.exit()

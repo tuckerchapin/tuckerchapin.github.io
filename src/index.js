@@ -5,7 +5,7 @@ import core from '@actions/core'
 import slugify from 'slugify'
 
 // TODO handle startup, no issues folder
-
+// probably want to remove this, migrate the issues to a different branch or something?
 if (!fs.existsSync('issues')) {
   console.log('No issues/ folder found. Exiting.')
   process.exit()

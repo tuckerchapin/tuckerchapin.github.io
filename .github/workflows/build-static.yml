@@ -19,9 +19,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Run node
+      - name: Build static files
         id: issue-to-html
         run: node dist/index.js
+
+      # TODO
+      # copy public folder to root
+      # publish to gh pages
 
       - name: Check diff
         id: check-diff

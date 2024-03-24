@@ -19,6 +19,9 @@ jobs:
 
       # TODO filter out stuff from the blacklist/whitelist
       # delete issues not made by the opener?
+      # https://docs.github.com/en/actions/managing-issues-and-pull-requests/closing-inactive-issues
+
+      # TODO should this just get unified into a single workflow? yeah, probably
 
       - name: Save issue to JSON
         id: issue-to-json
@@ -30,7 +33,7 @@ jobs:
             const fs = require('fs');
             if (!fs.existsSync()) fs.mkdirSync(path, { recursive: true });
             fs.writeFileSync(`${path}${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2));
-
+            # TODO when an issue is deleted, delete it instead of writing an update of god knows what payload
             const changesSummary = '';
             if (context.payload.changes) {
               changesSummary = ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => {
