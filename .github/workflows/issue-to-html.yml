@@ -13,6 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run node
+        id: issue-to-html
         run: node dist/index.js
       # - name: Dump issue to JSON
       #   id: dump-issue
@@ -29,10 +30,10 @@ jobs:
       #       return `Issue sync: ${context.payload.action} issue #${context.issue.number}${formattedChanges}`;
       #     result-encoding: string
 
-      # - name: Commit and push
-      #   run: |
-      #     git config --local user.email "action@github.com"
-      #     git config --local user.name "Issue to Post"
-      #     git add .
-      #     git commit -m "${{ steps.dump-issue.outputs.result }}"
-      #     git push
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Issue to Post"
+          git add .
+          git commit -m "${{ steps.issue-to-html.outputs.commit-message }}"
+          git push
