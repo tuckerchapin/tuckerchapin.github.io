@@ -37,11 +37,10 @@ jobs:
 
       - name: Check if there are any changes to commit
         id: check-diff
-        run: |
-          git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
+        run: if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then echo "changed=true" >> $GITHUB_OUTPUT; else echo "changed=false" >> $GITHUB_OUTPUT locally; fi
 
       - name: Commit and push
-        if: steps.check-diff.outputs.changed == 'true'
+        if: ${{ steps.check-diff.outputs.changed == 'true' }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Github Action"
@@ -50,7 +49,12 @@ jobs:
           git push
 
       - name: Build static site
-        if: steps.check-diff.outputs.changed == 'true'
+        if: ${{ steps.check-diff.outputs.changed == 'true' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run build-static.yml
+
+      - name: Commit and push
+        if: ${{ steps.check-diff.outputs.changed == 'false' }}
+        run: echo "::warning title::message"
+
