@@ -40,12 +40,12 @@ jobs:
         run: |
           if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
             echo "changed=true" >> $GITHUB_OUTPUT
-            echo "::warning titleA::messageA"
+            echo "::warning title=titleA::messageA"
             echo "changes test raw echo"
             echo "{there were changes summary}" >> $GITHUB_STEP_SUMMARY
           else
             echo "changed=false" >> $GITHUB_OUTPUT
-            echo "::warning titleB::messageB"
+            echo "::warning title=titleB::messageB"
             echo "NO changes test raw echo"
             echo "{there were NOT ANY changes summary}" >> $GITHUB_STEP_SUMMARY
           fi
