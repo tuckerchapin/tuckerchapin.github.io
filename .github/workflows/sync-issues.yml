@@ -37,7 +37,14 @@ jobs:
 
       - name: Check if there are any changes to commit
         id: check-diff
-        run: if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then echo "changed=true" >> $GITHUB_OUTPUT; else echo "changed=false" >> $GITHUB_OUTPUT locally; fi
+        run: |
+          if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
+            echo "changed=true" >> $GITHUB_OUTPUT;
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT;
+            echo "::warning title::message"
+            echo "hewwo test?"
+          fi
 
       - name: Commit and push
         if: ${{ steps.check-diff.outputs.changed == 'true' }}
@@ -53,8 +60,3 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run build-static.yml
-
-      - name: Commit and push
-        if: ${{ steps.check-diff.outputs.changed == 'false' }}
-        run: echo "::warning title::message"
-
