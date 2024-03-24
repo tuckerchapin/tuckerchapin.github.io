@@ -29013,9 +29013,9 @@ for (const issueFile of issueFiles) {
     // write out the blog post
     const fileName = `${issue.number}-${slug}.html`
     external_fs_.writeFileSync(`blog/${fileName}`, html)
-    console.log(`issue ${('#' + issue.number).padStart(4)} -> blog/${fileName} created`)
+    console.log(`issue ${('#' + issue.number).padStart(4)} -> blog/${fileName}`)
   } else {
-    console.log(`issue ${('#' + issue.number).padStart(4)} -> has no body, no output`)
+    console.log(`issue ${('#' + issue.number).padStart(4)} -> no body, no output`)
   }
 }
 
