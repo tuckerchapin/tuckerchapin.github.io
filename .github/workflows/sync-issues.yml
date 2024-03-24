@@ -6,6 +6,10 @@ on:
 
 run-name: "Sync issues"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
 jobs:
   sync-issues:
     runs-on: ubuntu-latest
@@ -34,6 +38,7 @@ jobs:
           git config --local user.name "Github Action"
           git add .
           git commit -m "${{ steps.dump-issue.outputs.result }}"
+          git pull --rebase
           git push
 
       - name: Generate static files
