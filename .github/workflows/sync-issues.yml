@@ -31,8 +31,8 @@ jobs:
             if (!fs.existsSync()) fs.mkdirSync(path, { recursive: true });
             fs.writeFileSync(`${path}${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2));
 
-            const formattedChanges = context.payload.changes ? ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => { if (i === 0) return c; if (i === arr.length - 1) return `${a} & ${c}`; return `${a}, ${c}`;}, '') : '';
-            return `Issue sync: ${context.payload.action} issue #${context.issue.number}${formattedChanges}`;
+            const changesSummary = context.payload.changes ? ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => { if (i === 0) return c; if (i === arr.length - 1) return `${a} & ${c}`; return `${a}, ${c}`;}, '') : '';
+            return `Issue sync: ${context.payload.action} issue #${context.issue.number}${changesSummary}`;
           result-encoding: string
 
       - name: Check diff
