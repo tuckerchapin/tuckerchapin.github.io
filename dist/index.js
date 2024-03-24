@@ -28978,8 +28978,10 @@ if (!external_fs_.existsSync('issues')) {
   process.exit()
 }
 
-const issueFiles = external_fs_.readdirSync('issues')
+// if the blog folder doesn't exit, create it
+if (!external_fs_.existsSync('blog')) external_fs_.mkdirSync('blog')
 const blogFiles = external_fs_.readdirSync('blog')
+const issueFiles = external_fs_.readdirSync('issues')
 
 for (const issueFile of issueFiles) {
   // read in the issue file
@@ -28996,9 +28998,6 @@ for (const issueFile of issueFiles) {
   if (issue.body) {
     // TODO shite templating
     const html = `<html><body>${marked(issue.body)}</body></html>`
-
-    // if the blog folder doesn't exit, create it
-    if (!external_fs_.existsSync('blog')) external_fs_.mkdirSync('blog')
 
     // slugify and create the post title
     const slug = slugify(issue.title, {
