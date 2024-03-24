@@ -40,14 +40,10 @@ jobs:
         run: |
           if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
             echo "changed=true" >> $GITHUB_OUTPUT
-            echo "::warning title=titleA::messageA"
-            echo "changes test raw echo"
-            echo "{there were changes summary}" >> $GITHUB_STEP_SUMMARY
+            echo "::warning title=No changes made::Not committing any changes, running static rebuild, or deploying."
           else
             echo "changed=false" >> $GITHUB_OUTPUT
-            echo "::warning title=titleB::messageB"
-            echo "NO changes test raw echo"
-            echo "{there were NOT ANY changes summary}" >> $GITHUB_STEP_SUMMARY
+            echo "::warning title=No changes made::Not committing any changes, running static rebuild, or deploying."
           fi
 
       - name: Commit and push
