@@ -39,11 +39,14 @@ jobs:
         id: check-diff
         run: |
           if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
-            echo "changed=true" >> $GITHUB_OUTPUT;
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "changes test raw echo"
+            echo "{there were changes summary}" >> $GITHUB_STEP_SUMMARY
           else
-            echo "changed=false" >> $GITHUB_OUTPUT;
+            echo "changed=false" >> $GITHUB_OUTPUT
             echo "::warning title::message"
-            echo "hewwo test?"
+            echo "NO changes test raw echo"
+            echo "{there were NOT ANY changes summary}" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Commit and push
@@ -53,6 +56,7 @@ jobs:
           git config --local user.name "Github Action"
           git add .
           git commit -m "${{ steps.issue-to-json.outputs.result }}"
+          git pull --rebase
           git push
 
       - name: Build static site
