@@ -1,9 +1,10 @@
 name: Issue to HTML
 
 on:
-  push
-    # paths:
-    #   - issues/*
+  push:
+    paths:
+      - issues/*
+  workflow_dispatch:
 
 jobs:
   issue-to-html-job:
