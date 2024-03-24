@@ -35,14 +35,16 @@ jobs:
             return `Issue sync: ${context.payload.action} issue #${context.issue.number}${formattedChanges}`;
           result-encoding: string
 
-      - name: Check if there are any changes to commit
+      - name: Check diff
         id: check-diff
         run: |
           if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
             echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Diff has changes to commit"
           else
             echo "changed=false" >> $GITHUB_OUTPUT
-            echo "::warning title=No changes to commit::Not rebuilding or deploying."
+            echo "::warning title=Nothing to commit::Not rebuilding or deploying."
+            echo "Nothing to commit"
           fi
 
       - name: Commit and push

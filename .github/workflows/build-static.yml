@@ -23,7 +23,20 @@ jobs:
         id: issue-to-html
         run: node dist/index.js
 
+      - name: Check diff
+        id: check-diff
+        run: |
+          if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Diff has changes to commit"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "::warning title=Nothing to commit::Not rebuilding or deploying."
+            echo "Nothing to commit"
+          fi
+
       - name: Commit and push
+        if: ${{ steps.check-diff.outputs.changed == 'true' }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Github Action"
