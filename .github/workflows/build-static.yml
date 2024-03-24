@@ -1,9 +1,11 @@
-name: Issue to HTML
+name: Build static blog
 
 on:
   push:
     paths:
       - issues/*
+      - public/*
+      - templates/*
   workflow_dispatch:
 
 concurrency:
