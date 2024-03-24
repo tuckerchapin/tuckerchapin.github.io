@@ -28979,7 +28979,12 @@ if (!external_fs_.existsSync('issues')) {
 }
 
 // if the blog folder doesn't exit, create it
-if (!external_fs_.existsSync('blog')) external_fs_.mkdirSync('blog')
+if (!external_fs_.existsSync('blog')) {
+  console.log('blog folder doesnt exist, making it')
+  external_fs_.mkdirSync('blog')
+} else {
+  console.log('blog folder exists')
+}
 const blogFiles = external_fs_.readdirSync('blog')
 const issueFiles = external_fs_.readdirSync('issues')
 
@@ -28995,6 +29000,7 @@ for (const issueFile of issueFiles) {
   }
 
   // if there's no body issue, skip and don't produce html output
+  console.log(issue.number, issue.body && issue.closed, issue.body, issue.closed)
   if (issue.body && issue.closed) {
     // TODO shite templating
     const html = `<html><body>${marked(issue.body)}</body></html>`
