@@ -23,9 +23,8 @@ jobs:
         id: issue-to-html
         run: node dist/index.js
 
-      # TODO
-      # copy public folder to root
-      # publish to gh pages
+      # TODO publish to gh pages
+      # remove these other steps
 
       - name: Check diff
         id: check-diff

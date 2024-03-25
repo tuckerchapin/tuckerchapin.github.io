@@ -41621,14 +41621,12 @@ try {
 templateData.issues = []
 for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
   const issueAsJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readFile(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].issuesDir */ .Z.issuesDir, issuesAsJsonFilename), 'utf8'))
-  if (issueAsJson.body) {
-    // TODO be more careful here as marked is particular about the input
-    // TODO commented out to be written in helpers file
-    // issueAsJson.bodyAsHtml = marked(issueAsJson.body)
-    // TODO should the markdown be templated here as well? leaves the ability for local embeddings
-    // could also be templated later, though that starts to make it challenging to sort out the root
-    templateData.issues.push(issueAsJson)
-  }
+  // TODO be more careful here as marked is particular about the input
+  // TODO commented out to be written in helpers file
+  // issueAsJson.bodyAsHtml = marked(issueAsJson.body)
+  // TODO should the markdown be templated here as well? leaves the ability for local embeddings
+  // could also be templated later, though that starts to make it challenging to sort out the root
+  if (issueAsJson.body) templateData.issues.push(issueAsJson)
 }
 console.log(`Parsed ${templateData.issues.length} issues.`)
 // TODO where do we handle the closed/vs open logic? still want to use labels for something
