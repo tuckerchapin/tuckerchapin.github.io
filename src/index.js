@@ -26,7 +26,7 @@ Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => {
   uriHandlebars.registerHelper(name, fn)
 })
 
-const data = config.staticData
+const templateData = config.staticData
 
 // 1. pick up and parse all of the issues files
 // TODO probably want to migrate the issues to a different branch or something?
@@ -39,7 +39,7 @@ try {
   console.warn(`Cannot read issues directory '${path.resolve(config.issuesDir)}'. No issues will be templated.`)
 }
 
-data.issues = []
+templateData.issues = []
 for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
   const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issuesAsJsonFilename), 'utf8'))
   if (issueAsJson.body) {
@@ -47,10 +47,10 @@ for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
     issueAsJson.bodyAsHtml = marked(issueAsJson.body)
     // TODO should the markdown be templated here as well? leaves the ability for local embeddings
     // could also be templated later, though that starts to make it challenging to sort out the root
-    data.issues.push(issueAsJson)
+    templateData.issues.push(issueAsJson)
   }
 }
-console.log(`Parsed ${data.issues.length} issues.`)
+console.log(`Parsed ${templateData.issues.length} issues.`)
 // TODO where do we handle the closed/vs open logic? still want to use labels for something
 
 
@@ -94,15 +94,13 @@ for (const rawFilepath of rawFilepaths) {
     + '\n'
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
+  const template = await fs.readFile(path.resolve(config.templateDir, rawFilepath), 'utf8')
+
   uriHandlebars
-    .compile(preppedFilepath)(testData)
+    .compile(preppedFilepath)(templateData)
     .trim()
     .split('\n')
-    .forEach(filepath => {
-      outputFiles.push({
-        filepath,
-      })
-    })
+    .forEach(filepath => outputFiles.push({ filepath, template, }))
 }
 
 console.log(outputFiles)
