@@ -1,8 +1,10 @@
 import slugify from 'slugify'
+import { marked } from 'marked'
 
 export default {
   templateDir: `template`,
   issuesDir: `issues`,
+  publicDir: `public`,
   handlebarsHelpers: {
     helperMissing: (value, helper) => {
       // this just passes through the raw arg and logs a warning
@@ -13,6 +15,10 @@ export default {
       lower: true,
       strict: true
     }),
+    md: marked,
+    // file: (relPath) => {
+    //   // TODO stubbed
+    // }
   },
   staticData: {
     title: `My Blog`,

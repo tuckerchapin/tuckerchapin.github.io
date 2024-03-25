@@ -39107,11 +39107,14 @@ module.exports = parseParams
 /* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(9013);
+/* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7910);
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   templateDir: `template`,
   issuesDir: `issues`,
+  publicDir: `public`,
   handlebarsHelpers: {
     helperMissing: (value, helper) => {
       // this just passes through the raw arg and logs a warning
@@ -39122,6 +39125,10 @@ module.exports = parseParams
       lower: true,
       strict: true
     }),
+    md: marked__WEBPACK_IMPORTED_MODULE_1__/* .marked */ .TU,
+    // file: (relPath) => {
+    //   // TODO stubbed
+    // }
   },
   staticData: {
     title: `My Blog`,
@@ -41592,25 +41599,11 @@ __nccwpck_require__.a(__webpack_module__, async (__webpack_handle_async_dependen
 
 
 
-/* NOTE this is hacky, but don't really see a better way to make it work
-        we want to make the file names URL safe
-        originally, I was going to insert sub-expressions to chain these with user-defined helpers
-        https://handlebarsjs.com/guide/expressions.html#subexpressions
-        e.g. user-defined          transformed
-             {{title}}          => {{urlencode (title)}}
-             {{slugify title}}  => {{urlencode (slugify (title))}}
-        HOWEVER, Handlebars doesn't seem to support empty sub-expressions
-        so I'm just overriding their internal escapeExpression function used for HTML-escaping
-        🫠
-*/
-const uriHandlebars = handlebars__WEBPACK_IMPORTED_MODULE_4__.create()
-uriHandlebars.Utils.escapeExpression = encodeURIComponent
-
 // register handlebar helpers from config
-Object.entries(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].handlebarsHelpers */ .Z.handlebarsHelpers).forEach(([name, fn]) => {
-  handlebars__WEBPACK_IMPORTED_MODULE_4__.registerHelper(name, fn)
-  uriHandlebars.registerHelper(name, fn)
-})
+Object.entries(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].handlebarsHelpers */ .Z.handlebarsHelpers).forEach(([name, fn]) => handlebars__WEBPACK_IMPORTED_MODULE_4__.registerHelper(name, fn))
+
+// save this to switch between the two
+const defaultHandlebarsEscapeExpression = handlebars__WEBPACK_IMPORTED_MODULE_4__.Utils.escapeExpression;
 
 const templateData = _blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].staticData */ .Z.staticData
 
@@ -41630,7 +41623,8 @@ for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
   const issueAsJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readFile(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].issuesDir */ .Z.issuesDir, issuesAsJsonFilename), 'utf8'))
   if (issueAsJson.body) {
     // TODO be more careful here as marked is particular about the input
-    issueAsJson.bodyAsHtml = (0,marked__WEBPACK_IMPORTED_MODULE_0__/* .marked */ .TU)(issueAsJson.body)
+    // TODO commented out to be written in helpers file
+    // issueAsJson.bodyAsHtml = marked(issueAsJson.body)
     // TODO should the markdown be templated here as well? leaves the ability for local embeddings
     // could also be templated later, though that starts to make it challenging to sort out the root
     templateData.issues.push(issueAsJson)
@@ -41642,13 +41636,15 @@ console.log(`Parsed ${templateData.issues.length} issues.`)
 
 // 3. ingest all of the templates into a heirarchy
 
-const walkFs = async (dir, relative=false) => (await Promise.all((await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readdir(path__WEBPACK_IMPORTED_MODULE_5__.resolve(dir))).map(async (file) => {
-  file = path__WEBPACK_IMPORTED_MODULE_5__.resolve(dir, file)
-  const stat = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.stat(file)
-  if (stat && stat.isDirectory()) return await walkFs(file, relative)
-  if (relative) return path__WEBPACK_IMPORTED_MODULE_5__.relative(relative, file)
-  return file
-}))).flat(Infinity)
+const walkFs = async (dir, relative=false) => (
+  await Promise.all((await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readdir(path__WEBPACK_IMPORTED_MODULE_5__.resolve(dir))).map(async (file) => {
+    file = path__WEBPACK_IMPORTED_MODULE_5__.resolve(dir, file)
+    const stat = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.stat(file)
+    if (stat && stat.isDirectory()) return await walkFs(file, relative)
+    if (relative) return path__WEBPACK_IMPORTED_MODULE_5__.relative(relative, file)
+    return file
+  }))
+).flat(Infinity)
 
 const rawFilepaths = await walkFs(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir, _blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir)
 // TODO output this error to the job summary/error
@@ -41666,6 +41662,20 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 // generate list of all files to be templated
 const outputFiles = []
 for (const rawFilepath of rawFilepaths) {
+  /* NOTE this is hacky, but don't really see a better way to make it work
+          we want to make the file names URL safe
+          originally, I was going to insert sub-expressions to chain these with user-defined helpers
+          https://handlebarsjs.com/guide/expressions.html#subexpressions
+          e.g. user-defined          transformed
+               {{title}}          => {{urlencode (title)}}
+               {{slugify title}}  => {{urlencode (slugify (title))}}
+          HOWEVER, Handlebars doesn't seem to support empty sub-expressions
+          so I'm just overriding their internal escapeExpression function used for HTML-escaping
+          ALSO using handlebars.create() does not stop it from polluting the global handlebars instance
+          🫠
+  */
+  handlebars__WEBPACK_IMPORTED_MODULE_4__.Utils.escapeExpression = encodeURIComponent
+
   /* NOTE because we can't have / in a filename, blocks in filenames only have opening tags
           this extracts them and prepends them to the entire filepath and appends the closing tags
   */
@@ -41682,32 +41692,40 @@ for (const rawFilepath of rawFilepaths) {
 
   const template = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readFile(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir, rawFilepath), 'utf8')
 
-  uriHandlebars
-    .compile(preppedFilepath)(templateData)
+  // reset the escapeExpression function
+  handlebars__WEBPACK_IMPORTED_MODULE_4__.Utils.escapeExpression = defaultHandlebarsEscapeExpression
+
+  handlebars__WEBPACK_IMPORTED_MODULE_4__.compile(preppedFilepath)(templateData)
     .trim()
     .split('\n')
-    .forEach(filepath => outputFiles.push({ filepath, template, }))
+    .forEach(filepath => outputFiles.push({
+      filepath,
+      template,
+      content: handlebars__WEBPACK_IMPORTED_MODULE_4__.compile(template)(templateData)
+    }))
 }
 
-console.log(outputFiles)
+// console.log(outputFiles)
+
+const OUTPUT_DIR = `build`
+
+outputFiles.forEach(async ({ filepath, content }) => {
+  filepath = path__WEBPACK_IMPORTED_MODULE_5__.resolve(OUTPUT_DIR, filepath)
+  await fs_promises__WEBPACK_IMPORTED_MODULE_1__.mkdir(path__WEBPACK_IMPORTED_MODULE_5__.dirname(filepath), { recursive: true })
+  await fs_promises__WEBPACK_IMPORTED_MODULE_1__.writeFile(filepath, content)
+})
+
+// last step is to just copy over the public directory
+await fs_promises__WEBPACK_IMPORTED_MODULE_1__.cp(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].publicDir */ .Z.publicDir), path__WEBPACK_IMPORTED_MODULE_5__.resolve(OUTPUT_DIR), { recursive: true })
+
+// TODO need to iterate over
 
 // TODO need to figure out how to template files to be able to nest
 
+// TODO need to figure out how to go over the files one by one when theyre being templated
 
-// 4. shake the tree for the entire path of rendering
-
-
-
-// 5. start with the lowest component and template that
-
-
-
-// 6. composite all of the templates
-
-
-
-// 7. write out same structure
-
+// so first step is just to template out the files, without templating their urls
+// THEN we template the urls? need to sync them, weird
 
 
 _actions_core__WEBPACK_IMPORTED_MODULE_2__.setOutput("commit-message", "Generated blog posts from issues")

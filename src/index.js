@@ -6,25 +6,11 @@ import handlebars from 'handlebars'
 import path from 'path'
 import config from '../blog-config.js'
 
-/* NOTE this is hacky, but don't really see a better way to make it work
-        we want to make the file names URL safe
-        originally, I was going to insert sub-expressions to chain these with user-defined helpers
-        https://handlebarsjs.com/guide/expressions.html#subexpressions
-        e.g. user-defined          transformed
-             {{title}}          => {{urlencode (title)}}
-             {{slugify title}}  => {{urlencode (slugify (title))}}
-        HOWEVER, Handlebars doesn't seem to support empty sub-expressions
-        so I'm just overriding their internal escapeExpression function used for HTML-escaping
-        🫠
-*/
-const uriHandlebars = handlebars.create()
-uriHandlebars.Utils.escapeExpression = encodeURIComponent
-
 // register handlebar helpers from config
-Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => {
-  handlebars.registerHelper(name, fn)
-  uriHandlebars.registerHelper(name, fn)
-})
+Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars.registerHelper(name, fn))
+
+// save this to switch between the two
+const defaultHandlebarsEscapeExpression = handlebars.Utils.escapeExpression;
 
 const templateData = config.staticData
 
@@ -44,7 +30,8 @@ for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
   const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issuesAsJsonFilename), 'utf8'))
   if (issueAsJson.body) {
     // TODO be more careful here as marked is particular about the input
-    issueAsJson.bodyAsHtml = marked(issueAsJson.body)
+    // TODO commented out to be written in helpers file
+    // issueAsJson.bodyAsHtml = marked(issueAsJson.body)
     // TODO should the markdown be templated here as well? leaves the ability for local embeddings
     // could also be templated later, though that starts to make it challenging to sort out the root
     templateData.issues.push(issueAsJson)
@@ -56,13 +43,15 @@ console.log(`Parsed ${templateData.issues.length} issues.`)
 
 // 3. ingest all of the templates into a heirarchy
 
-const walkFs = async (dir, relative=false) => (await Promise.all((await fs.readdir(path.resolve(dir))).map(async (file) => {
-  file = path.resolve(dir, file)
-  const stat = await fs.stat(file)
-  if (stat && stat.isDirectory()) return await walkFs(file, relative)
-  if (relative) return path.relative(relative, file)
-  return file
-}))).flat(Infinity)
+const walkFs = async (dir, relative=false) => (
+  await Promise.all((await fs.readdir(path.resolve(dir))).map(async (file) => {
+    file = path.resolve(dir, file)
+    const stat = await fs.stat(file)
+    if (stat && stat.isDirectory()) return await walkFs(file, relative)
+    if (relative) return path.relative(relative, file)
+    return file
+  }))
+).flat(Infinity)
 
 const rawFilepaths = await walkFs(config.templateDir, config.templateDir)
 // TODO output this error to the job summary/error
@@ -80,6 +69,20 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 // generate list of all files to be templated
 const outputFiles = []
 for (const rawFilepath of rawFilepaths) {
+  /* NOTE this is hacky, but don't really see a better way to make it work
+          we want to make the file names URL safe
+          originally, I was going to insert sub-expressions to chain these with user-defined helpers
+          https://handlebarsjs.com/guide/expressions.html#subexpressions
+          e.g. user-defined          transformed
+               {{title}}          => {{urlencode (title)}}
+               {{slugify title}}  => {{urlencode (slugify (title))}}
+          HOWEVER, Handlebars doesn't seem to support empty sub-expressions
+          so I'm just overriding their internal escapeExpression function used for HTML-escaping
+          ALSO using handlebars.create() does not stop it from polluting the global handlebars instance
+          🫠
+  */
+  handlebars.Utils.escapeExpression = encodeURIComponent
+
   /* NOTE because we can't have / in a filename, blocks in filenames only have opening tags
           this extracts them and prepends them to the entire filepath and appends the closing tags
   */
@@ -96,32 +99,41 @@ for (const rawFilepath of rawFilepaths) {
 
   const template = await fs.readFile(path.resolve(config.templateDir, rawFilepath), 'utf8')
 
-  uriHandlebars
+  // reset the escapeExpression function
+  handlebars.Utils.escapeExpression = defaultHandlebarsEscapeExpression
+
+  handlebars
     .compile(preppedFilepath)(templateData)
     .trim()
     .split('\n')
-    .forEach(filepath => outputFiles.push({ filepath, template, }))
+    .forEach(filepath => outputFiles.push({
+      filepath,
+      template,
+      content: handlebars.compile(template)(templateData)
+    }))
 }
 
-console.log(outputFiles)
+// console.log(outputFiles)
+
+const OUTPUT_DIR = `build`
+
+outputFiles.forEach(async ({ filepath, content }) => {
+  filepath = path.resolve(OUTPUT_DIR, filepath)
+  await fs.mkdir(path.dirname(filepath), { recursive: true })
+  await fs.writeFile(filepath, content)
+})
+
+// last step is to just copy over the public directory
+await fs.cp(path.resolve(config.publicDir), path.resolve(OUTPUT_DIR), { recursive: true })
+
+// TODO need to iterate over
 
 // TODO need to figure out how to template files to be able to nest
 
+// TODO need to figure out how to go over the files one by one when theyre being templated
 
-// 4. shake the tree for the entire path of rendering
-
-
-
-// 5. start with the lowest component and template that
-
-
-
-// 6. composite all of the templates
-
-
-
-// 7. write out same structure
-
+// so first step is just to template out the files, without templating their urls
+// THEN we template the urls? need to sync them, weird
 
 
 core.setOutput("commit-message", "Generated blog posts from issues")
