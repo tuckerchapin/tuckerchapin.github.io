@@ -72,13 +72,6 @@ const rawFilepaths = await walkFs(config.templateDir, config.templateDir)
 //   throw e
 // }
 
-const testData = {
-  "issues": [
-    { "number": 1, "title": "a titular title"},
-    { "number": 2, "title": "Myy Title 2 ALL CAPS!!!"}
-  ]
-}
-
 
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g

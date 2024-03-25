@@ -41658,13 +41658,6 @@ const rawFilepaths = await walkFs(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/*
 //   throw e
 // }
 
-const testData = {
-  "issues": [
-    { "number": 1, "title": "a titular title"},
-    { "number": 2, "title": "Myy Title 2 ALL CAPS!!!"}
-  ]
-}
-
 
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
