@@ -1,55 +1,136 @@
 import { marked } from 'marked'
-import fs from 'fs'
+import fs from 'fs/promises'
 import core from '@actions/core'
-// import github from '@actions/github'
-import slugify from 'slugify'
+import github from '@actions/github'
+import handlebars from 'handlebars'
+import path from 'path'
+import config from '../blog-config.js'
 
-// TODO handle startup, no issues folder
-// probably want to remove this, migrate the issues to a different branch or something?
-if (!fs.existsSync('issues')) {
-  console.log('No issues/ folder found. Exiting.')
-  process.exit()
+/* NOTE this is hacky, but don't really see a better way to make it work
+        we want to make the file names URL safe
+        originally, I was going to insert sub-expressions to chain these with user-defined helpers
+        https://handlebarsjs.com/guide/expressions.html#subexpressions
+        e.g. user-defined          transformed
+             {{title}}          => {{urlencode (title)}}
+             {{slugify title}}  => {{urlencode (slugify (title))}}
+        HOWEVER, Handlebars doesn't seem to support empty sub-expressions
+        so I'm just overriding their internal escapeExpression function used for HTML-escaping
+        🫠
+*/
+const uriHandlebars = handlebars.create()
+uriHandlebars.Utils.escapeExpression = encodeURIComponent
+
+// register handlebar helpers from config
+Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => {
+  handlebars.registerHelper(name, fn)
+  uriHandlebars.registerHelper(name, fn)
+})
+
+const data = config.staticData
+
+// 1. pick up and parse all of the issues files
+// TODO probably want to migrate the issues to a different branch or something?
+
+let issuesAsJsonFilenames = []
+try {
+  issuesAsJsonFilenames = await fs.readdir(path.resolve(config.issuesDir))
+} catch (e) {
+  // TODO output this warning to the job summary/warnings
+  console.warn(`Cannot read issues directory '${path.resolve(config.issuesDir)}'. No issues will be templated.`)
 }
 
-// if the blog folder doesn't exit, create it
-if (!fs.existsSync('blog')) {
-  console.log('blog folder doesnt exist, making it')
-  fs.mkdirSync('blog')
-} else {
-  console.log('blog folder exists')
-}
-const blogFiles = fs.readdirSync('blog')
-const issueFiles = fs.readdirSync('issues')
-
-for (const issueFile of issueFiles) {
-  // read in the issue file
-  const issue = JSON.parse(fs.readFileSync(`issues/${issueFile}`, 'utf8'))
-
-  // clean up other conflicting files sharing this post id
-  for (const blogFile of blogFiles) {
-    if (blogFile.startsWith(`${issue.number}-`)) {
-      fs.unlinkSync(`blog/${blogFile}`);
-    }
+data.issues = []
+for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
+  const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issuesAsJsonFilename), 'utf8'))
+  if (issueAsJson.body) {
+    // TODO be more careful here as marked is particular about the input
+    issueAsJson.bodyAsHtml = marked(issueAsJson.body)
+    // TODO should the markdown be templated here as well? leaves the ability for local embeddings
+    // could also be templated later, though that starts to make it challenging to sort out the root
+    data.issues.push(issueAsJson)
   }
+}
+console.log(`Parsed ${data.issues.length} issues.`)
+// TODO where do we handle the closed/vs open logic? still want to use labels for something
 
-  // if there's no body issue, skip and don't produce html output
-  if (issue.body && issue.state === 'closed') {
-    // TODO shite templating
-    const html = `<html><body>${marked(issue.body)}</body></html>`
 
-    // slugify and create the post title
-    const slug = slugify(issue.title, {
-      lower: true,
-      strict: true
+// 3. ingest all of the templates into a heirarchy
+
+const walkFs = async (dir, relative=false) => (await Promise.all((await fs.readdir(path.resolve(dir))).map(async (file) => {
+  file = path.resolve(dir, file)
+  const stat = await fs.stat(file)
+  if (stat && stat.isDirectory()) return await walkFs(file, relative)
+  if (relative) return path.relative(relative, file)
+  return file
+}))).flat(Infinity)
+
+const rawFilepaths = await walkFs(config.templateDir, config.templateDir)
+// TODO output this error to the job summary/error
+// TODO handle this error better
+// } catch (e) {
+//   console.error(`Cannot read templates directory '${path.resolve(config.templateDir)}'`)
+//   throw e
+// }
+
+const testData = {
+  "issues": [
+    { "number": 1, "title": "a titular title"},
+    { "number": 2, "title": "Myy Title 2 ALL CAPS!!!"}
+  ]
+}
+
+
+// matches handlebar opening tags in the filepaths
+const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
+
+// transform the template filepaths as templates themselves
+// generate list of all files to be templated
+const outputFiles = []
+for (const rawFilepath of rawFilepaths) {
+  /* NOTE because we can't have / in a filename, blocks in filenames only have opening tags
+          this extracts them and prepends them to the entire filepath and appends the closing tags
+  */
+  /* TODO this whole section is kinda nasty:
+          insertion of the newline, the line splitting, the block regexes, etc.
+          could use a second pass for refinement and robustness
+  */
+  const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
+  const preppedFilepath =
+    templateBlocks.map(b => `{{#${b[1]} ${b[2]}}}`).join()
+    + rawFilepath.replace(openBlockRe, '')
+    + '\n'
+    + templateBlocks.map(b => `{{/${b[1]}}}`).join()
+
+  uriHandlebars
+    .compile(preppedFilepath)(testData)
+    .trim()
+    .split('\n')
+    .forEach(filepath => {
+      outputFiles.push({
+        filepath,
+      })
     })
-
-    // write out the blog post
-    const fileName = `${issue.number}-${slug}.html`
-    fs.writeFileSync(`blog/${fileName}`, html)
-    console.log(`issue ${('#' + issue.number).padStart(4)} -> blog/${fileName}`)
-  } else {
-    console.log(`issue ${('#' + issue.number).padStart(4)} -> no body, no output`)
-  }
 }
 
-core.setOutput("commit-message", "Generated blog posts from issues");
+console.log(outputFiles)
+
+// TODO need to figure out how to template files to be able to nest
+
+
+// 4. shake the tree for the entire path of rendering
+
+
+
+// 5. start with the lowest component and template that
+
+
+
+// 6. composite all of the templates
+
+
+
+// 7. write out same structure
+
+
+
+core.setOutput("commit-message", "Generated blog posts from issues")

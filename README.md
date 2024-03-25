@@ -41,3 +41,6 @@
 - $GITHUB_STEP_SUMMARY
 - fork utterances?
     - ability to react to the post itself, ability to subscribe to the discussion on github
+- file name templating/iterating
+- need the ability for some JSON files as static data
+    - eg a list of projects
