@@ -1,33 +1,33 @@
 # TODO
-- [ ] open issue
-    - [ ] write markdown post in body
+- [X] open issue
+    - [X] write markdown post in body
     - [ ] add tags
-    - [ ] convert to html?
+    - [X] convert to html?
 
 
 
-- [ ] issue -> new file in folder
-- [ ] folder-based routing
+- [X] issue -> new file in folder
+- [X] folder-based routing
 - [ ] lock out non-posting users?
 - [ ] private?
-- [ ] json -> slug.html -> templating engine and releasing?
+- [X] json -> slug.html -> templating engine and releasing?
 - [ ] closed issues get published
 - [ ] open issues are in "draft" and don’t get published
-- [ ] need to create a blog template
+- [X] need to create a blog template
 - [ ] don’t mention issues in the syncing, creates clutter on the issue thread
 - [ ] open issues are "drafts" closed issues are publishable
 - [ ] add reactions to the post, fork utterances?
 - [ ] eventually figure out how to fork
-- [ ] use ncc to bundle deps?
+- [X] use ncc to bundle deps?
 - [ ] limit whos posts
 - [ ] if only the issues path changed… then just rebuild that issue
-- [ ] if the templates changed… then rebuild all
-- [ ] gotta recompile ncc every time
-- [ ] https://github.com/orgs/community/discussions/25702 assholery
-    - [ ] github actions token doesn’t kick off other workflows
-- [ ] stop concurrent runs for issues
-    - [ ] https://docs.github.com/en/actions/using-jobs/using-concurrency
-- [ ] only commit on diff otherwise annoying failures
+- [X] if the templates changed… then rebuild all
+- [X] gotta recompile ncc every time
+- [X] https://github.com/orgs/community/discussions/25702 assholery
+    - [X] github actions token doesn’t kick off other workflows
+- [X] stop concurrent runs for issues
+    - [X] https://docs.github.com/en/actions/using-jobs/using-concurrency
+- [X] only commit on diff otherwise annoying failures
 - [ ] interesitng syncing app
     - [ ] https://github.com/apps/settings
 - [ ] svelte static site generator?
@@ -41,6 +41,6 @@
 - [ ] $GITHUB_STEP_SUMMARY
 - [ ] fork utterances?
     - [ ] ability to react to the post itself, ability to subscribe to the discussion on github
-- [ ] file name templating/iterating
-- [ ] need the ability for some JSON files as static data
-    - [ ] eg a list of projects
+- [X] file name templating/iterating
+- [X] need the ability for some JSON files as static data
+    - [X] eg a list of projects
