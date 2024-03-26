@@ -20,13 +20,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        # with:
-        #   ref: issues
+      - name: Checkout issues branch
+        id: checkout-issues
+        continue-on-error: true
+        with:
+          ref: issues
         uses: actions/checkout@v4
 
-      - name: Checkout repo
-        run: git checkout issues
+      - name: Create branch if it doesn't exist
+        if: ${{ steps.checkout-issues.outcome == 'failure' }}
+        run: |
+          git checkout --orphan issues
+          git rm -rf .
+          git push -u origin issues
 
       - name: Checkout repo
         run: echo $(git branch)
@@ -97,11 +103,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # - name: Checkout repo
-      #   with:
-      #     path: issues
-      #     ref: issues
-      #   uses: actions/checkout@v4
+      - name: Checkout repo
+        with:
+          path: issues
+          ref: issues
+        uses: actions/checkout@v4
 
       # - name: Checkout repo
       #   with:
