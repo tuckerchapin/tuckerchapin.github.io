@@ -1,0 +1,45 @@
+name: Issues Blog
+
+on:
+  push:
+    # paths:
+    #   - issues/*
+    #   - public/*
+    #   - templates/*
+  # issues:
+  #   types: [opened, edited, deleted, transferred, pinned, unpinned, closed, reopened, assigned, unassigned, labeled, unlabeled, locked, unlocked, milestoned, demilestoned]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        with:
+          ref: issues
+        uses: actions/checkout@v4
+
+      - name: Template & build static files
+        id: issue-to-html
+        run: node dist/index.js
+
+      # TODO publish to gh pages
+      # remove these other steps
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+
+  # TODO only deploy if there's a diff? or always deploy? why not lol
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy GitHub Pages site
+        uses: actions/deploy-pages@v4
