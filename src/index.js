@@ -101,7 +101,7 @@ try {
   console.log('4')
   // process.exit(message)
   console.log('5')
-  throw(e)
+  // throw(e)
 }
 
 console.log('hewwo 101')
