@@ -65,8 +65,8 @@ templateData.issues =
     .map(file => JSON.parse(file))
     .filter(f => f)
 
-const parsedMessage = `Parsed ${templateData.issues.length} issue${templateData.issues.length === 1 ? 's' : ''} to publish.`
-templateData.issues.length ? core.notice(parsedMessage) : core.warning(parsedMessage)
+const publishableIssueLog = `Parsed ${templateData.issues.length} issue${templateData.issues.length === 1 ? 's' : ''} to publish.`
+templateData.issues.length ? core.notice(publishableIssueLog) : core.warning(publishableIssueLog)
 
 // discover site template
 const walkFs = async (dir, relative=false) => (
@@ -84,18 +84,21 @@ const walkFs = async (dir, relative=false) => (
 
 let rawFilepaths = []
 try {
+  console.log('hewwo 87')
   rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
     console.log('caught errror? 91')
     console.error(e)
     throw e
   })
+  console.log('hewwo 93')
 } catch (e) {
-  const message = `${github.job?.name}: Cannot read templates directory '${path.resolve(config.templateDir)}'`
-  core.error(e, { title: message })
+  const message = `Cannot read templates directory '${path.resolve(config.templateDir)}'`
+  core.error(message)
   core.setFailed(message)
+  process.exit(message)
 }
 
-console.log('hewwo 109')
+console.log('hewwo 101')
 
 
 // matches handlebar opening tags in the filepaths

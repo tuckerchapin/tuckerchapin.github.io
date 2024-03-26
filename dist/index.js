@@ -37513,8 +37513,8 @@ templateData.issues =
     .map(file => JSON.parse(file))
     .filter(f => f)
 
-const parsedMessage = `Parsed ${templateData.issues.length} issue${templateData.issues.length === 1 ? 's' : ''} to publish.`
-templateData.issues.length ? _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(parsedMessage) : _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(parsedMessage)
+const publishableIssueLog = `Parsed ${templateData.issues.length} issue${templateData.issues.length === 1 ? 's' : ''} to publish.`
+templateData.issues.length ? _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(publishableIssueLog) : _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(publishableIssueLog)
 
 // discover site template
 const walkFs = async (dir, relative=false) => (
@@ -37532,18 +37532,21 @@ const walkFs = async (dir, relative=false) => (
 
 let rawFilepaths = []
 try {
+  console.log('hewwo 87')
   rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
     console.log('caught errror? 91')
     console.error(e)
     throw e
   })
+  console.log('hewwo 93')
 } catch (e) {
-  const message = `${_actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name}: Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir)}'`
-  _actions_core__WEBPACK_IMPORTED_MODULE_1__.error(e, { title: message })
+  const message = `Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir)}'`
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.error(message)
   _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(message)
+  process.exit(message)
 }
 
-console.log('hewwo 109')
+console.log('hewwo 101')
 
 
 // matches handlebar opening tags in the filepaths
