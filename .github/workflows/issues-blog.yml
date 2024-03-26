@@ -31,8 +31,7 @@ jobs:
         if: ${{ steps.checkout-issues.outcome == 'failure' }}
         run: |
           git checkout --orphan issues
-          echo $(ls -alF)
-          echo $(git status)
+          git commit --allow-empty -m "Initial commit"
           git push -u origin issues
 
       - name: Checkout repo
