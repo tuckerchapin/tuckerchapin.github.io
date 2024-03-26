@@ -12,6 +12,8 @@ import path from 'path'
 import slugify from 'slugify'
 import { marked } from 'marked'
 
+core.notice('Building test')
+
 const config = {
   templateDir: `template`,
   issuesDir: `issues`,

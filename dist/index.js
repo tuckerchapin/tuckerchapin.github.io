@@ -37460,6 +37460,8 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
+_actions_core__WEBPACK_IMPORTED_MODULE_1___default().notice('Building test')
+
 const config = {
   templateDir: `template`,
   issuesDir: `issues`,
