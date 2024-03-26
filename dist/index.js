@@ -37488,69 +37488,53 @@ const config = {
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars__WEBPACK_IMPORTED_MODULE_3___default().registerHelper(name, fn))
 
-console.log('hewwo 43')
 // get list of issue files
 const issueJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir)).catch(e => {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(e, { title: `${_actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name} Cannot read issues directory.` })
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Cannot read issues directory`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
+  console.error(e)
   return []
 })
-console.log('hewwo 49')
 
-// read and parse issues from json
 const templateData = config.staticData
 
-templateData.issues = issueJsonFilenames
+// read issue files
+const issueFiles = issueJsonFilenames
   .filter((filename) => filename.endsWith('.json'))
-  .map(async (issueJsonFilename) => {
-    const issueJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir, issueJsonFilename), 'utf8'))
-    if (issueJson.body) return issueJson
-  })
-templateData.issues = (await Promise.all(templateData.issues).catch(e => {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1__.error(e, { title: `${_actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name} Cannot read issue files.` })
-  return []
-})).filter(f => f)
+  .map(filename => fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir, filename), 'utf8'))
 
-// templateData.issues = []
-// for (const issueJsonFilename of issueJsonFilenames) {
-//   const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issueJsonFilename), 'utf8'))
-//   if (issueAsJson.body) templateData.issues.push(issueAsJson)
-// }
+// parse issue files
+templateData.issues =
+  (await Promise.all(issueFiles)
+    .catch(e => {
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Cannot read issue files`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
+      console.error(e)
+      return []
+    }))
+    .map(file => JSON.parse(file))
+    .filter(f => f)
+
 if (templateData.issues.length) {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(`Parsed ${templateData.issues.length} issues to published.`)
 } else {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`No issues found to be published.`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`No issues found.`)
 }
 
-console.log('hewwo 68')
-
-// discover all template files
+// discover site template
 const walkFs = async (dir, relative=false) => (
-  await Promise.all((await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir)).catch(e => {
-    console.log('caught errror? 67')
-    console.error(e)
-    throw e
-  })).map(async (file) => {
-    file = path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir, file)
-    const stat = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().stat(file).catch(e => {
-      console.log('caught errror? 73')
-      console.error(e)
-      throw e
-    })
-    if (stat && stat.isDirectory()) return await walkFs(file, relative).catch(e => {
-      console.log('caught errror? 78')
-      console.error(e)
-      throw e
-    })
-    if (relative) return path__WEBPACK_IMPORTED_MODULE_4___default().relative(relative, file)
-    return file
-  }))
+  await Promise.all(
+    (await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir)))
+      .map(async (file) => {
+        file = path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir, file)
+        const stat = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().stat(file)
+        if (stat && stat.isDirectory()) return await walkFs(file, relative)
+        if (relative) return path__WEBPACK_IMPORTED_MODULE_4___default().relative(relative, file)
+        return file
+      })
+  )
 ).flat(Infinity)
-
-console.log('hewwo 93')
 
 let rawFilepaths = []
 try {
-  console.log('about to walk fs')
   rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
     console.log('caught errror? 91')
     console.error(e)

@@ -40,69 +40,53 @@ const config = {
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars.registerHelper(name, fn))
 
-console.log('hewwo 43')
 // get list of issue files
 const issueJsonFilenames = await fs.readdir(path.resolve(config.issuesDir)).catch(e => {
-  core.warning(e, { title: `${github.job?.name} Cannot read issues directory.` })
+  core.warning(`Cannot read issues directory`, { title: github.job?.name })
+  console.error(e)
   return []
 })
-console.log('hewwo 49')
 
-// read and parse issues from json
 const templateData = config.staticData
 
-templateData.issues = issueJsonFilenames
+// read issue files
+const issueFiles = issueJsonFilenames
   .filter((filename) => filename.endsWith('.json'))
-  .map(async (issueJsonFilename) => {
-    const issueJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issueJsonFilename), 'utf8'))
-    if (issueJson.body) return issueJson
-  })
-templateData.issues = (await Promise.all(templateData.issues).catch(e => {
-  core.error(e, { title: `${github.job?.name} Cannot read issue files.` })
-  return []
-})).filter(f => f)
+  .map(filename => fs.readFile(path.resolve(config.issuesDir, filename), 'utf8'))
 
-// templateData.issues = []
-// for (const issueJsonFilename of issueJsonFilenames) {
-//   const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issueJsonFilename), 'utf8'))
-//   if (issueAsJson.body) templateData.issues.push(issueAsJson)
-// }
+// parse issue files
+templateData.issues =
+  (await Promise.all(issueFiles)
+    .catch(e => {
+      core.warning(`Cannot read issue files`, { title: github.job?.name })
+      console.error(e)
+      return []
+    }))
+    .map(file => JSON.parse(file))
+    .filter(f => f)
+
 if (templateData.issues.length) {
-  core.notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: github.job?.name })
+  core.notice(`Parsed ${templateData.issues.length} issues to published.`)
 } else {
-  core.warning(`No issues found to be published.`, { title: github.job?.name })
+  core.warning(`No issues found.`)
 }
 
-console.log('hewwo 68')
-
-// discover all template files
+// discover site template
 const walkFs = async (dir, relative=false) => (
-  await Promise.all((await fs.readdir(path.resolve(dir)).catch(e => {
-    console.log('caught errror? 67')
-    console.error(e)
-    throw e
-  })).map(async (file) => {
-    file = path.resolve(dir, file)
-    const stat = await fs.stat(file).catch(e => {
-      console.log('caught errror? 73')
-      console.error(e)
-      throw e
-    })
-    if (stat && stat.isDirectory()) return await walkFs(file, relative).catch(e => {
-      console.log('caught errror? 78')
-      console.error(e)
-      throw e
-    })
-    if (relative) return path.relative(relative, file)
-    return file
-  }))
+  await Promise.all(
+    (await fs.readdir(path.resolve(dir)))
+      .map(async (file) => {
+        file = path.resolve(dir, file)
+        const stat = await fs.stat(file)
+        if (stat && stat.isDirectory()) return await walkFs(file, relative)
+        if (relative) return path.relative(relative, file)
+        return file
+      })
+  )
 ).flat(Infinity)
-
-console.log('hewwo 93')
 
 let rawFilepaths = []
 try {
-  console.log('about to walk fs')
   rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
     console.log('caught errror? 91')
     console.error(e)
