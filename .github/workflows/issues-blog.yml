@@ -23,6 +23,7 @@ concurrency:
 
 jobs:
   sync-issues:
+    name: Sync issues
     if: ${{ github.event.issue.number }}
     runs-on: ubuntu-latest
     steps:
@@ -80,6 +81,7 @@ jobs:
           fi
 
   build:
+    name: Build static site
     # if sync doesn't run, fine, if sync does run, we need it
     needs: sync-issues
     if: ${{ !failure() && !cancelled()}}
@@ -105,6 +107,7 @@ jobs:
 
 
   deploy:
+    name: Deploy to Github Pages
     needs: build
     runs-on: ubuntu-latest
     permissions:

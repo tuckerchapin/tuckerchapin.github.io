@@ -37490,34 +37490,24 @@ const config = {
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars__WEBPACK_IMPORTED_MODULE_3___default().registerHelper(name, fn))
 
-// save this to switch between the two
-const defaultHandlebarsEscapeExpression = (handlebars__WEBPACK_IMPORTED_MODULE_3___default().Utils.escapeExpression);
-
-const templateData = config.staticData
-
-// 1. pick up and parse all of the issues files
-// TODO probably want to migrate the issues to a different branch or something?
-
-console.log('about to read issues DIR..')
 
 let issuesAsJsonFilenames = []
 try {
   issuesAsJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir))
 } catch (e) {
   // TODO output this warning to the job summary/warnings
-  console.warn(`Cannot read issues directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir)}'. No issues will be templated.`)
+  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(`Cannot read issues directory. No issues will be templated.`, { title: (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name) })
 }
 issuesAsJsonFilenames = issuesAsJsonFilenames.filter(f => f.endsWith('.json'))
 
-console.log(`Found ${issuesAsJsonFilenames.length} issues.`)
-
-console.log(`about to read issues ${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir, '*.json')}`)
-
+const templateData = config.staticData
 templateData.issues = []
 for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
   const issueAsJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir, issuesAsJsonFilename), 'utf8'))
-  // TODO be more careful here as marked is particular about the input
   if (issueAsJson.body) templateData.issues.push(issueAsJson)
+}
+if (templateData.issues.length) {
+
 }
 console.log(`Parsed ${templateData.issues.length} issues.`)
 // TODO where do we handle the closed/vs open logic? still want to use labels for something
@@ -37548,10 +37538,20 @@ try {
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 
+/* TODO this whole section is kinda nasty: the block regexes, string interps, etc.
+        could use a second pass for refinement and robustness
+*/
 // transform the templates
 const outputFiles = []
 for (const rawFilepath of rawFilepaths) {
   const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath), 'utf8')
+
+  /* NOTE because we can't have / in a filename, blocks in filenames only have opening tags
+          this extracts them and prepends them to the entire filepath and appends the closing tags
+  */
+  const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
+  const preppedFilepath = rawFilepath.replace(openBlockRe, '')
+
 
   /* NOTE Ok, so time for a hacky solution.
           We want to be able to template the file structure AND the files themselves.
@@ -37560,17 +37560,6 @@ for (const rawFilepath of rawFilepaths) {
           So the solution here is to template the file path and the file itself together, compile,
           and split them back apart. This requires some nasty string parsing on my part.
   */
-
-  /* TODO this whole section is kinda nasty: the block regexes, string interps, etc.
-          could use a second pass for refinement and robustness
-  */
-
-  /* NOTE because we can't have / in a filename, blocks in filenames only have opening tags
-          this extracts them and prepends them to the entire filepath and appends the closing tags
-  */
-  const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
-  const preppedFilepath = rawFilepath.replace(openBlockRe, '')
-
   const combinedTemplate =
     templateBlocks.map(b => `{{#${b[1]} ${b[2]}}}`).join()
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
@@ -37585,25 +37574,20 @@ for (const rawFilepath of rawFilepaths) {
   ).forEach(match => outputFiles.push({ ...match.groups }))
 }
 
-// write out the files
+// default directory for upload-pages-artifact, why not
 const OUTPUT_DIR = `_site`
 
+// write out the resulting compiled files
 outputFiles.forEach(async ({ filepath, content }) => {
   filepath = path__WEBPACK_IMPORTED_MODULE_4___default().resolve(OUTPUT_DIR, filepath)
   await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().mkdir(path__WEBPACK_IMPORTED_MODULE_4___default().dirname(filepath), { recursive: true })
   await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().writeFile(filepath, content)
 })
 
-// TODO maybe make this a workflow step
 // copy public files to output directory
 await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().cp(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.publicDir), path__WEBPACK_IMPORTED_MODULE_4___default().resolve(OUTPUT_DIR), { recursive: true })
 
 // TODO need to figure out how to template files to be able to nest
-
-// TODO need to figure out how to go over the files one by one when theyre being templated
-
-
-// core.setOutput("commit-message", "Generated blog posts from issues")
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
 
