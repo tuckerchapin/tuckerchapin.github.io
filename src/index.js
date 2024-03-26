@@ -34,7 +34,7 @@ const config = {
   }
 }
 /*=============================================*/
-
+console.log('hewwo37')
 
 // TODO make this more like a normal config where it's overrideable/zippable with a default
 // TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
@@ -42,11 +42,15 @@ const config = {
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars.registerHelper(name, fn))
 
+console.log('hewwo 45')
+
 // get list of issue files
 const issuesJsonFilenames = await fs.readdir(path.resolve(config.issuesDir)).catch(e => {
   core.warning(e, { title: `${github.job.name} Cannot read issues directory.` })
   return []
 })
+
+console.log('hewwo 53')
 
 // read and parse issues from json
 const templateData = config.staticData
@@ -60,6 +64,8 @@ if (templateData.issues.length) {
 } else {
   core.warning(`No issues found to be published.`, { title: github.job.name })
 }
+
+console.log('hewwo 68')
 
 // discover all template files
 const walkFs = async (dir, relative=false) => (
@@ -84,6 +90,8 @@ const walkFs = async (dir, relative=false) => (
   }))
 ).flat(Infinity)
 
+console.log('hewwo 93')
+
 let rawFilepaths = []
 try {
   console.log('about to walk fs')
@@ -97,6 +105,8 @@ try {
   core.error(e, { title: message })
   core.setFailed(message)
 }
+
+console.log('hewwo 109')
 
 
 // matches handlebar opening tags in the filepaths

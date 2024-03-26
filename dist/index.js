@@ -37482,7 +37482,7 @@ const config = {
   }
 }
 /*=============================================*/
-
+console.log('hewwo37')
 
 // TODO make this more like a normal config where it's overrideable/zippable with a default
 // TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
@@ -37490,11 +37490,15 @@ const config = {
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars__WEBPACK_IMPORTED_MODULE_3___default().registerHelper(name, fn))
 
+console.log('hewwo 45')
+
 // get list of issue files
 const issuesJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir)).catch(e => {
   _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(e, { title: `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)} Cannot read issues directory.` })
   return []
 })
+
+console.log('hewwo 53')
 
 // read and parse issues from json
 const templateData = config.staticData
@@ -37508,6 +37512,8 @@ if (templateData.issues.length) {
 } else {
   _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(`No issues found to be published.`, { title: (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name) })
 }
+
+console.log('hewwo 68')
 
 // discover all template files
 const walkFs = async (dir, relative=false) => (
@@ -37532,6 +37538,8 @@ const walkFs = async (dir, relative=false) => (
   }))
 ).flat(Infinity)
 
+console.log('hewwo 93')
+
 let rawFilepaths = []
 try {
   console.log('about to walk fs')
@@ -37545,6 +37553,8 @@ try {
   _actions_core__WEBPACK_IMPORTED_MODULE_1___default().error(e, { title: message })
   _actions_core__WEBPACK_IMPORTED_MODULE_1___default().setFailed(message)
 }
+
+console.log('hewwo 109')
 
 
 // matches handlebar opening tags in the filepaths
