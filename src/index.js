@@ -5,6 +5,8 @@ import handlebars from 'handlebars'
 import path from 'path'
 
 /*=============================================*/
+// TODO make this more like a normal config where it's overrideable/zippable with a default
+// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
 // TODO move config into separate file and support stuff
 // import config from '../blog-config.js'
 import slugify from 'slugify'
@@ -34,31 +36,37 @@ const config = {
   }
 }
 /*=============================================*/
-console.log('hewwo37')
-
-// TODO make this more like a normal config where it's overrideable/zippable with a default
-// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
 
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars.registerHelper(name, fn))
 
-console.log('hewwo 45')
-
+console.log('hewwo 43')
 // get list of issue files
-const issuesJsonFilenames = await fs.readdir(path.resolve(config.issuesDir)).catch(e => {
+const issueJsonFilenames = await fs.readdir(path.resolve(config.issuesDir)).catch(e => {
   core.warning(e, { title: `${github.job.name} Cannot read issues directory.` })
   return []
 })
-
-console.log('hewwo 53')
+console.log('hewwo 49')
 
 // read and parse issues from json
 const templateData = config.staticData
-templateData.issues = []
-for (const issuesJsonFilename of issuesJsonFilenames) {
-  const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issuesJsonFilename), 'utf8'))
-  if (issueAsJson.body) templateData.issues.push(issueAsJson)
-}
+
+templateData.issues = issueJsonFilenames
+  .filter((filename) => filename.endsWith('.json'))
+  .map(async (issueJsonFilename) => {
+    const issueJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issueJsonFilename), 'utf8'))
+    if (issueJson.body) return issueJson
+  })
+templateData.issues = (await Promise.all(templateData.issues).catch(e => {
+  core.error(e, { title: `${github.job.name} Cannot read issue files.` })
+  return []
+})).filter(f => f)
+
+// templateData.issues = []
+// for (const issueJsonFilename of issueJsonFilenames) {
+//   const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issueJsonFilename), 'utf8'))
+//   if (issueAsJson.body) templateData.issues.push(issueAsJson)
+// }
 if (templateData.issues.length) {
   core.notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: github.job.name })
 } else {

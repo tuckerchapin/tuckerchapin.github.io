@@ -37453,6 +37453,8 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 /*=============================================*/
+// TODO make this more like a normal config where it's overrideable/zippable with a default
+// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
 // TODO move config into separate file and support stuff
 // import config from '../blog-config.js'
 
@@ -37482,31 +37484,37 @@ const config = {
   }
 }
 /*=============================================*/
-console.log('hewwo37')
-
-// TODO make this more like a normal config where it's overrideable/zippable with a default
-// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
 
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars__WEBPACK_IMPORTED_MODULE_3___default().registerHelper(name, fn))
 
-console.log('hewwo 45')
-
+console.log('hewwo 43')
 // get list of issue files
-const issuesJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir)).catch(e => {
+const issueJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir)).catch(e => {
   _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(e, { title: `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)} Cannot read issues directory.` })
   return []
 })
-
-console.log('hewwo 53')
+console.log('hewwo 49')
 
 // read and parse issues from json
 const templateData = config.staticData
-templateData.issues = []
-for (const issuesJsonFilename of issuesJsonFilenames) {
-  const issueAsJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir, issuesJsonFilename), 'utf8'))
-  if (issueAsJson.body) templateData.issues.push(issueAsJson)
-}
+
+templateData.issues = issueJsonFilenames
+  .filter((filename) => filename.endsWith('.json'))
+  .map(async (issueJsonFilename) => {
+    const issueJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir, issueJsonFilename), 'utf8'))
+    if (issueJson.body) return issueJson
+  })
+templateData.issues = (await Promise.all(templateData.issues).catch(e => {
+  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().error(e, { title: `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)} Cannot read issue files.` })
+  return []
+})).filter(f => f)
+
+// templateData.issues = []
+// for (const issueJsonFilename of issueJsonFilenames) {
+//   const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issueJsonFilename), 'utf8'))
+//   if (issueAsJson.body) templateData.issues.push(issueAsJson)
+// }
 if (templateData.issues.length) {
   _actions_core__WEBPACK_IMPORTED_MODULE_1___default().notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name) })
 } else {
