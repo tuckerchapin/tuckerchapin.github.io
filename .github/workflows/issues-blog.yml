@@ -77,9 +77,10 @@ jobs:
           fi
 
   build:
-    # TODO we want this to run if sync issues doesn't run or wait if it does
+    # if sync doesn't run, fine, if sync does run, we need it
     needs: sync-issues
     if: ${{ !failure() && !cancelled()}}
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -92,24 +93,14 @@ jobs:
           ref: issues
         uses: actions/checkout@v4
 
-      - name: Log
-        run: |
-          echo $(ls -a)
-          echo $(ls -a issues)
-
-      # TODO need to read from issues and main dir for everything else
-
       - name: Template & build static files
         id: issue-to-html
         run: node dist/index.js
 
-      # TODO publish to gh pages
-      # remove these other steps
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
 
-  # TODO only deploy if there's a diff? or always deploy? why not lol
   deploy:
     needs: build
     runs-on: ubuntu-latest
