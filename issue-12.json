@@ -11,7 +11,17 @@
   "events_url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/12/events",
   "html_url": "https://github.com/tuckerchapin/tuckerchapin.github.io/issues/12",
   "id": 2204101324,
-  "labels": [],
+  "labels": [
+    {
+      "color": "1d76db",
+      "default": false,
+      "description": "",
+      "id": 6744141647,
+      "name": "test label",
+      "node_id": "LA_kwDOBPAHGM8AAAABkftvTw",
+      "url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/labels/test%20label"
+    }
+  ],
   "labels_url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/12/labels{/name}",
   "locked": false,
   "milestone": null,
@@ -35,7 +45,7 @@
   "state_reason": "reopened",
   "timeline_url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/12/timeline",
   "title": "Sample Markdown File",
-  "updated_at": "2024-03-26T04:51:41Z",
+  "updated_at": "2024-03-26T17:38:55Z",
   "url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/12",
   "user": {
     "avatar_url": "https://avatars.githubusercontent.com/u/9058954?v=4",
