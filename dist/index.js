@@ -37460,8 +37460,8 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
-console.log('before the notice call, does github work?', (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name))
-_actions_core__WEBPACK_IMPORTED_MODULE_1___default().notice('Building test')
+console.log('before the notice call, does github work?', _actions_github__WEBPACK_IMPORTED_MODULE_2__.job.name)
+_actions_core__WEBPACK_IMPORTED_MODULE_1__.notice('Building test')
 
 const config = {
   templateDir: `template`,
@@ -37494,7 +37494,7 @@ Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars__WEB
 console.log('hewwo 43')
 // get list of issue files
 const issueJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir)).catch(e => {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(e, { title: `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)} Cannot read issues directory.` })
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(e, { title: `${_actions_github__WEBPACK_IMPORTED_MODULE_2__.job.name} Cannot read issues directory.` })
   return []
 })
 console.log('hewwo 49')
@@ -37509,7 +37509,7 @@ templateData.issues = issueJsonFilenames
     if (issueJson.body) return issueJson
   })
 templateData.issues = (await Promise.all(templateData.issues).catch(e => {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().error(e, { title: `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)} Cannot read issue files.` })
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.error(e, { title: `${_actions_github__WEBPACK_IMPORTED_MODULE_2__.job.name} Cannot read issue files.` })
   return []
 })).filter(f => f)
 
@@ -37519,9 +37519,9 @@ templateData.issues = (await Promise.all(templateData.issues).catch(e => {
 //   if (issueAsJson.body) templateData.issues.push(issueAsJson)
 // }
 if (templateData.issues.length) {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name) })
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job.name })
 } else {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(`No issues found to be published.`, { title: (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name) })
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`No issues found to be published.`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job.name })
 }
 
 console.log('hewwo 68')
@@ -37560,9 +37560,9 @@ try {
     throw e
   })
 } catch (e) {
-  const message = `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)}: Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir)}'`
-  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().error(e, { title: message })
-  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().setFailed(message)
+  const message = `${_actions_github__WEBPACK_IMPORTED_MODULE_2__.job.name}: Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir)}'`
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.error(e, { title: message })
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(message)
 }
 
 console.log('hewwo 109')
