@@ -10,7 +10,7 @@ import path from 'path'
 import slugify from 'slugify'
 import { marked } from 'marked'
 
-config = {
+const config = {
   templateDir: `template`,
   issuesDir: `issues`,
   publicDir: `public`,

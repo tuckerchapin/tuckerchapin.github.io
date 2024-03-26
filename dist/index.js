@@ -37458,7 +37458,7 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
-config = {
+const config = {
   templateDir: `template`,
   issuesDir: `issues`,
   publicDir: `public`,
