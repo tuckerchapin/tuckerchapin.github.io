@@ -92,10 +92,16 @@ try {
   })
   console.log('hewwo 93')
 } catch (e) {
-  const message = `Cannot read templates directory '${path.resolve(config.templateDir)}'`
+  console.log('1')
+  const message = `Cannot read templates directory '${config.templateDir}'`
+  console.log('2')
   core.error(message)
+  console.log('3')
   core.setFailed(message)
+  console.log('4')
   process.exit(message)
+  console.log('5')
+  throw(e)
 }
 
 console.log('hewwo 101')

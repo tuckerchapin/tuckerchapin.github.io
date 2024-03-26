@@ -37540,10 +37540,16 @@ try {
   })
   console.log('hewwo 93')
 } catch (e) {
-  const message = `Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir)}'`
+  console.log('1')
+  const message = `Cannot read templates directory '${config.templateDir}'`
+  console.log('2')
   _actions_core__WEBPACK_IMPORTED_MODULE_1__.error(message)
+  console.log('3')
   _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(message)
+  console.log('4')
   process.exit(message)
+  console.log('5')
+  throw(e)
 }
 
 console.log('hewwo 101')

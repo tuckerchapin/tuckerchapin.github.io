@@ -101,7 +101,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Template & build static files
-        id: issue-to-html
+        continue-on-error: false
         run: node dist/index.js
 
       - name: Upload artifact
