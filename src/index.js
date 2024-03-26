@@ -42,31 +42,26 @@ const config = {
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars.registerHelper(name, fn))
 
+// get list of issue files
+const issuesJsonFilenames = await fs.readdir(path.resolve(config.issuesDir)).catch(e => {
+  core.warning(e, { title: `${github.job.name} Cannot read issues directory.` })
+  return []
+})
 
-let issuesAsJsonFilenames = []
-try {
-  issuesAsJsonFilenames = await fs.readdir(path.resolve(config.issuesDir))
-} catch (e) {
-  // TODO output this warning to the job summary/warnings
-  core.warning(`Cannot read issues directory. No issues will be templated.`, { title: github.job.name })
-}
-issuesAsJsonFilenames = issuesAsJsonFilenames.filter(f => f.endsWith('.json'))
-
+// read and parse issues from json
 const templateData = config.staticData
 templateData.issues = []
-for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
-  const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issuesAsJsonFilename), 'utf8'))
+for (const issuesJsonFilename of issuesJsonFilenames) {
+  const issueAsJson = JSON.parse(await fs.readFile(path.resolve(config.issuesDir, issuesJsonFilename), 'utf8'))
   if (issueAsJson.body) templateData.issues.push(issueAsJson)
 }
 if (templateData.issues.length) {
-
+  core.notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: github.job.name })
+} else {
+  core.warning(`No issues found to be published.`, { title: github.job.name })
 }
-console.log(`Parsed ${templateData.issues.length} issues.`)
-// TODO where do we handle the closed/vs open logic? still want to use labels for something
 
-
-// 3. ingest all of the templates into a heirarchy
-
+// discover all template files
 const walkFs = async (dir, relative=false) => (
   await Promise.all((await fs.readdir(path.resolve(dir))).map(async (file) => {
     file = path.resolve(dir, file)
@@ -81,9 +76,9 @@ let rawFilepaths = []
 try {
   rawFilepaths = await walkFs(config.templateDir, config.templateDir)
 } catch (e) {
-  // TODO output this error to the job summary/error
-  console.error(`Cannot read templates directory '${path.resolve(config.templateDir)}'`)
-  throw e
+  const message = `${github.job.name}: Cannot read templates directory '${path.resolve(config.templateDir)}'`
+  core.error(e, { title: message })
+  core.setFailed(message)
 }
 
 

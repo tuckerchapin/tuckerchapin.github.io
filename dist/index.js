@@ -37490,31 +37490,26 @@ const config = {
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars__WEBPACK_IMPORTED_MODULE_3___default().registerHelper(name, fn))
 
+// get list of issue files
+const issuesJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir)).catch(e => {
+  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(e, { title: `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)} Cannot read issues directory.` })
+  return []
+})
 
-let issuesAsJsonFilenames = []
-try {
-  issuesAsJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir))
-} catch (e) {
-  // TODO output this warning to the job summary/warnings
-  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(`Cannot read issues directory. No issues will be templated.`, { title: (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name) })
-}
-issuesAsJsonFilenames = issuesAsJsonFilenames.filter(f => f.endsWith('.json'))
-
+// read and parse issues from json
 const templateData = config.staticData
 templateData.issues = []
-for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
-  const issueAsJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir, issuesAsJsonFilename), 'utf8'))
+for (const issuesJsonFilename of issuesJsonFilenames) {
+  const issueAsJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir, issuesJsonFilename), 'utf8'))
   if (issueAsJson.body) templateData.issues.push(issueAsJson)
 }
 if (templateData.issues.length) {
-
+  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name) })
+} else {
+  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(`No issues found to be published.`, { title: (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name) })
 }
-console.log(`Parsed ${templateData.issues.length} issues.`)
-// TODO where do we handle the closed/vs open logic? still want to use labels for something
 
-
-// 3. ingest all of the templates into a heirarchy
-
+// discover all template files
 const walkFs = async (dir, relative=false) => (
   await Promise.all((await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir))).map(async (file) => {
     file = path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir, file)
@@ -37529,9 +37524,9 @@ let rawFilepaths = []
 try {
   rawFilepaths = await walkFs(config.templateDir, config.templateDir)
 } catch (e) {
-  // TODO output this error to the job summary/error
-  console.error(`Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir)}'`)
-  throw e
+  const message = `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)}: Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir)}'`
+  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().error(e, { title: message })
+  _actions_core__WEBPACK_IMPORTED_MODULE_1___default().setFailed(message)
 }
 
 
