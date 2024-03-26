@@ -93,6 +93,7 @@ jobs:
       - name: Log
         run: |
           echo $(ls -a)
+          echo $(ls -a issues)
 
       # TODO need to read from issues and main dir for everything else
 
