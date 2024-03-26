@@ -6,11 +6,10 @@ export default {
   issuesDir: `issues`,
   publicDir: `public`,
   handlebarsHelpers: {
-    helperMissing: (value, helper) => {
-      // this just passes through the raw arg and logs a warning
-      console.warn(`Handlebars helper missing: ${helper.name}`)
-      return value
+    helperMissing: (...a) => {
+      console.warn(`Handlebars helper missing: ${JSON.stringify(a)}`)
     },
+    urlencode: encodeURIComponent,
     slugify: (value) => slugify(value, {
       lower: true,
       strict: true

@@ -39116,11 +39116,10 @@ module.exports = parseParams
   issuesDir: `issues`,
   publicDir: `public`,
   handlebarsHelpers: {
-    helperMissing: (value, helper) => {
-      // this just passes through the raw arg and logs a warning
-      console.warn(`Handlebars helper missing: ${helper.name}`)
-      return value
+    helperMissing: (...a) => {
+      console.warn(`Handlebars helper missing: ${JSON.stringify(a)}`)
     },
+    urlencode: encodeURIComponent,
     slugify: (value) => slugify__WEBPACK_IMPORTED_MODULE_0__(value, {
       lower: true,
       strict: true
@@ -41622,10 +41621,6 @@ templateData.issues = []
 for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
   const issueAsJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readFile(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].issuesDir */ .Z.issuesDir, issuesAsJsonFilename), 'utf8'))
   // TODO be more careful here as marked is particular about the input
-  // TODO commented out to be written in helpers file
-  // issueAsJson.bodyAsHtml = marked(issueAsJson.body)
-  // TODO should the markdown be templated here as well? leaves the ability for local embeddings
-  // could also be templated later, though that starts to make it challenging to sort out the root
   if (issueAsJson.body) templateData.issues.push(issueAsJson)
 }
 console.log(`Parsed ${templateData.issues.length} issues.`)
@@ -41644,67 +41639,57 @@ const walkFs = async (dir, relative=false) => (
   }))
 ).flat(Infinity)
 
-const rawFilepaths = await walkFs(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir, _blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir)
-// TODO output this error to the job summary/error
-// TODO handle this error better
-// } catch (e) {
-//   console.error(`Cannot read templates directory '${path.resolve(config.templateDir)}'`)
-//   throw e
-// }
+let rawFilepaths = []
+try {
+  rawFilepaths = await walkFs(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir, _blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir)
+} catch (e) {
+  // TODO output this error to the job summary/error
+  console.error(`Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir)}'`)
+  throw e
+}
 
 
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 
-// transform the template filepaths as templates themselves
-// generate list of all files to be templated
+// transform the templates
 const outputFiles = []
 for (const rawFilepath of rawFilepaths) {
-  /* NOTE this is hacky, but don't really see a better way to make it work
-          we want to make the file names URL safe
-          originally, I was going to insert sub-expressions to chain these with user-defined helpers
-          https://handlebarsjs.com/guide/expressions.html#subexpressions
-          e.g. user-defined          transformed
-               {{title}}          => {{urlencode (title)}}
-               {{slugify title}}  => {{urlencode (slugify (title))}}
-          HOWEVER, Handlebars doesn't seem to support empty sub-expressions
-          so I'm just overriding their internal escapeExpression function used for HTML-escaping
-          ALSO using handlebars.create() does not stop it from polluting the global handlebars instance
-          🫠
+  const template = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readFile(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir, rawFilepath), 'utf8')
+
+  /* NOTE Ok, so time for a hacky solution.
+          We want to be able to template the file structure AND the files themselves.
+          If we just template the file structure and the files separately, when we template the files
+          they won't be properly scoped for the file structure's implied templates.
+          So the solution here is to template the file path and the file itself together, compile,
+          and split them back apart. This requires some nasty string parsing on my part.
   */
-  handlebars__WEBPACK_IMPORTED_MODULE_4__.Utils.escapeExpression = encodeURIComponent
+
+  /* TODO this whole section is kinda nasty: the block regexes, string interps, etc.
+          could use a second pass for refinement and robustness
+  */
 
   /* NOTE because we can't have / in a filename, blocks in filenames only have opening tags
           this extracts them and prepends them to the entire filepath and appends the closing tags
   */
-  /* TODO this whole section is kinda nasty:
-          insertion of the newline, the line splitting, the block regexes, etc.
-          could use a second pass for refinement and robustness
-  */
   const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
-  const preppedFilepath =
+  const preppedFilepath = rawFilepath.replace(openBlockRe, '')
+
+  const combinedTemplate =
     templateBlocks.map(b => `{{#${b[1]} ${b[2]}}}`).join()
-    + rawFilepath.replace(openBlockRe, '')
-    + '\n'
+    + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
-  const template = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readFile(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir, rawFilepath), 'utf8')
-
-  // reset the escapeExpression function
-  handlebars__WEBPACK_IMPORTED_MODULE_4__.Utils.escapeExpression = defaultHandlebarsEscapeExpression
-
-  handlebars__WEBPACK_IMPORTED_MODULE_4__.compile(preppedFilepath)(templateData)
-    .trim()
-    .split('\n')
-    .forEach(filepath => outputFiles.push({
-      filepath,
-      template,
-      content: handlebars__WEBPACK_IMPORTED_MODULE_4__.compile(template)(templateData)
-    }))
+  /* We compile and evaluate the template that includes the filepaths and directives as well as the file content.
+     Then we split this back apart into potentially more than one file and write that out.
+  */
+  Array.from(
+    handlebars__WEBPACK_IMPORTED_MODULE_4__.compile(combinedTemplate)(templateData)
+      .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
+  ).forEach(match => outputFiles.push({ ...match.groups }))
 }
 
-// console.log(outputFiles)
-
+// write out the files
 const OUTPUT_DIR = `build`
 
 outputFiles.forEach(async ({ filepath, content }) => {
@@ -41713,17 +41698,13 @@ outputFiles.forEach(async ({ filepath, content }) => {
   await fs_promises__WEBPACK_IMPORTED_MODULE_1__.writeFile(filepath, content)
 })
 
-// last step is to just copy over the public directory
+// TODO maybe make this a workflow step
+// copy public files to output directory
 await fs_promises__WEBPACK_IMPORTED_MODULE_1__.cp(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].publicDir */ .Z.publicDir), path__WEBPACK_IMPORTED_MODULE_5__.resolve(OUTPUT_DIR), { recursive: true })
-
-// TODO need to iterate over
 
 // TODO need to figure out how to template files to be able to nest
 
 // TODO need to figure out how to go over the files one by one when theyre being templated
-
-// so first step is just to template out the files, without templating their urls
-// THEN we template the urls? need to sync them, weird
 
 
 _actions_core__WEBPACK_IMPORTED_MODULE_2__.setOutput("commit-message", "Generated blog posts from issues")
