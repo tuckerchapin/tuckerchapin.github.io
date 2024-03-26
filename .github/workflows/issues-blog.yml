@@ -1,5 +1,7 @@
 name: Issues Blog
 
+# run-name: "Sync issues"
+
 on:
   push:
     # paths:
@@ -46,10 +48,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const path = `issues/`;
-            const fs = require('fs');
-            if (!fs.existsSync()) fs.mkdirSync(path, { recursive: true });
-            fs.writeFileSync(`${path}issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2));
+            require('fs')
+              .writeFileSync(`issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2));
             // TODO when an issue is deleted, delete it instead of writing an update of god knows what payload
             let changesSummary = '';
             if (context.payload.changes) {
@@ -59,7 +59,7 @@ jobs:
                 return `${a}, ${c}`;
               }, '');
             }
-            return `${context.payload.action} issue #${context.issue.number}${changesSummary}`;
+            return `Issue sync: ${context.payload.action} issue #${context.issue.number}${changesSummary}`;
           result-encoding: string
 
       - name: Commit and push
