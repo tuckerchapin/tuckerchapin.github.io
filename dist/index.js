@@ -37460,6 +37460,7 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
+console.log('before the notice call, does github work?', (_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name))
 _actions_core__WEBPACK_IMPORTED_MODULE_1___default().notice('Building test')
 
 const config = {
