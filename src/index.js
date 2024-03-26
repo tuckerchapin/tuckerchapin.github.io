@@ -82,30 +82,10 @@ const walkFs = async (dir, relative=false) => (
   )
 ).flat(Infinity)
 
-let rawFilepaths = []
-try {
-  console.log('hewwo 87')
-  rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
-    console.log('caught errror? 91')
-    console.error(e)
-    throw e
-  })
-  console.log('hewwo 93')
-} catch (e) {
-  console.log('1')
-  const message = `Cannot read templates directory '${config.templateDir}'`
-  console.log('2')
-  core.error(message)
-  console.log('3')
-  core.setFailed(message)
-  console.log('4')
-  // process.exit(message)
-  console.log('5')
-  // throw(e)
-}
-
-console.log('hewwo 101')
-
+const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
+  console.error(e)
+  core.setFailed(`Cannot read templates directory '${config.templateDir}'`)
+})
 
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
