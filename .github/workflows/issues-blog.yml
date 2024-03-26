@@ -18,6 +18,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.issue.number }}
   cancel-in-progress: true
 
+# TODO fancier annotations/messaging, like how gh pages deploy adds the url
+
 jobs:
   sync-issues:
     if: ${{ github.event.issue.number }}
