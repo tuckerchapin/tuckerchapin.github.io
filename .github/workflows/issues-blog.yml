@@ -82,6 +82,7 @@ jobs:
 
   build:
     name: Build static site
+
     # if sync doesn't run, fine, if sync does run, we need it
     needs: sync-issues
     if: ${{ !failure() && !cancelled()}}
@@ -108,7 +109,10 @@ jobs:
 
   deploy:
     name: Deploy to Github Pages
+
     needs: build
+    if: ${{ !failure() && !cancelled()}}
+
     runs-on: ubuntu-latest
     permissions:
       pages: write
