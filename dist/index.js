@@ -37522,7 +37522,11 @@ const walkFs = async (dir, relative=false) => (
 
 let rawFilepaths = []
 try {
-  rawFilepaths = await walkFs(config.templateDir, config.templateDir)
+  console.log('about to walk fs')
+  rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
+    console.log('caught errror?')
+    console.error(e)
+  })
 } catch (e) {
   const message = `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)}: Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir)}'`
   _actions_core__WEBPACK_IMPORTED_MODULE_1___default().error(e, { title: message })
