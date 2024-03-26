@@ -37511,10 +37511,22 @@ if (templateData.issues.length) {
 
 // discover all template files
 const walkFs = async (dir, relative=false) => (
-  await Promise.all((await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir))).map(async (file) => {
+  await Promise.all((await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir)).catch(e => {
+    console.log('caught errror? 67')
+    console.error(e)
+    throw e
+  })).map(async (file) => {
     file = path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir, file)
-    const stat = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().stat(file)
-    if (stat && stat.isDirectory()) return await walkFs(file, relative)
+    const stat = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().stat(file).catch(e => {
+      console.log('caught errror? 73')
+      console.error(e)
+      throw e
+    })
+    if (stat && stat.isDirectory()) return await walkFs(file, relative).catch(e => {
+      console.log('caught errror? 78')
+      console.error(e)
+      throw e
+    })
     if (relative) return path__WEBPACK_IMPORTED_MODULE_4___default().relative(relative, file)
     return file
   }))
@@ -37524,8 +37536,9 @@ let rawFilepaths = []
 try {
   console.log('about to walk fs')
   rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
-    console.log('caught errror?')
+    console.log('caught errror? 91')
     console.error(e)
+    throw e
   })
 } catch (e) {
   const message = `${(_actions_github__WEBPACK_IMPORTED_MODULE_2___default().job.name)}: Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir)}'`

@@ -63,10 +63,22 @@ if (templateData.issues.length) {
 
 // discover all template files
 const walkFs = async (dir, relative=false) => (
-  await Promise.all((await fs.readdir(path.resolve(dir))).map(async (file) => {
+  await Promise.all((await fs.readdir(path.resolve(dir)).catch(e => {
+    console.log('caught errror? 67')
+    console.error(e)
+    throw e
+  })).map(async (file) => {
     file = path.resolve(dir, file)
-    const stat = await fs.stat(file)
-    if (stat && stat.isDirectory()) return await walkFs(file, relative)
+    const stat = await fs.stat(file).catch(e => {
+      console.log('caught errror? 73')
+      console.error(e)
+      throw e
+    })
+    if (stat && stat.isDirectory()) return await walkFs(file, relative).catch(e => {
+      console.log('caught errror? 78')
+      console.error(e)
+      throw e
+    })
     if (relative) return path.relative(relative, file)
     return file
   }))
@@ -76,8 +88,9 @@ let rawFilepaths = []
 try {
   console.log('about to walk fs')
   rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
-    console.log('caught errror?')
+    console.log('caught errror? 91')
     console.error(e)
+    throw e
   })
 } catch (e) {
   const message = `${github.job.name}: Cannot read templates directory '${path.resolve(config.templateDir)}'`
