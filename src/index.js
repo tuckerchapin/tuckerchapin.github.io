@@ -90,7 +90,7 @@ const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(
 console.log('exit code', process.exitCode)
 
 if (process.exitCode) {
-  process.exit(process.exitCode)
+  process.exit(`Cannot read templates directory '${config.templateDir}'`)
 }
 
 // matches handlebar opening tags in the filepaths
