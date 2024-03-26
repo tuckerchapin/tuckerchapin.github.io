@@ -37516,7 +37516,6 @@ templateData.issues =
 const publishableIssueLog = `Parsed ${templateData.issues.length} issue${templateData.issues.length === 1 ? 's' : ''} to publish.`
 templateData.issues.length ? _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(publishableIssueLog) : _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(publishableIssueLog)
 
-// discover site template
 const walkFs = async (dir, relative=false) => (
   await Promise.all(
     (await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(dir)))
@@ -37530,15 +37529,14 @@ const walkFs = async (dir, relative=false) => (
   )
 ).flat(Infinity)
 
-const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(e => {
-  console.error(e)
+// discover site template
+const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(() => {
   _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Cannot read templates directory '${config.templateDir}'`)
 })
 
-console.log('exit code', process.exitCode)
-
+// TODO i don't really like this
 if (process.exitCode) {
-  process.exit(`Cannot read templates directory '${config.templateDir}'`)
+  process.exit(process.exitCode)
 }
 
 // matches handlebar opening tags in the filepaths
