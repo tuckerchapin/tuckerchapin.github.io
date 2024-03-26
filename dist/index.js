@@ -37507,6 +37507,7 @@ try {
   // TODO output this warning to the job summary/warnings
   console.warn(`Cannot read issues directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir)}'. No issues will be templated.`)
 }
+issuesAsJsonFilenames = issuesAsJsonFilenames.filter(f => f.endsWith('.json'))
 
 console.log(`Found ${issuesAsJsonFilenames.length} issues.`)
 
