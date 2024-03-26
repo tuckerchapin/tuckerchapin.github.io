@@ -25,3 +25,4 @@ export default {
   }
 }
 // TODO make this more like a normal config where it's overrideable/zippable with a default
+// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
