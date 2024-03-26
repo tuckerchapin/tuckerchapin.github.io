@@ -14,7 +14,6 @@ const defaultHandlebarsEscapeExpression = handlebars.Utils.escapeExpression;
 
 const templateData = config.staticData
 
-
 // 1. pick up and parse all of the issues files
 // TODO probably want to migrate the issues to a different branch or something?
 
@@ -117,4 +116,4 @@ await fs.cp(path.resolve(config.publicDir), path.resolve(OUTPUT_DIR), { recursiv
 // TODO need to figure out how to go over the files one by one when theyre being templated
 
 
-core.setOutput("commit-message", "Generated blog posts from issues")
+// core.setOutput("commit-message", "Generated blog posts from issues")
