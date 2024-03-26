@@ -27,11 +27,12 @@ jobs:
           ref: issues
         uses: actions/checkout@v4
 
-      - name: Create branch if it doesn't exist
+      - name: Create issues branch
         if: ${{ steps.checkout-issues.outcome == 'failure' }}
         run: |
           git checkout --orphan issues
-          git rm -rf .
+          echo $(ls -alF)
+          echo $(git status)
           git push -u origin issues
 
       - name: Checkout repo
