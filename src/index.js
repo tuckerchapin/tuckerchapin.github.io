@@ -14,6 +14,7 @@ const defaultHandlebarsEscapeExpression = handlebars.Utils.escapeExpression;
 
 const templateData = config.staticData
 
+
 // 1. pick up and parse all of the issues files
 // TODO probably want to migrate the issues to a different branch or something?
 
