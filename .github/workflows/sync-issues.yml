@@ -1,8 +1,8 @@
 name: Sync issues
 
-on:
-  issues:
-    types: [opened, edited, deleted, transferred, pinned, unpinned, closed, reopened, assigned, unassigned, labeled, unlabeled, locked, unlocked, milestoned, demilestoned]
+# on:
+#   issues:
+#     types: [opened, edited, deleted, transferred, pinned, unpinned, closed, reopened, assigned, unassigned, labeled, unlabeled, locked, unlocked, milestoned, demilestoned]
 
 run-name: "Sync issues"
 

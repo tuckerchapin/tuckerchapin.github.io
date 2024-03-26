@@ -77,7 +77,8 @@ jobs:
           fi
 
   build:
-    needs: sync-issues
+    # TODO we want this to run if sync issues doesn't run or wait if it does
+    # needs: sync-issues
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
