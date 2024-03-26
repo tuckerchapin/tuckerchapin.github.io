@@ -28,6 +28,9 @@ jobs:
       - name: Checkout repo
         run: git fetch origin issues:issues
 
+      - name: Checkout repo
+        run: echo $(git branch)
+
   # sync-issues:
   #   runs-on: ubuntu-latest
   #   if: ${{ github.event.issue.number }}
