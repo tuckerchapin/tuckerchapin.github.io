@@ -37513,11 +37513,8 @@ templateData.issues =
     .map(file => JSON.parse(file))
     .filter(f => f)
 
-if (templateData.issues.length) {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(`Parsed ${templateData.issues.length} issues to published.`)
-} else {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`No issues found.`)
-}
+const parsedMessage = `Parsed ${templateData.issues.length} issue${templateData.issues.length === 1 ? 's' : ''} to publish.`
+templateData.issues.length ? _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(parsedMessage) : _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(parsedMessage)
 
 // discover site template
 const walkFs = async (dir, relative=false) => (

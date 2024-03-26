@@ -65,11 +65,8 @@ templateData.issues =
     .map(file => JSON.parse(file))
     .filter(f => f)
 
-if (templateData.issues.length) {
-  core.notice(`Parsed ${templateData.issues.length} issues to published.`)
-} else {
-  core.warning(`No issues found.`)
-}
+const parsedMessage = `Parsed ${templateData.issues.length} issue${templateData.issues.length === 1 ? 's' : ''} to publish.`
+templateData.issues.length ? core.notice(parsedMessage) : core.warning(parsedMessage)
 
 // discover site template
 const walkFs = async (dir, relative=false) => (
