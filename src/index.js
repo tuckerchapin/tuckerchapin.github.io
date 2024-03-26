@@ -99,7 +99,7 @@ try {
   console.log('3')
   core.setFailed(message)
   console.log('4')
-  process.exit(message)
+  // process.exit(message)
   console.log('5')
   throw(e)
 }
