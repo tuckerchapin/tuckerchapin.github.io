@@ -37535,6 +37535,12 @@ const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(
   _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Cannot read templates directory '${config.templateDir}'`)
 })
 
+console.log('exit code', process.exitCode)
+
+if (process.exitCode) {
+  process.exit(process.exitCode)
+}
+
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 
