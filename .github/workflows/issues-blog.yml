@@ -78,13 +78,15 @@ jobs:
 
   build:
     # TODO we want this to run if sync issues doesn't run or wait if it does
-    # needs: sync-issues
+    needs: sync-issues
+    if: ${{ !failure() && !cancelled()}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Checkout repo
+        continue-on-error: true
         with:
           path: issues
           ref: issues
