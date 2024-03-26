@@ -39100,45 +39100,6 @@ module.exports = parseParams
 
 /***/ }),
 
-/***/ 2383:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
-
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(9013);
-/* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7910);
-
-
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  templateDir: `template`,
-  issuesDir: `issues`,
-  publicDir: `public`,
-  handlebarsHelpers: {
-    helperMissing: (...a) => {
-      console.warn(`Handlebars helper missing: ${JSON.stringify(a)}`)
-    },
-    urlencode: encodeURIComponent,
-    slugify: (value) => slugify__WEBPACK_IMPORTED_MODULE_0__(value, {
-      lower: true,
-      strict: true
-    }),
-    md: marked__WEBPACK_IMPORTED_MODULE_1__/* .marked */ .TU,
-    // file: (relPath) => {
-    //   // TODO stubbed
-    // }
-  },
-  staticData: {
-    title: `My Blog`,
-    description: `A blog about things.`
-  }
-});
-// TODO make this more like a normal config where it's overrideable/zippable with a default
-// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
-
-/***/ }),
-
 /***/ 7910:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
@@ -41584,43 +41545,76 @@ const lexer = _Lexer.lex;
 /***/ ((__webpack_module__, __unused_webpack___webpack_exports__, __nccwpck_require__) => {
 
 __nccwpck_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7910);
-/* harmony import */ var fs_promises__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(3292);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(9689);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(2706);
-/* harmony import */ var handlebars__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(8892);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(1017);
-/* harmony import */ var _blog_config_js__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(2383);
+/* harmony import */ var fs_promises__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3292);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(9689);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(2706);
+/* harmony import */ var handlebars__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(8892);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(1017);
+/* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(9013);
+/* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(7910);
 
 
 
 
 
 
+/*=============================================*/
+// TODO move config into separate file and support stuff
+// import config from '../blog-config.js'
 
+
+
+config = {
+  templateDir: `template`,
+  issuesDir: `issues`,
+  publicDir: `public`,
+  handlebarsHelpers: {
+    helperMissing: (...a) => {
+      console.warn(`Handlebars helper missing: ${JSON.stringify(a)}`)
+    },
+    urlencode: encodeURIComponent,
+    slugify: (value) => slugify__WEBPACK_IMPORTED_MODULE_5__(value, {
+      lower: true,
+      strict: true
+    }),
+    md: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked */ .TU,
+    // file: (relPath) => {
+    //   // TODO stubbed
+    // }
+  },
+  staticData: {
+    title: `My Blog`,
+    description: `A blog about things.`
+  }
+}
+/*=============================================*/
+
+
+// TODO make this more like a normal config where it's overrideable/zippable with a default
+// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
 
 // register handlebar helpers from config
-Object.entries(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].handlebarsHelpers */ .Z.handlebarsHelpers).forEach(([name, fn]) => handlebars__WEBPACK_IMPORTED_MODULE_4__.registerHelper(name, fn))
+Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars__WEBPACK_IMPORTED_MODULE_3__.registerHelper(name, fn))
 
 // save this to switch between the two
-const defaultHandlebarsEscapeExpression = handlebars__WEBPACK_IMPORTED_MODULE_4__.Utils.escapeExpression;
+const defaultHandlebarsEscapeExpression = handlebars__WEBPACK_IMPORTED_MODULE_3__.Utils.escapeExpression;
 
-const templateData = _blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].staticData */ .Z.staticData
+const templateData = config.staticData
 
 // 1. pick up and parse all of the issues files
 // TODO probably want to migrate the issues to a different branch or something?
 
 let issuesAsJsonFilenames = []
 try {
-  issuesAsJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readdir(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].issuesDir */ .Z.issuesDir))
+  issuesAsJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0__.readdir(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.issuesDir))
 } catch (e) {
   // TODO output this warning to the job summary/warnings
-  console.warn(`Cannot read issues directory '${path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].issuesDir */ .Z.issuesDir)}'. No issues will be templated.`)
+  console.warn(`Cannot read issues directory '${path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.issuesDir)}'. No issues will be templated.`)
 }
 
 templateData.issues = []
 for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
-  const issueAsJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readFile(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].issuesDir */ .Z.issuesDir, issuesAsJsonFilename), 'utf8'))
+  const issueAsJson = JSON.parse(await fs_promises__WEBPACK_IMPORTED_MODULE_0__.readFile(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.issuesDir, issuesAsJsonFilename), 'utf8'))
   // TODO be more careful here as marked is particular about the input
   if (issueAsJson.body) templateData.issues.push(issueAsJson)
 }
@@ -41631,21 +41625,21 @@ console.log(`Parsed ${templateData.issues.length} issues.`)
 // 3. ingest all of the templates into a heirarchy
 
 const walkFs = async (dir, relative=false) => (
-  await Promise.all((await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readdir(path__WEBPACK_IMPORTED_MODULE_5__.resolve(dir))).map(async (file) => {
-    file = path__WEBPACK_IMPORTED_MODULE_5__.resolve(dir, file)
-    const stat = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.stat(file)
+  await Promise.all((await fs_promises__WEBPACK_IMPORTED_MODULE_0__.readdir(path__WEBPACK_IMPORTED_MODULE_4__.resolve(dir))).map(async (file) => {
+    file = path__WEBPACK_IMPORTED_MODULE_4__.resolve(dir, file)
+    const stat = await fs_promises__WEBPACK_IMPORTED_MODULE_0__.stat(file)
     if (stat && stat.isDirectory()) return await walkFs(file, relative)
-    if (relative) return path__WEBPACK_IMPORTED_MODULE_5__.relative(relative, file)
+    if (relative) return path__WEBPACK_IMPORTED_MODULE_4__.relative(relative, file)
     return file
   }))
 ).flat(Infinity)
 
 let rawFilepaths = []
 try {
-  rawFilepaths = await walkFs(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir, _blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir)
+  rawFilepaths = await walkFs(config.templateDir, config.templateDir)
 } catch (e) {
   // TODO output this error to the job summary/error
-  console.error(`Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir)}'`)
+  console.error(`Cannot read templates directory '${path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.templateDir)}'`)
   throw e
 }
 
@@ -41656,7 +41650,7 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 // transform the templates
 const outputFiles = []
 for (const rawFilepath of rawFilepaths) {
-  const template = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.readFile(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].templateDir */ .Z.templateDir, rawFilepath), 'utf8')
+  const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0__.readFile(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.templateDir, rawFilepath), 'utf8')
 
   /* NOTE Ok, so time for a hacky solution.
           We want to be able to template the file structure AND the files themselves.
@@ -41685,23 +41679,23 @@ for (const rawFilepath of rawFilepaths) {
      Then we split this back apart into potentially more than one file and write that out.
   */
   Array.from(
-    handlebars__WEBPACK_IMPORTED_MODULE_4__.compile(combinedTemplate)(templateData)
+    handlebars__WEBPACK_IMPORTED_MODULE_3__.compile(combinedTemplate)(templateData)
       .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
   ).forEach(match => outputFiles.push({ ...match.groups }))
 }
 
 // write out the files
-const OUTPUT_DIR = `build`
+const OUTPUT_DIR = `_site`
 
 outputFiles.forEach(async ({ filepath, content }) => {
-  filepath = path__WEBPACK_IMPORTED_MODULE_5__.resolve(OUTPUT_DIR, filepath)
-  await fs_promises__WEBPACK_IMPORTED_MODULE_1__.mkdir(path__WEBPACK_IMPORTED_MODULE_5__.dirname(filepath), { recursive: true })
-  await fs_promises__WEBPACK_IMPORTED_MODULE_1__.writeFile(filepath, content)
+  filepath = path__WEBPACK_IMPORTED_MODULE_4__.resolve(OUTPUT_DIR, filepath)
+  await fs_promises__WEBPACK_IMPORTED_MODULE_0__.mkdir(path__WEBPACK_IMPORTED_MODULE_4__.dirname(filepath), { recursive: true })
+  await fs_promises__WEBPACK_IMPORTED_MODULE_0__.writeFile(filepath, content)
 })
 
 // TODO maybe make this a workflow step
 // copy public files to output directory
-await fs_promises__WEBPACK_IMPORTED_MODULE_1__.cp(path__WEBPACK_IMPORTED_MODULE_5__.resolve(_blog_config_js__WEBPACK_IMPORTED_MODULE_6__/* ["default"].publicDir */ .Z.publicDir), path__WEBPACK_IMPORTED_MODULE_5__.resolve(OUTPUT_DIR), { recursive: true })
+await fs_promises__WEBPACK_IMPORTED_MODULE_0__.cp(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.publicDir), path__WEBPACK_IMPORTED_MODULE_4__.resolve(OUTPUT_DIR), { recursive: true })
 
 // TODO need to figure out how to template files to be able to nest
 

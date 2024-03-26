@@ -44,3 +44,4 @@
 - [X] file name templating/iterating
 - [X] need the ability for some JSON files as static data
     - [X] eg a list of projects
+- interesting https://github.com/marketplace/actions/deploy-pr-preview
