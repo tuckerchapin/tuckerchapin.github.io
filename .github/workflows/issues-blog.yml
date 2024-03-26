@@ -88,6 +88,10 @@ jobs:
           ref: issues
         uses: actions/checkout@v4
 
+      - name: Log
+        run: |
+          echo $(ls -a)
+
       # TODO need to read from issues and main dir for everything else
 
       - name: Template & build static files
