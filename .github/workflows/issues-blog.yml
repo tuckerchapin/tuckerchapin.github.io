@@ -42,6 +42,7 @@ jobs:
           git config --local user.name "Github Action"
           git commit --allow-empty -m "Initial commit"
           git push -u origin issues
+          echo "::notice title=Created issues branch::No branch found, checked out new orphaned branch."
 
 #     # TODO filter out stuff from the blacklist/whitelist
 #     # delete issues not made by the opener?

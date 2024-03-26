@@ -12,9 +12,6 @@ import path from 'path'
 import slugify from 'slugify'
 import { marked } from 'marked'
 
-console.log('before the notice call, does github work?', github.job?.name)
-core.notice('Building test')
-
 const config = {
   templateDir: `template`,
   issuesDir: `issues`,

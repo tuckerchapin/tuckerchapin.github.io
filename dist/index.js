@@ -37460,9 +37460,6 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
-console.log('before the notice call, does github work?', _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name)
-_actions_core__WEBPACK_IMPORTED_MODULE_1__.notice('Building test')
-
 const config = {
   templateDir: `template`,
   issuesDir: `issues`,
@@ -37608,17 +37605,17 @@ for (const rawFilepath of rawFilepaths) {
 }
 
 // default directory for upload-pages-artifact, why not
-const OUTPUT_DIR = (/* unused pure expression or super */ null && (`_site`))
+const OUTPUT_DIR = `_site`
 
 // write out the resulting compiled files
 outputFiles.forEach(async ({ filepath, content }) => {
-  filepath = __nccwpck_require__.ab + "_site/" + filepath
+  filepath = path__WEBPACK_IMPORTED_MODULE_4___default().resolve(OUTPUT_DIR, filepath)
   await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().mkdir(path__WEBPACK_IMPORTED_MODULE_4___default().dirname(filepath), { recursive: true })
   await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().writeFile(filepath, content)
 })
 
 // copy public files to output directory
-await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().cp(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.publicDir), __nccwpck_require__.ab + "_site", { recursive: true })
+await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().cp(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.publicDir), path__WEBPACK_IMPORTED_MODULE_4___default().resolve(OUTPUT_DIR), { recursive: true })
 
 // TODO need to figure out how to template files to be able to nest
 __webpack_async_result__();
