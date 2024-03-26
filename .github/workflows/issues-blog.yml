@@ -17,7 +17,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  sync-issues:
+    # if: ${{ github.event.issue.number }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout issues branch
@@ -36,68 +37,44 @@ jobs:
           git commit --allow-empty -m "Initial commit"
           git push -u origin issues
 
-      - name: Checkout repo
-        run: echo $(git branch)
+#     # TODO filter out stuff from the blacklist/whitelist
+#     # delete issues not made by the opener?
+#     # https://docs.github.com/en/actions/managing-issues-and-pull-requests/closing-inactive-issues
+      - name: Store issue as JSON
+        id: issue-to-json
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const path = `issues/`;
+            const fs = require('fs');
+            if (!fs.existsSync()) fs.mkdirSync(path, { recursive: true });
+            fs.writeFileSync(`${path}issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2));
+            // TODO when an issue is deleted, delete it instead of writing an update of god knows what payload
+            let changesSummary = '';
+            if (context.payload.changes) {
+              changesSummary = ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => {
+                if (i === 0) return c;
+                if (i === arr.length - 1) return `${a} & ${c}`;
+                return `${a}, ${c}`;
+              }, '');
+            }
+            return `${context.payload.action} issue #${context.issue.number}${changesSummary}`;
+          result-encoding: string
 
-  # sync-issues:
-  #   runs-on: ubuntu-latest
-  #   if: ${{ github.event.issue.number }}
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-
-  #     # TODO filter out stuff from the blacklist/whitelist
-  #     # delete issues not made by the opener?
-  #     # https://docs.github.com/en/actions/managing-issues-and-pull-requests/closing-inactive-issues
-
-  #     - name: Save issue as JSON
-  #       id: issue-to-json
-  #       uses: actions/github-script@v7
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #         script: |
-  #           const path = `issues/`;
-  #           const fs = require('fs');
-  #           if (!fs.existsSync()) fs.mkdirSync(path, { recursive: true });
-  #           fs.writeFileSync(`${path}issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2));
-  #           // TODO when an issue is deleted, delete it instead of writing an update of god knows what payload
-  #           let changesSummary = '';
-  #           if (context.payload.changes) {
-  #             changesSummary = ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => {
-  #               if (i === 0) return c;
-  #               if (i === arr.length - 1) return `${a} & ${c}`;
-  #               return `${a}, ${c}`;
-  #             }, '');
-  #           }
-  #           return `Issue sync: ${context.payload.action} issue #${context.issue.number}${changesSummary}`;
-  #         result-encoding: string
-
-  #     - name: Check diff
-  #       id: check-diff
-  #       run: |
-  #         if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
-  #           echo "changed=true" >> $GITHUB_OUTPUT
-  #           echo "Diff has changes to commit"
-  #         else
-  #           echo "changed=false" >> $GITHUB_OUTPUT
-  #           echo "::warning title=Nothing to commit::Not rebuilding or deploying."
-  #         fi
-
-  #     - name: Commit and push
-  #       if: ${{ steps.check-diff.outputs.changed == 'true' }}
-  #       run: |
-  #         git config --local user.email "action@github.com"
-  #         git config --local user.name "Github Action"
-  #         git add .
-  #         git commit -m "${{ steps.issue-to-json.outputs.result }}"
-  #         git pull --rebase
-  #         git push
-
-  #     - name: Build static site
-  #       if: ${{ steps.check-diff.outputs.changed == 'true' }}
-  #       env:
-  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: gh workflow run build-static.yml
+      - name: Commit and push
+        run: |
+          if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
+            git config --local user.email "action@github.com"
+            git config --local user.name "Github Action"
+            git add .
+            git commit -m "${{ steps.issue-to-json.outputs.result }}"
+            git pull --rebase
+            git push
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "::warning title=Nothing to commit::Not rebuilding or deploying."
+          fi
 
   build:
     runs-on: ubuntu-latest
@@ -110,11 +87,6 @@ jobs:
           path: issues
           ref: issues
         uses: actions/checkout@v4
-
-      # - name: Checkout repo
-      #   with:
-      #     path: head
-      #   uses: actions/checkout@v4
 
       # TODO need to read from issues and main dir for everything else
 
