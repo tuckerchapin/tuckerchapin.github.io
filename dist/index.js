@@ -39135,6 +39135,7 @@ module.exports = parseParams
   }
 });
 // TODO make this more like a normal config where it's overrideable/zippable with a default
+// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
 
 /***/ }),
 
@@ -41707,7 +41708,7 @@ await fs_promises__WEBPACK_IMPORTED_MODULE_1__.cp(path__WEBPACK_IMPORTED_MODULE_
 // TODO need to figure out how to go over the files one by one when theyre being templated
 
 
-_actions_core__WEBPACK_IMPORTED_MODULE_2__.setOutput("commit-message", "Generated blog posts from issues")
+// core.setOutput("commit-message", "Generated blog posts from issues")
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
 
