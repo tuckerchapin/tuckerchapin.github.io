@@ -12,7 +12,7 @@ import path from 'path'
 import slugify from 'slugify'
 import { marked } from 'marked'
 
-console.log('before the notice call, does github work?', github.job.name)
+console.log('before the notice call, does github work?', github.job?.name)
 core.notice('Building test')
 
 const config = {
@@ -46,7 +46,7 @@ Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars.regi
 console.log('hewwo 43')
 // get list of issue files
 const issueJsonFilenames = await fs.readdir(path.resolve(config.issuesDir)).catch(e => {
-  core.warning(e, { title: `${github.job.name} Cannot read issues directory.` })
+  core.warning(e, { title: `${github.job?.name} Cannot read issues directory.` })
   return []
 })
 console.log('hewwo 49')
@@ -61,7 +61,7 @@ templateData.issues = issueJsonFilenames
     if (issueJson.body) return issueJson
   })
 templateData.issues = (await Promise.all(templateData.issues).catch(e => {
-  core.error(e, { title: `${github.job.name} Cannot read issue files.` })
+  core.error(e, { title: `${github.job?.name} Cannot read issue files.` })
   return []
 })).filter(f => f)
 
@@ -71,9 +71,9 @@ templateData.issues = (await Promise.all(templateData.issues).catch(e => {
 //   if (issueAsJson.body) templateData.issues.push(issueAsJson)
 // }
 if (templateData.issues.length) {
-  core.notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: github.job.name })
+  core.notice(`Parsed ${templateData.issues.length} issues to be published.`, { title: github.job?.name })
 } else {
-  core.warning(`No issues found to be published.`, { title: github.job.name })
+  core.warning(`No issues found to be published.`, { title: github.job?.name })
 }
 
 console.log('hewwo 68')
@@ -112,7 +112,7 @@ try {
     throw e
   })
 } catch (e) {
-  const message = `${github.job.name}: Cannot read templates directory '${path.resolve(config.templateDir)}'`
+  const message = `${github.job?.name}: Cannot read templates directory '${path.resolve(config.templateDir)}'`
   core.error(e, { title: message })
   core.setFailed(message)
 }

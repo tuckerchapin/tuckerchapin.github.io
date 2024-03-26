@@ -12,4 +12,5 @@
     "marked": "^12.0.1",
     "slugify": "^1.6.6"
   }
+  , "type": "module"
 }
