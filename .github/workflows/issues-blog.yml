@@ -31,6 +31,8 @@ jobs:
         if: ${{ steps.checkout-issues.outcome == 'failure' }}
         run: |
           git checkout --orphan issues
+          git config --local user.email "action@github.com"
+          git config --local user.name "Github Action"
           git commit --allow-empty -m "Initial commit"
           git push -u origin issues
 
