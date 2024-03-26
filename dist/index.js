@@ -37498,6 +37498,8 @@ const templateData = config.staticData
 // 1. pick up and parse all of the issues files
 // TODO probably want to migrate the issues to a different branch or something?
 
+console.log('about to read issues DIR..')
+
 let issuesAsJsonFilenames = []
 try {
   issuesAsJsonFilenames = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readdir(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir))
@@ -37505,6 +37507,10 @@ try {
   // TODO output this warning to the job summary/warnings
   console.warn(`Cannot read issues directory '${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir)}'. No issues will be templated.`)
 }
+
+console.log(`Found ${issuesAsJsonFilenames.length} issues.`)
+
+console.log(`about to read issues ${path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.issuesDir, '*.json')}`)
 
 templateData.issues = []
 for (const issuesAsJsonFilename of issuesAsJsonFilenames) {
