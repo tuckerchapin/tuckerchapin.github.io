@@ -25,7 +25,8 @@ const config = {
       lower: true,
       strict: true
     }),
-    md: marked,
+    markdown: marked,
+    'markdown-inline': marked.parseInline
     // file: (relPath) => {
     //   // TODO stubbed
     // }

@@ -37473,7 +37473,8 @@ const config = {
       lower: true,
       strict: true
     }),
-    md: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked */ .TU,
+    markdown: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked */ .TU,
+    'markdown-inline': marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parseInline */ .TU.parseInline
     // file: (relPath) => {
     //   // TODO stubbed
     // }
