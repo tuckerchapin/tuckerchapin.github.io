@@ -37468,6 +37468,7 @@ const config = {
     helperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Handlebars helper missing: ${JSON.stringify(args)}`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
+      console.log(`Handlebars helper missing: ${JSON.stringify(args)}`)
       // core.warning(`Handlebars helper missing: ${args.reduce((a, c) => a || c.name)}`, { title: github.job?.name })
     },
     urlencode: encodeURIComponent,
