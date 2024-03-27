@@ -37468,11 +37468,11 @@ const config = {
     helperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
       // why tf is handlebars so poorly documented? isn't this like widley used?
-      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a.name || c.name)}`)
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name)}`)
     },
     blockHelperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
-      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a.name || c.name)}`)
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name)}`)
     },
     urlencode: encodeURIComponent,
     slugify: (value) => slugify__WEBPACK_IMPORTED_MODULE_5___default()(value, {
@@ -37539,6 +37539,7 @@ const walkFs = async (dir, relative=false) => (
 // discover site template
 const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(() => {
   _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Cannot read templates directory '${config.templateDir}'`)
+  return []
 })
 
 // matches handlebar opening tags in the filepaths
