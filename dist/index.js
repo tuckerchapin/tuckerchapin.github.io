@@ -37468,11 +37468,13 @@ const config = {
     helperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
       // why tf is handlebars so poorly documented? isn't this like widley used?
+      console.error('missing helper', JSON.stringify(args))
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name)}`)
     },
     blockHelperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
-      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name)}`)
+      console.error('missing block helper', JSON.stringify(args))
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name)}`)
     },
     urlencode: encodeURIComponent,
     slugify: (value) => slugify__WEBPACK_IMPORTED_MODULE_5___default()(value, {
