@@ -37465,16 +37465,16 @@ const config = {
   issuesDir: `issues`,
   publicDir: `public`,
   handlebarsHelpers: {
-    helperMissing: (...a) => {
-      console.warn(`Handlebars helper missing: ${JSON.stringify(a)}`)
+    helperMissing: (...args) => {
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Handlebars helper missing: ${args.reduce((a, c) => a || c.name)}`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
     },
     urlencode: encodeURIComponent,
     slugify: (value) => slugify__WEBPACK_IMPORTED_MODULE_5___default()(value, {
       lower: true,
       strict: true
     }),
-    markdown: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked */ .TU,
-    'markdown-inline': marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parseInline */ .TU.parseInline
+    md: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked */ .TU,
+    'inline-md': marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parseInline */ .TU.parseInline
     // file: (relPath) => {
     //   // TODO stubbed
     // }

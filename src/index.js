@@ -17,16 +17,16 @@ const config = {
   issuesDir: `issues`,
   publicDir: `public`,
   handlebarsHelpers: {
-    helperMissing: (...a) => {
-      console.warn(`Handlebars helper missing: ${JSON.stringify(a)}`)
+    helperMissing: (...args) => {
+      core.warning(`Handlebars helper missing: ${args.reduce((a, c) => a || c.name)}`, { title: github.job?.name })
     },
     urlencode: encodeURIComponent,
     slugify: (value) => slugify(value, {
       lower: true,
       strict: true
     }),
-    markdown: marked,
-    'markdown-inline': marked.parseInline
+    md: marked,
+    'inline-md': marked.parseInline
     // file: (relPath) => {
     //   // TODO stubbed
     // }

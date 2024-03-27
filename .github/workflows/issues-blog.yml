@@ -27,6 +27,7 @@ jobs:
     if: ${{ github.event.issue.number }}
     runs-on: ubuntu-latest
     steps:
+      -
       - name: Checkout issues branch
         id: checkout-issues
         continue-on-error: true
@@ -44,9 +45,9 @@ jobs:
           git push -u origin issues
           echo "::notice title=Created issues branch::No branch found, checked out new orphaned branch."
 
-#     # TODO filter out stuff from the blacklist/whitelist
-#     # delete issues not made by the opener?
-#     # https://docs.github.com/en/actions/managing-issues-and-pull-requests/closing-inactive-issues
+      # TODO filter out stuff from the blacklist/whitelist
+      # delete issues not made by the opener?
+      # https://docs.github.com/en/actions/managing-issues-and-pull-requests/closing-inactive-issues
       - name: Store issue as JSON
         id: issue-to-json
         uses: actions/github-script@v7
