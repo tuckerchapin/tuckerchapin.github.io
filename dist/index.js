@@ -37466,6 +37466,7 @@ const config = {
   publicDir: `public`,
   handlebarsHelpers: {
     helperMissing: (...args) => {
+      // TODO optionally fail the task on failed handlebar evaluation
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Handlebars helper missing: ${args.reduce((a, c) => a || c.name)}`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
     },
     urlencode: encodeURIComponent,
