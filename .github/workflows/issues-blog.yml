@@ -1,12 +1,10 @@
 name: Issues Blog
 
-# run-name: "Sync issues"
-
 on:
+  # TODO consider pushes on other branches or limiting to pushes on specific branches?
   push:
     paths:
       - dist/*
-      - issues/*
       - public/*
       - template/*
   issues:
@@ -15,6 +13,7 @@ on:
 
 # TODO happy for this to run concurrently when updating issues
 # but then don't want to build concurrently and instead want to pull again
+# TODO think through the concurrency
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.issue.number }}
   cancel-in-progress: true
@@ -22,12 +21,28 @@ concurrency:
 # TODO fancier annotations/messaging, like how gh pages deploy adds the url
 
 jobs:
-  sync-issues:
-    name: Sync issues
-    if: ${{ github.event.issue.number }}
+  check-auth:
+    # allows for public repos with a whitelist of authorized contributors
+    # TODO whitelist and contributor lookup
+    name: Delete unauthorized issues
+    if: ${{ github.event.action == 'opened' }}
     runs-on: ubuntu-latest
     steps:
-      -
+      - run: |
+          gh issue delete $ISSUE --yes
+          echo "::error title=Deleted issue #$ISSUE::Opened by @$USER (not a contributor or in whitelist)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ github.event.issue.number }}
+          # USER: ${{ d }}
+
+  sync-issues:
+    name: Sync issues
+    # TODO hmm what happens if the issue is deleted... how do we get rid of it
+    if: ${{ github.event.issue.state == 'closed' }}
+    needs: check-auth # TODO is this necessary?
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout issues branch
         id: checkout-issues
         continue-on-error: true
@@ -84,11 +99,10 @@ jobs:
 
   build:
     name: Build static site
-
     # if sync doesn't run, fine, if sync does run, we need it
     needs: sync-issues
-    if: ${{ !failure() && !cancelled()}}
-
+    # TODO more complicated dependency on sync issues
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
