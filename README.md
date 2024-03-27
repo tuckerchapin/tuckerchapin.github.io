@@ -45,3 +45,11 @@ files as tempaltes https://stackoverflow.com/questions/12014547/how-do-i-precomp
 - [X] need the ability for some JSON files as static data
     - [X] eg a list of projects
 - interesting https://github.com/marketplace/actions/deploy-pr-preview
+
+
+
+ok so the big todo:
+- issue management
+  - create a whitelisting/auth system
+- figure out how to template files into each other as partials
+- figure out how to support external configs, both of static json and custom helpers for extensions

@@ -37476,13 +37476,12 @@ const config = {
       console.error('missing block helper', JSON.stringify(args))
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
     },
-    urlencode: encodeURIComponent,
+    urlencode: encodeURIComponent, // TODO should this be safe string'd?
     slugify: (value) => slugify__WEBPACK_IMPORTED_MODULE_5___default()(value, {
       lower: true,
       strict: true
     }),
-    markdown: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked */ .TU,
-    'markdown-inline': marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parseInline */ .TU.parseInline
+    marked: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked */ .TU,
     // file: (relPath) => {
     //   // TODO stubbed
     // }

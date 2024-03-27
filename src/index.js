@@ -28,13 +28,12 @@ const config = {
       console.error('missing block helper', JSON.stringify(args))
       core.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
     },
-    urlencode: encodeURIComponent,
+    urlencode: encodeURIComponent, // TODO should this be safe string'd?
     slugify: (value) => slugify(value, {
       lower: true,
       strict: true
     }),
-    markdown: marked,
-    'markdown-inline': marked.parseInline
+    marked: marked,
     // file: (relPath) => {
     //   // TODO stubbed
     // }
