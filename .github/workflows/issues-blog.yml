@@ -22,6 +22,10 @@ concurrency:
 
 jobs:
   # TODO commented out for now
+  # https://docs.github.com/en/rest/collaborators/collaborators?apiVersion=2022-11-28#list-repository-collaborators
+  # https://docs.github.com/en/rest/collaborators/collaborators?apiVersion=2022-11-28#check-if-a-user-is-a-repository-collaborator
+  # https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+  # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=opened#issues
   # check-auth:
   #   # allows for public repos with a whitelist of authorized contributors
   #   # TODO whitelist and contributor lookup
