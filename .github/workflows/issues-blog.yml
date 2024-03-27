@@ -21,30 +21,33 @@ concurrency:
 # TODO fancier annotations/messaging, like how gh pages deploy adds the url
 
 jobs:
-  check-auth:
-    # allows for public repos with a whitelist of authorized contributors
-    # TODO whitelist and contributor lookup
-    name: Delete unauthorized issues
-    if: ${{ github.event.action == 'opened' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+  # TODO commented out for now
+  # check-auth:
+  #   # allows for public repos with a whitelist of authorized contributors
+  #   # TODO whitelist and contributor lookup
+  #   name: Delete unauthorized issues
+  #   if: ${{ github.event.action == 'opened' }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v4
 
-      - name: Delete issue
-        run: |
-          gh issue delete $ISSUE --yes
-          echo "::error title=Deleted issue #$ISSUE::Opened by @$USER (not a contributor or in whitelist)"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE: ${{ github.event.issue.number }}
-          # USER: ${{ d }}
+  #     - name: Delete issue
+  #       run: |
+  #         gh issue delete $ISSUE --yes
+  #         echo "::error title=Deleted issue #$ISSUE::Opened by @$USER (not a contributor or in whitelist)"
+  #       env:
+  #         # TODO need a PAT here annoyingly
+  #         # GITHUB_TOKEN doesn't have admin rights...
+  #         # https://github.com/orgs/community/discussions/24302
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         ISSUE: ${{ github.event.issue.number }}
+  #         USER: ${{ github.event.sender.login }}
 
   sync-issues:
     name: Sync issues
     # TODO hmm what happens if the issue is deleted... how do we get rid of it
     if: ${{ github.event.issue.state == 'closed' }}
-    needs: check-auth # TODO is this necessary?
     runs-on: ubuntu-latest
     steps:
       - name: Checkout issues branch
@@ -130,6 +133,9 @@ jobs:
     name: Deploy to Github Pages
 
     needs: build
+    # it's very annoying that we cant access other jobs here
+    # like the steps context jobs.build.result == 'success'
+    # TODO
     if: ${{ !failure() && !cancelled()}}
 
     runs-on: ubuntu-latest
