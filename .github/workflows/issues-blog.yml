@@ -28,7 +28,11 @@ jobs:
     if: ${{ github.event.action == 'opened' }}
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Delete issue
+        run: |
           gh issue delete $ISSUE --yes
           echo "::error title=Deleted issue #$ISSUE::Opened by @$USER (not a contributor or in whitelist)"
         env:
