@@ -21,12 +21,12 @@ const config = {
       // TODO optionally fail the task on failed handlebar evaluation
       // why tf is handlebars so poorly documented? isn't this like widley used?
       console.error('missing helper', JSON.stringify(args))
-      core.setFailed(`Missing Handlebars helper: ${args.reduceRight((a, c) => a?.name || c?.name)}`)
+      core.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
     },
     blockHelperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
       console.error('missing block helper', JSON.stringify(args))
-      core.setFailed(`Missing Handlebars block helper: ${args.reduceRight((a, c) => a?.name || c?.name)}`)
+      core.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
     },
     urlencode: encodeURIComponent,
     slugify: (value) => slugify(value, {
