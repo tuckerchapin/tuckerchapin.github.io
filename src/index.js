@@ -13,10 +13,9 @@ import slugify from 'slugify'
 import { marked } from 'marked'
 
 const config = {
-  pageTemplatesDir: `pages`,
+  templateDir: `template`,
   issuesDir: `issues`,
   publicDir: `public`,
-  partialsDir: `components`,
   handlebarsHelpers: {
     helperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
@@ -90,8 +89,8 @@ const walkFs = async (dir, relative=false) => (
 ).flat(Infinity)
 
 // discover site template
-const rawFilepaths = await walkFs(config.pageTemplatesDir, config.pageTemplatesDir).catch(() => {
-  core.setFailed(`Cannot read templates directory '${config.pageTemplatesDir}'`)
+const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(() => {
+  core.setFailed(`Cannot read templates directory '${config.templateDir}'`)
 })
 
 // TODO i don't really like this
@@ -110,7 +109,7 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 // transform the templates
 const outputFiles = []
 for (const rawFilepath of rawFilepaths) {
-  const template = await fs.readFile(path.resolve(config.pageTemplatesDir, rawFilepath), 'utf8')
+  const template = await fs.readFile(path.resolve(config.templateDir, rawFilepath), 'utf8')
 
   /* NOTE because we can't have / in a filename, blocks in filenames only have opening tags
           this extracts them and prepends them to the entire filepath and appends the closing tags
