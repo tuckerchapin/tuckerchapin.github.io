@@ -4,7 +4,7 @@
     - [ ] add tags
     - [X] convert to html?
 
-
+files as tempaltes https://stackoverflow.com/questions/12014547/how-do-i-precompile-partials-for-handlebars-js
 
 - [X] issue -> new file in folder
 - [X] folder-based routing

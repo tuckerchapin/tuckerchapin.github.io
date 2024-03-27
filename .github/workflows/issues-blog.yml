@@ -3,10 +3,10 @@ name: Issues Blog
 on:
   # TODO consider pushes on other branches or limiting to pushes on specific branches?
   push:
-    paths:
-      - dist/*
-      - public/*
-      - template/*
+    # paths:
+    #   - dist/*
+    #   - public/*
+    #   - template/*
   issues:
     types: [opened, edited, deleted, transferred, pinned, unpinned, closed, reopened, assigned, unassigned, labeled, unlabeled, locked, unlocked, milestoned, demilestoned]
   workflow_dispatch:
@@ -78,7 +78,7 @@ jobs:
           script: |
             require('fs')
               .writeFileSync(`issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2));
-            // TODO when an issue is deleted, delete it instead of writing an update of god knows what payload
+            // TODO when an issue is deleted, delete it (unsync)
             let changesSummary = '';
             if (context.payload.changes) {
               changesSummary = ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => {
@@ -133,9 +133,9 @@ jobs:
     name: Deploy to Github Pages
 
     needs: build
-    # it's very annoying that we cant access other jobs here
+    # TODO it's very annoying that we cant access other jobs here
     # like the steps context jobs.build.result == 'success'
-    # TODO
+    # this condition could use some work
     if: ${{ !failure() && !cancelled()}}
 
     runs-on: ubuntu-latest

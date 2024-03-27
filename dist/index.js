@@ -37461,13 +37461,19 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 const config = {
-  templateDir: `template`,
+  pageTemplatesDir: `pages`,
   issuesDir: `issues`,
   publicDir: `public`,
+  partialsDir: `components`,
   handlebarsHelpers: {
     helperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
+      // why tf is handlebars so poorly documented? isn't this like widley used?
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Missing Handlebars helper: ${args.reduce((a, c) => a.name || c.name)}`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
+    },
+    blockHelperMissing: (...args) => {
+      // TODO optionally fail the task on failed handlebar evaluation
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Missing Handlebars block helper: ${args.reduce((a, c) => a.name || c.name)}`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
     },
     urlencode: encodeURIComponent,
     slugify: (value) => slugify__WEBPACK_IMPORTED_MODULE_5___default()(value, {
@@ -37532,8 +37538,8 @@ const walkFs = async (dir, relative=false) => (
 ).flat(Infinity)
 
 // discover site template
-const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(() => {
-  _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Cannot read templates directory '${config.templateDir}'`)
+const rawFilepaths = await walkFs(config.pageTemplatesDir, config.pageTemplatesDir).catch(() => {
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Cannot read templates directory '${config.pageTemplatesDir}'`)
 })
 
 // TODO i don't really like this
@@ -37546,11 +37552,13 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 
 /* TODO this whole section is kinda nasty: the block regexes, string interps, etc.
         could use a second pass for refinement and robustness
+   TODO BIG FUCKING FAT TODO HERE: support partials in the filenames... that could get mindfucky as all hell, but also could be very powerful
+        not sure how much use there is for that, but intriguing
 */
 // transform the templates
 const outputFiles = []
 for (const rawFilepath of rawFilepaths) {
-  const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath), 'utf8')
+  const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.pageTemplatesDir, rawFilepath), 'utf8')
 
   /* NOTE because we can't have / in a filename, blocks in filenames only have opening tags
           this extracts them and prepends them to the entire filepath and appends the closing tags
@@ -37574,6 +37582,8 @@ for (const rawFilepath of rawFilepaths) {
   /* We compile and evaluate the template that includes the filepaths and directives as well as the file content.
      Then we split this back apart into potentially more than one file and write that out.
   */
+  // TODO in order to support partials and refer to them as files
+  // we may have to split the compilation and template steps apart
   Array.from(
     handlebars__WEBPACK_IMPORTED_MODULE_3___default().compile(combinedTemplate)(templateData)
       .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
