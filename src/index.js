@@ -20,11 +20,11 @@ const config = {
     helperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
       // why tf is handlebars so poorly documented? isn't this like widley used?
-      core.warning(`Missing Handlebars helper: ${args.reduce((a, c) => a.name || c.name)}`, { title: github.job?.name })
+      core.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a.name || c.name)}`)
     },
     blockHelperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
-      core.warning(`Missing Handlebars block helper: ${args.reduce((a, c) => a.name || c.name)}`, { title: github.job?.name })
+      core.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a.name || c.name)}`)
     },
     urlencode: encodeURIComponent,
     slugify: (value) => slugify(value, {
@@ -92,11 +92,6 @@ const walkFs = async (dir, relative=false) => (
 const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(() => {
   core.setFailed(`Cannot read templates directory '${config.templateDir}'`)
 })
-
-// TODO i don't really like this
-if (process.exitCode) {
-  process.exit(process.exitCode)
-}
 
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
