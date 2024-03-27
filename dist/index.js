@@ -37516,7 +37516,7 @@ templateData.issues =
     .map(file => JSON.parse(file))
     .filter(f => f)
 
-const publishableIssueLog = `Parsed ${templateData.issues.length} issue${templateData.issues.length === 1 ? 's' : ''} to publish.`
+const publishableIssueLog = `${templateData.issues.length} publishable issue${templateData.issues.length === 1 ? '' : 's'}.`
 templateData.issues.length ? _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(publishableIssueLog) : _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(publishableIssueLog)
 
 const walkFs = async (dir, relative=false) => (
