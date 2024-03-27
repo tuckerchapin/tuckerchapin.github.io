@@ -37469,12 +37469,12 @@ const config = {
       // TODO optionally fail the task on failed handlebar evaluation
       // why tf is handlebars so poorly documented? isn't this like widley used?
       console.error('missing helper', JSON.stringify(args))
-      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name)}`)
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars helper: ${args.reduceRight((a, c) => a?.name || c?.name)}`)
     },
     blockHelperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
       console.error('missing block helper', JSON.stringify(args))
-      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name)}`)
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars block helper: ${args.reduceRight((a, c) => a?.name || c?.name)}`)
     },
     urlencode: encodeURIComponent,
     slugify: (value) => slugify__WEBPACK_IMPORTED_MODULE_5___default()(value, {
@@ -37522,7 +37522,7 @@ templateData.issues =
     .map(file => JSON.parse(file))
     .filter(f => f)
 
-const publishableIssueLog = `${templateData.issues.length} publishable issue${templateData.issues.length === 1 ? '' : 's'}.`
+const publishableIssueLog = `${templateData.issues.length} publishable issue${templateData.issues.length === 1 ? '' : 's'}`
 templateData.issues.length ? _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(publishableIssueLog) : _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(publishableIssueLog)
 
 const walkFs = async (dir, relative=false) => (
