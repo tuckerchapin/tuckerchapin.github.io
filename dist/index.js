@@ -37607,11 +37607,11 @@ console.log('hewwo did we get here?')
 */
 // compile the templates and register them all as partials
 const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath) => {
-  console.log('hewwo iteration', rawFilepath)
+  console.log('hewwo iteration', path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath))
 
   const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath), 'utf8')
 
-  console.log('read in the file', rawFilepath)
+  console.log('read in the file', path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath))
 
   /* NOTE because we can't have / in a filename, so when using blocks in filenames we only have opening tags
           this moves opening tags to the start of the filepath and adds closing tags to the end
@@ -37631,7 +37631,7 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
-  console.log('just about to compile', rawFilepath, preppedFilepath)
+  console.log('just about to compile', path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath))
 
   const compiledTemplate = handlebars__WEBPACK_IMPORTED_MODULE_3___default().compile(combinedTemplate)
   // what should we use as the partial's name?
@@ -37640,7 +37640,7 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
 }))
 
 const outputFiles = []
-compiledTemplates.map((compiledTemplate) => {
+compiledTemplates.forEach((compiledTemplate) => {
   /* We compile and evaluate the template that includes the filepaths and directives as well as the file content.
      Then we split this back apart into potentially more than one file and write that out.
   */
