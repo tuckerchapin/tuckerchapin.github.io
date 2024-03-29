@@ -37593,7 +37593,7 @@ const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(
   return []
 })
 
-console.log('all filepaths found:', rawFilepaths)
+console.log('all filepaths:', rawFilepaths)
 
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
@@ -37607,13 +37607,15 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 const compiledTemplates = await rawFilepaths.map(async (rawFilepath) => {
   const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath), 'utf8')
 
+  console.log(rawFilepath, template)
+
   /* NOTE because we can't have / in a filename, so when using blocks in filenames we only have opening tags
           this moves opening tags to the start of the filepath and adds closing tags to the end
   */
   const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
   const preppedFilepath = rawFilepath.replace(openBlockRe, '')
 
-  /* NOTE Ok, so time for a hacky solution.
+  /* NOTE Ok, time for a hacky solution.
           We want to be able to template the file structure AND the files themselves.
           If we just template the file structure and the files separately, when we template the files
           they won't be properly scoped for the file structure's implied templates.
@@ -37625,6 +37627,7 @@ const compiledTemplates = await rawFilepaths.map(async (rawFilepath) => {
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
+  console.log(rawFilepath, template, combinedTemplate)
 
   const compiledTemplate = handlebars__WEBPACK_IMPORTED_MODULE_3___default().compile(combinedTemplate)
   // what should we use as the partial's name?
