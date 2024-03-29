@@ -33,42 +33,44 @@ const config = {
       lower: true,
       strict: true
     }),
-    marked: marked,
+    marked: marked.parse,
+    if: (value) => value || null
   },
+  marked: {},
   staticData: {
     projects: [
       {
-        name: `Keebhunter`,
+        label: `Keebhunter`,
         description: `Find your perfect keyboard`,
         url: `https://keebhunter.com/`
       },
       {
-        name: `Easy CC Autofill`,
+        label: `Easy CC Autofill`,
         description: `Prompt your browser's autofill for saved credit cards`,
         url: `https://tuckerchap.in/easy-cc-autofill/`
       },
       {
-        name: 'BetterVRV',
+        label: 'BetterVRV',
         description: 'https://tuckerchap.in/BetterVRV/',
         url: 'A suite of improvements to the VRV player and experience'
       },
       {
-        name: `Forza Horizon Season`,
+        label: `Forza Horizon Season`,
         description: `What season is it in Edinburgh in Forza Horizon 4`,
         url: `https://whatseasonisitinhorizon.com/`
       },
       {
-        name: `HoursWithoutYandi`,
+        label: `HoursWithoutYandi`,
         description: `How long since we were promised Yandhi`,
         url: `https://hourswithoutyandhi.com/`
       },
       {
-        name: `Fake Album Cover Generator`,
+        label: `Fake Album Cover Generator`,
         description: `Randomly generate a fake album`,
         url: `https://fakealbumart.com`
       },
       {
-        name: `Clever Domain`,
+        label: `Clever Domain`,
         description: `Generate a trendy domain name with unusual TLDs`,
         disabled: true,
         url: `http://cleverdoma.in/`
@@ -91,12 +93,39 @@ const config = {
         url: `https://side.guide`
       },
     ],
+    contactLinks: [
+      {
+        label: `blog`,
+        url: `/blog`
+      },
+      {
+        label: `mail`,
+        url: `mailto:site@tuckerchap.in`
+      },
+      {
+        label: `github`,
+        url: `https://github.com/tuckerchapin`
+      },
+      {
+        label: `linkedin`,
+        url: `https://www.linkedin.com/in/tuckerchapin`
+      },
+      {
+        label: `imdb`,
+        url: `https://www.imdb.com/name/nm5847740/`
+      },
+    ]
   },
 }
 /*=============================================*/
 
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars.registerHelper(name, fn))
+
+// register marked extensions
+// TODO do we need to do this? or should this be externalized?
+// https://marked.js.org/using_pro#use
+marked.use(config.marked)
 
 // get list of issue files
 const issueJsonFilenames = await fs.readdir(path.resolve(config.issuesDir)).catch(e => {
