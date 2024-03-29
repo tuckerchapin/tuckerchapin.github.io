@@ -156,7 +156,7 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
         not sure how much use there is for that, but intriguing
 */
 // compile the templates and register them all as partials
-const compiledTemplates = rawFilepaths.map((rawFilepath) => {
+const compiledTemplates = await rawFilepaths.map(async (rawFilepath) => {
   const template = await fs.readFile(path.resolve(config.templateDir, rawFilepath), 'utf8')
 
   /* NOTE because we can't have / in a filename, so when using blocks in filenames we only have opening tags
