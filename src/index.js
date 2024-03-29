@@ -29,14 +29,14 @@ const config = {
       core.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
     },
     urlencode: encodeURIComponent, // TODO should this be safe string'd?
-    slugify: (value) => slugify(value, {
+    slugify: value => slugify(value, {
       lower: true,
       strict: true
     }),
     marked: marked.parse,
     'inline-marked': marked.parseInline,
-    length: (value) => value?.length || 0,
-    'format-date': (dateString) => new Date(dateString).toLocaleDateString('en-US')
+    length: value => value?.length || 0,
+    'format-date': dateString => new Date(dateString).toLocaleDateString('en-US')
   },
   marked: {},
   staticData: {
