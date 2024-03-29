@@ -6,7 +6,10 @@
     <ul>
       {{#each issues}}
         <li>
-          <a href="/blog/{{number}}/{{urlencode (slugify title)}}">{{title}} {{closed_at}}</a>
+          <div>
+            <div><a href="/blog/{{number}}/{{urlencode (slugify title)}}">{{title}}</a></div>
+            <div>published {{closed_at}}</div>
+          </div>
         </li>
       {{/each}}
     </ul>
