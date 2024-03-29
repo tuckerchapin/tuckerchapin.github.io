@@ -183,6 +183,7 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     const compiledTemplate = handlebars.compile(combinedTemplate)
   } catch (e) {
     console.log('failed to compile', path.resolve(config.templateDir, rawFilepath))
+    throw e
   }
   // what should we use as the partial's name?
   handlebars.registerPartial(rawFilepath, compiledTemplate)
