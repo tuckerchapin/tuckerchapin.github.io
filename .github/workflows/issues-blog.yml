@@ -117,6 +117,9 @@ jobs:
     # TODO more complicated dependency on sync issues
     if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: dogwater
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -135,7 +138,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
-      - run: echo "::set-output name=test::poopoopeepee"
+      - run: echo "test=poopoopeepee" >> $GITHUB_OUTPUT
 
   deploy:
     name: Deploy to Github Pages
