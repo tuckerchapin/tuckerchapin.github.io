@@ -1,15 +1,14 @@
 <html>
   <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css"> -->
   </head>
   <body>
-    {{#each issues}}
-      <div>
-        <h1>{{title}}</h1>
-        <div>
-          {{{marked body}}}
-        </div>
-      </div>
-    {{/each}}
+    <ul>
+      {{#each issues}}
+        <li>
+          <a href="{{urlencode (slugify title)}}">{{title}}</a>
+        </li>
+      {{/each}}
+    </ul>
   </body>
 </html>
