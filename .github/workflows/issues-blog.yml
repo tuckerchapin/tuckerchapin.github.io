@@ -135,6 +135,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
+      - run: echo "::set-output name=test::poopoopeepee"
+
   deploy:
     name: Deploy to Github Pages
 
