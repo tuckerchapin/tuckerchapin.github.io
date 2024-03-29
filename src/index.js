@@ -179,8 +179,9 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
+  let compiledTemplate
   try {
-    const compiledTemplate = handlebars.compile(combinedTemplate)
+    compiledTemplate = handlebars.compile(combinedTemplate)
   } catch (e) {
     console.log('failed to compile', path.resolve(config.templateDir, rawFilepath))
     throw e

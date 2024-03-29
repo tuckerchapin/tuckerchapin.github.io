@@ -37627,8 +37627,9 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
+  let compiledTemplate
   try {
-    const compiledTemplate = handlebars__WEBPACK_IMPORTED_MODULE_3___default().compile(combinedTemplate)
+    compiledTemplate = handlebars__WEBPACK_IMPORTED_MODULE_3___default().compile(combinedTemplate)
   } catch (e) {
     console.log('failed to compile', path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath))
     throw e
