@@ -150,8 +150,6 @@ console.log('all filepaths:', rawFilepaths)
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 
-console.log('hewwo did we get here?')
-
 /* TODO this whole section is kinda nasty: the block regexes, string interps, etc.
         could use a second pass for refinement and robustness
    TODO BIG FUCKING FAT TODO HERE: support partials in the filenames... that could get mindfucky as all hell, but also could be very powerful
@@ -179,13 +177,7 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
-  // let compiledTemplate
-  // try {
   const compiledTemplate = handlebars.compile(combinedTemplate)
-  // } catch (e) {
-    // console.log('failed to compile', path.resolve(config.templateDir, rawFilepath))
-    // throw e
-  // }
   // what should we use as the partial's name?
   handlebars.registerPartial(rawFilepath, compiledTemplate)
   return compiledTemplate
