@@ -34,14 +34,64 @@ const config = {
       strict: true
     }),
     marked: marked,
-    // file: (relPath) => {
-    //   // TODO stubbed
-    // }
   },
   staticData: {
-    title: `My Blog`,
-    description: `A blog about things.`
-  }
+    projects: [
+      {
+        name: `Keebhunter`,
+        description: `Find your perfect keyboard`,
+        url: `https://keebhunter.com/`
+      },
+      {
+        name: `Easy CC Autofill`,
+        description: `Prompt your browser's autofill for saved credit cards`,
+        url: `https://tuckerchap.in/easy-cc-autofill/`
+      },
+      {
+        name: 'BetterVRV',
+        description: 'https://tuckerchap.in/BetterVRV/',
+        url: 'A suite of improvements to the VRV player and experience'
+      },
+      {
+        name: `Forza Horizon Season`,
+        description: `What season is it in Edinburgh in Forza Horizon 4`,
+        url: `https://whatseasonisitinhorizon.com/`
+      },
+      {
+        name: `HoursWithoutYandi`,
+        description: `How long since we were promised Yandhi`,
+        url: `https://hourswithoutyandhi.com/`
+      },
+      {
+        name: `Fake Album Cover Generator`,
+        description: `Randomly generate a fake album`,
+        url: `https://fakealbumart.com`
+      },
+      {
+        name: `Clever Domain`,
+        description: `Generate a trendy domain name with unusual TLDs`,
+        disabled: true,
+        url: `http://cleverdoma.in/`
+      },
+    ],
+    work: [
+      {
+        name: `Staked`,
+        description: `Compound your crypto`,
+        url: `https://staked.us`
+      },
+      {
+        name: `FitMango`,
+        description: `On-demand personalized group training`,
+        url: `http://fitmango.com/`
+      },
+      {
+        name: `SideGuide`,
+        description: `Mobile-optimized campus tours`,
+        url: `https://side.guide`
+      },
+    ],
+  },
 }
 /*=============================================*/
 
@@ -89,11 +139,13 @@ const walkFs = async (dir, relative=false) => (
   )
 ).flat(Infinity)
 
-// discover site template
+// discover site templates
 const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(() => {
   core.setFailed(`Cannot read templates directory '${config.templateDir}'`)
   return []
 })
+
+console.log('all filepaths found:', rawFilepaths)
 
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
@@ -103,17 +155,15 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
    TODO BIG FUCKING FAT TODO HERE: support partials in the filenames... that could get mindfucky as all hell, but also could be very powerful
         not sure how much use there is for that, but intriguing
 */
-// transform the templates
-const outputFiles = []
-for (const rawFilepath of rawFilepaths) {
+// compile the templates and register them all as partials
+const compiledTemplates = rawFilepaths.map((rawFilepath) => {
   const template = await fs.readFile(path.resolve(config.templateDir, rawFilepath), 'utf8')
 
-  /* NOTE because we can't have / in a filename, blocks in filenames only have opening tags
-          this extracts them and prepends them to the entire filepath and appends the closing tags
+  /* NOTE because we can't have / in a filename, so when using blocks in filenames we only have opening tags
+          this moves opening tags to the start of the filepath and adds closing tags to the end
   */
   const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
   const preppedFilepath = rawFilepath.replace(openBlockRe, '')
-
 
   /* NOTE Ok, so time for a hacky solution.
           We want to be able to template the file structure AND the files themselves.
@@ -127,17 +177,26 @@ for (const rawFilepath of rawFilepaths) {
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
+
+  const compiledTemplate = handlebars.compile(combinedTemplate)
+  // what should we use as the partial's name?
+  handlebars.registerPartial(rawFilepath, compiledTemplate)
+  return compiledTemplate
+})
+
+const outputFiles = []
+compiledTemplates.map((compiledTemplate) => {
   /* We compile and evaluate the template that includes the filepaths and directives as well as the file content.
      Then we split this back apart into potentially more than one file and write that out.
   */
-  // TODO in order to support partials and refer to them as files
-  // we may have to split the compilation and template steps apart
   Array.from(
     handlebars
-      .compile(combinedTemplate)(templateData)
-      .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
+    .compile(compiledTemplate)(templateData)
+    .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
   ).forEach(match => outputFiles.push({ ...match.groups }))
-}
+})
+
+console.log('all output files:', outputFiles.map(o => o.filepath))
 
 // default directory for upload-pages-artifact, why not
 const OUTPUT_DIR = `_site`
@@ -151,5 +210,3 @@ outputFiles.forEach(async ({ filepath, content }) => {
 
 // copy public files to output directory
 await fs.cp(path.resolve(config.publicDir), path.resolve(OUTPUT_DIR), { recursive: true })
-
-// TODO need to figure out how to template files to be able to nest
