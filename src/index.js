@@ -179,13 +179,13 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
-  let compiledTemplate
-  try {
-    compiledTemplate = handlebars.compile(combinedTemplate)
-  } catch (e) {
-    console.log('failed to compile', path.resolve(config.templateDir, rawFilepath))
-    throw e
-  }
+  // let compiledTemplate
+  // try {
+  const compiledTemplate = handlebars.compile(combinedTemplate)
+  // } catch (e) {
+    // console.log('failed to compile', path.resolve(config.templateDir, rawFilepath))
+    // throw e
+  // }
   // what should we use as the partial's name?
   handlebars.registerPartial(rawFilepath, compiledTemplate)
   return compiledTemplate
