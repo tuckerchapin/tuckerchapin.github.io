@@ -36,7 +36,7 @@ const config = {
     marked: marked.parse,
     'inline-marked': marked.parseInline,
     length: (value) => value?.length || 0,
-    'format-date': (dateString) => Date(dateString).toLocaleDateString('en-US')
+    'format-date': (dateString) => new Date(dateString).toLocaleDateString('en-US')
   },
   marked: {},
   staticData: {
