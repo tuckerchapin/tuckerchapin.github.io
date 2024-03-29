@@ -37598,6 +37598,8 @@ console.log('all filepaths:', rawFilepaths)
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 
+console.log('hewwo did we get here?')
+
 /* TODO this whole section is kinda nasty: the block regexes, string interps, etc.
         could use a second pass for refinement and robustness
    TODO BIG FUCKING FAT TODO HERE: support partials in the filenames... that could get mindfucky as all hell, but also could be very powerful
@@ -37605,7 +37607,11 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 */
 // compile the templates and register them all as partials
 const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath) => {
+  console.log('hewwo iteration', rawFilepath)
+
   const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath), 'utf8')
+
+  console.log('read in the file', rawFilepath)
 
   /* NOTE because we can't have / in a filename, so when using blocks in filenames we only have opening tags
           this moves opening tags to the start of the filepath and adds closing tags to the end
@@ -37624,6 +37630,8 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     templateBlocks.map(b => `{{#${b[1]} ${b[2]}}}`).join()
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
+
+  console.log('just about to compile', rawFilepath, preppedFilepath)
 
   const compiledTemplate = handlebars__WEBPACK_IMPORTED_MODULE_3___default().compile(combinedTemplate)
   // what should we use as the partial's name?
