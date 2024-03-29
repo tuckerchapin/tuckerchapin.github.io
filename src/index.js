@@ -34,7 +34,9 @@ const config = {
       strict: true
     }),
     marked: marked.parse,
-    if: (value) => value || null
+    // if: (value) => value || null,
+    length: (value) => value?.length || 0,
+
   },
   marked: {},
   staticData: {
