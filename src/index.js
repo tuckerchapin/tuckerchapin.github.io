@@ -159,11 +159,7 @@ console.log('hewwo did we get here?')
 */
 // compile the templates and register them all as partials
 const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath) => {
-  console.log('hewwo iteration', path.resolve(config.templateDir, rawFilepath))
-
   const template = await fs.readFile(path.resolve(config.templateDir, rawFilepath), 'utf8')
-
-  console.log('read in the file', path.resolve(config.templateDir, rawFilepath))
 
   /* NOTE because we can't have / in a filename, so when using blocks in filenames we only have opening tags
           this moves opening tags to the start of the filepath and adds closing tags to the end
@@ -183,9 +179,11 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
-  console.log('just about to compile', path.resolve(config.templateDir, rawFilepath))
-
-  const compiledTemplate = handlebars.compile(combinedTemplate)
+  try {
+    const compiledTemplate = handlebars.compile(combinedTemplate)
+  } catch (e) {
+    console.log('failed to compile', path.resolve(config.templateDir, rawFilepath))
+  }
   // what should we use as the partial's name?
   handlebars.registerPartial(rawFilepath, compiledTemplate)
   return compiledTemplate
@@ -197,8 +195,7 @@ compiledTemplates.forEach((compiledTemplate) => {
      Then we split this back apart into potentially more than one file and write that out.
   */
   Array.from(
-    handlebars
-    .compile(compiledTemplate)(templateData)
+    compiledTemplate(templateData)
     .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
   ).forEach(match => outputFiles.push({ ...match.groups }))
 })
