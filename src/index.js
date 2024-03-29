@@ -158,7 +158,7 @@ console.log('hewwo did we get here?')
         not sure how much use there is for that, but intriguing
 */
 // compile the templates and register them all as partials
-const compiledTemplates = await rawFilepaths.map(async (rawFilepath) => {
+const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath) => {
   console.log('hewwo iteration', rawFilepath)
   const template = await fs.readFile(path.resolve(config.templateDir, rawFilepath), 'utf8')
 
@@ -188,7 +188,7 @@ const compiledTemplates = await rawFilepaths.map(async (rawFilepath) => {
   // what should we use as the partial's name?
   handlebars.registerPartial(rawFilepath, compiledTemplate)
   return compiledTemplate
-})
+}))
 
 const outputFiles = []
 compiledTemplates.map((compiledTemplate) => {

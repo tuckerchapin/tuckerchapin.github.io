@@ -37606,7 +37606,7 @@ console.log('hewwo did we get here?')
         not sure how much use there is for that, but intriguing
 */
 // compile the templates and register them all as partials
-const compiledTemplates = await rawFilepaths.map(async (rawFilepath) => {
+const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath) => {
   console.log('hewwo iteration', rawFilepath)
   const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().readFile(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.templateDir, rawFilepath), 'utf8')
 
@@ -37636,7 +37636,7 @@ const compiledTemplates = await rawFilepaths.map(async (rawFilepath) => {
   // what should we use as the partial's name?
   handlebars__WEBPACK_IMPORTED_MODULE_3___default().registerPartial(rawFilepath, compiledTemplate)
   return compiledTemplate
-})
+}))
 
 const outputFiles = []
 compiledTemplates.map((compiledTemplate) => {
