@@ -37482,9 +37482,9 @@ const config = {
       strict: true
     }),
     marked: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parse */ .TU.parse,
-    // if: (value) => value || null,
+    'inline-marked': marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parseInline */ .TU.parseInline,
     length: (value) => value?.length || 0,
-
+    'format-date': (dateString) => Date(dateString).toLocaleDateString('en-US')
   },
   marked: {},
   staticData: {

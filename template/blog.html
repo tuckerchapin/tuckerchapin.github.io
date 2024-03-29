@@ -7,8 +7,8 @@
       {{#each issues}}
         <li>
           <div>
-            <div><a href="/blog/{{number}}/{{urlencode (slugify title)}}">{{title}}</a></div>
-            <div>published {{closed_at}}</div>
+            <div><a href="/blog/{{number}}/{{urlencode (slugify title)}}">{{inline-marked title}}</a></div>
+            <div>published {{format-date closed_at}}</div>
           </div>
         </li>
       {{/each}}

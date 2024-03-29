@@ -34,9 +34,9 @@ const config = {
       strict: true
     }),
     marked: marked.parse,
-    // if: (value) => value || null,
+    'inline-marked': marked.parseInline,
     length: (value) => value?.length || 0,
-
+    'format-date': (dateString) => Date(dateString).toLocaleDateString('en-US')
   },
   marked: {},
   staticData: {
