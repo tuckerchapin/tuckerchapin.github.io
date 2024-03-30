@@ -205,15 +205,11 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     templateBlocks.map(b => `{{#${b[1]} ${b[2]}}}`).join()
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
-  try {
-    const compiledTemplate = handlebars.compile(combinedTemplate)
-    // NOTE partials only template on the content, not the path, limitation?
-    handlebars.registerPartial(rawFilepath, template)
-    return [rawFilepath, compiledTemplate]
-  } catch (e) {
-    core.setFailed(`Error compiling template '${rawFilepath}': {e.message}`)
-    console.error(e)
-  }
+
+  const compiledTemplate = handlebars.compile(combinedTemplate)
+  // NOTE partials only template on the content, not the path, limitation?
+  handlebars.registerPartial(rawFilepath, template)
+  return [rawFilepath, compiledTemplate]
 }))
 
 const outputFiles = []

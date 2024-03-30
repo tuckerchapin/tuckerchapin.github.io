@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Tucker Chapin</title>
+    <meta name="description" content="contact, work, and portfolio">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="favicons/apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="favicons/apple-touch-icon-114x114.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="favicons/apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="favicons/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="60x60" href="favicons/apple-touch-icon-60x60.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="favicons/apple-touch-icon-120x120.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="favicons/apple-touch-icon-76x76.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="favicons/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="favicons/favicon-196x196.png" sizes="196x196" />
+    <link rel="icon" type="image/png" href="favicons/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="favicons/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="favicons/favicon-16x16.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="favicons/favicon-128.png" sizes="128x128" />
+    <meta name="application-name" content="Tucker Chapin"/>
+    <meta name="msapplication-TileColor" content="#424242" />
+    <meta name="msapplication-TileImage" content="favicons/mstile-144x144.png" />
+    <meta name="msapplication-square70x70logo" content="favicons/mstile-70x70.png" />
+    <meta name="msapplication-square150x150logo" content="favicons/mstile-150x150.png" />
+    <meta name="msapplication-wide310x150logo" content="favicons/mstile-310x150.png" />
+    <meta name="msapplication-square310x310logo" content="favicons/mstile-310x310.png" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,500;1,300&display=swap" rel="stylesheet">
+
+    <style>
+      html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,[type="button"],[type="reset"],[type="submit"]{-webkit-appearance:button}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type="button"]:-moz-focusring,[type="reset"]:-moz-focusring,[type="submit"]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type="checkbox"],[type="radio"]{box-sizing:border-box;padding:0}[type="number"]::-webkit-inner-spin-button,[type="number"]::-webkit-outer-spin-button{height:auto}[type="search"]{-webkit-appearance:textfield;outline-offset:-2px}[type="search"]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}template{display:none}[hidden]{display:none}
+
+      :root {
+        --bg-black: #1a1a1a;
+        --app__background: var(--bg-black);
+        --app__color: whitesmoke;
+        --logo__size: 150px;
+        --link__underline: #ababab;
+
+        --contact: whitesmoke;
+
+        --project__title: whitesmoke;
+        --project__description: #ababab;
+      }
+
+      html {
+        height: 100%;
+        background-color: var(--app__background);
+      }
+
+      body {
+        display: grid;
+        grid-template-columns: auto;
+        font-family: Montserrat, sans-serif;
+        background-color: var(--app__background);
+        font-size: 1em;
+      }
+
+      @media (min-width: 1000px) {
+        body {
+          justify-content: center;
+          grid-template-columns: 1000px;
+        }
+      }
+
+      #app {
+        display: grid;
+        grid-template-areas:
+          "title title contacts"
+          "logo projects projects";
+        grid-template-columns: min-content 1fr min-content;
+        grid-template-rows: min-content 1fr;
+        row-gap: 40px;
+        column-gap: 20px;
+        margin-top: 80px;
+        padding: 0 20px;
+        background-color: var(--app__background);
+        color: var(--app__color);
+      }
+
+      #title {
+        grid-area: title;
+        font-size: 2.5em;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      #logo-container {
+        grid-area: logo;
+        position: relative;
+        width: var(--logo__size);
+        height: var(--logo__size);
+        padding: 0 30px;
+      }
+
+        .logo {
+          width: var(--logo__size);
+          height: var(--logo__size);
+          position: absolute;
+          animation-duration: 1s;
+          animation-name: neonflicker;
+          animation-fill-mode: both;
+        }
+
+        .glow {
+          animation-duration: 1s;
+          animation-name: neonglowflicker;
+          animation-fill-mode: both;
+        }
+
+      #contacts {
+        grid-area: contacts;
+        align-self: flex-end;
+        display: grid;
+        grid-template-columns: repeat(5, min-content);
+        column-gap: 10px;
+        align-items: baseline;
+      }
+
+        .contact {
+          font-size: 1.25em;
+          font-weight: 300;
+          color: var(--contact);
+          text-transform: lowercase;
+          text-decoration: none;
+        }
+
+      #projects {
+        grid-area: projects;
+        display: grid;
+        grid-template-columns: 1fr;
+        row-gap: 8px;
+        align-content: flex-start;
+        align-items: baseline;
+      }
+
+      .project {
+
+      }
+
+        .project .title {
+          color: var(--project__title);
+          font-size: 1.25em;
+          text-decoration: none;
+        }
+
+        .project .description {
+          color: var(--project__description);
+          font-weight: 300;
+          font-style: italic;
+        }
+
+      .project .title:hover,
+      .contact:hover {
+        text-decoration: underline;
+        text-decoration-color: var(--link__underline);
+      }
+
+      .project.disabled .title,
+      .project.disabled .title:hover {
+        text-decoration: none;
+        color: var(--link__underline);
+        pointer-events: none;
+        cursor: text;
+      }
+
+      @media (max-width: 800px) {
+        #app {
+          display: grid;
+          grid-template-areas:
+            "title"
+            "contacts"
+            "projects"
+            "logo";
+          grid-template-columns: 1fr;
+          grid-template-rows: repeat(4, min-content);
+          margin-top: 0;
+          row-gap: 20px;
+          padding: 20px;
+        }
+
+        #contacts {
+          justify-self: right;
+        }
+
+        #logo-container {
+          margin-top: 20px;
+          justify-self: center;
+        }
+
+        #projects {
+          row-gap: 10px;
+        }
+
+        .project {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="title">Tucker Chapin</div>
+      <div id="contacts">
+          <a href="/blog" class="contact">blog</a>
+          <a href="mailto:site@tuckerchap.in" class="contact">mail</a>
+          <a href="https://github.com/tuckerchapin" class="contact">github</a>
+          <a href="https://www.linkedin.com/in/tuckerchapin" class="contact">linkedin</a>
+          <a href="https://www.imdb.com/name/nm5847740/" class="contact">imdb</a>
+      </div>
+      <div id="projects">
+          <div class="project">
+            <a class="title " href="https://keebhunter.com/">Keebhunter</a>
+            <span class="description">Find your perfect keyboard</span>
+          </div>
+          <div class="project">
+            <a class="title " href="https://tuckerchap.in/easy-cc-autofill/">Easy CC Autofill</a>
+            <span class="description">Prompt your browser&#x27;s autofill for saved credit cards</span>
+          </div>
+          <div class="project">
+            <a class="title " href="A suite of improvements to the VRV player and experience">BetterVRV</a>
+            <span class="description">https://tuckerchap.in/BetterVRV/</span>
+          </div>
+          <div class="project">
+            <a class="title " href="https://whatseasonisitinhorizon.com/">Forza Horizon Season</a>
+            <span class="description">What season is it in Edinburgh in Forza Horizon 4</span>
+          </div>
+          <div class="project">
+            <a class="title " href="https://hourswithoutyandhi.com/">HoursWithoutYandi</a>
+            <span class="description">How long since we were promised Yandhi</span>
+          </div>
+          <div class="project">
+            <a class="title " href="https://fakealbumart.com">Fake Album Cover Generator</a>
+            <span class="description">Randomly generate a fake album</span>
+          </div>
+          <div class="project">
+            <a class="title disabled" href="http://cleverdoma.in/">Clever Domain</a>
+            <span class="description">Generate a trendy domain name with unusual TLDs</span>
+          </div>
+      </div>
+    </div>
+    <script data-goatcounter="https://tuckerchapin.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  </body>
+</html>
