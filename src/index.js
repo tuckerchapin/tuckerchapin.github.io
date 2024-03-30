@@ -196,6 +196,8 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
   const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
   const preppedFilepath = rawFilepath.replace(openBlockRe, '')
 
+  console.log('all partials', rawFilepath, preppedFilepath)
+
   /* NOTE Ok, time for a hacky solution.
           We want to be able to template the file structure AND the files themselves.
           If we just template the file structure and the files separately, when we template the files
