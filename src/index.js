@@ -210,6 +210,10 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
+  if (rawFilepath.contains('urlencode')) {
+    console.log('post why are there 2x of each of these?', preppedFilepath, combinedTemplate)
+  }
+
   const compiledTemplate = handlebars.compile(combinedTemplate)
   // what should we use as the partial's name?
   handlebars.registerPartial(rawFilepath, compiledTemplate)
@@ -225,7 +229,10 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
   if (!rawFilepath.toLowerCase().endsWith('.hbs')) Array.from(
     compiledTemplate(templateData)
     .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
-  ).forEach(match => outputFiles.push({ ...match.groups }))
+  ).forEach(match => {
+    if (rawFilepath.contains('urlencode')) console.log('producing', Object.keys(match.groups.filepath));
+    outputFiles.push({ ...match.groups })
+  })
 })
 
 console.log('all output files:', outputFiles.map(o => o.filepath))
