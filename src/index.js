@@ -210,7 +210,7 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
-  if (rawFilepath.contains('urlencode')) {
+  if (rawFilepath.includes('urlencode')) {
     console.log('post why are there 2x of each of these?', preppedFilepath, combinedTemplate)
   }
 
@@ -230,7 +230,7 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
     compiledTemplate(templateData)
     .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
   ).forEach(match => {
-    if (rawFilepath.contains('urlencode')) console.log('producing', Object.keys(match.groups.filepath));
+    if (rawFilepath.includes('urlencode')) console.log('producing', Object.keys(match.groups.filepath));
     outputFiles.push({ ...match.groups })
   })
 })
