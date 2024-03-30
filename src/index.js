@@ -13,9 +13,9 @@ import slugify from 'slugify'
 import { marked } from 'marked'
 
 const config = {
-  templateDir: `template`,
-  issuesDir: `issues`,
-  publicDir: `public`,
+  TEMPLATE_DIR: `template`,
+  ISSUES_DIR: `issues`,
+  PUBLIC_DIR: `public`,
   handlebarsHelpers: {
     helperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
@@ -130,7 +130,7 @@ Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars.regi
 marked.use(config.marked)
 
 // get list of issue files
-const issueJsonFilenames = await fs.readdir(path.resolve(config.issuesDir)).catch(e => {
+const issueJsonFilenames = await fs.readdir(path.resolve(config.ISSUES_DIR)).catch(e => {
   core.warning(`Cannot read issues directory`, { title: github.job?.name })
   console.error(e)
   return []
@@ -141,7 +141,7 @@ const templateData = config.staticData
 // read issue files
 const issueFiles = issueJsonFilenames
   .filter((filename) => filename.endsWith('.json'))
-  .map(filename => fs.readFile(path.resolve(config.issuesDir, filename), 'utf8'))
+  .map(filename => fs.readFile(path.resolve(config.ISSUES_DIR, filename), 'utf8'))
 
 // parse issue files
 templateData.issues =
@@ -171,12 +171,10 @@ const walkFs = async (dir, relative=false) => (
 ).flat(Infinity)
 
 // discover site templates
-const rawFilepaths = await walkFs(config.templateDir, config.templateDir).catch(() => {
-  core.setFailed(`Cannot read templates directory '${config.templateDir}'`)
+const rawFilepaths = await walkFs(config.TEMPLATE_DIR, config.TEMPLATE_DIR).catch(() => {
+  core.setFailed(`Cannot read templates directory '${config.TEMPLATE_DIR}'`)
   return []
 })
-
-console.log('all filepaths:', rawFilepaths)
 
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
@@ -188,15 +186,13 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 */
 // compile the templates and register them all as partials
 const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath) => {
-  const template = await fs.readFile(path.resolve(config.templateDir, rawFilepath), 'utf8')
+  const template = await fs.readFile(path.resolve(config.TEMPLATE_DIR, rawFilepath), 'utf8')
 
   /* NOTE because we can't have / in a filename, so when using blocks in filenames we only have opening tags
           this moves opening tags to the start of the filepath and adds closing tags to the end
   */
   const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
   const preppedFilepath = rawFilepath.replace(openBlockRe, '')
-
-  console.log('all partials', rawFilepath, preppedFilepath)
 
   /* NOTE Ok, time for a hacky solution.
           We want to be able to template the file structure AND the files themselves.
@@ -209,33 +205,35 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     templateBlocks.map(b => `{{#${b[1]} ${b[2]}}}`).join()
     + `<%%%%>${preppedFilepath}<%%%%>${template}<%%%%>`
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
-
-  if (rawFilepath.includes('urlencode')) {
-    console.log('post why are there 2x of each of these?', preppedFilepath, combinedTemplate)
+  try {
+    const compiledTemplate = handlebars.compile(combinedTemplate)
+    // NOTE partials only template on the content, not the path, limitation?
+    handlebars.registerPartial(rawFilepath, template)
+    return [rawFilepath, compiledTemplate]
+  } catch (e) {
+    core.setFailed(`Error compiling template '${rawFilepath}': {e.message}`)
+    console.error(e)
   }
-
-  const compiledTemplate = handlebars.compile(combinedTemplate)
-  // what should we use as the partial's name?
-  handlebars.registerPartial(rawFilepath, compiledTemplate)
-  return [rawFilepath, compiledTemplate]
 }))
 
 const outputFiles = []
 compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
   /* We compile and evaluate the template that includes the filepaths and directives as well as the file content.
      Then we split this back apart into potentially more than one file and write that out.
-     Filepaths ending in .hbs are not rendered, only compiled as as template/partial
+     Files/directories that start with '__' are not rendered, so use these for internal partials
   */
-  if (!rawFilepath.toLowerCase().endsWith('.hbs')) Array.from(
-    compiledTemplate(templateData)
-    .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
-  ).forEach(match => {
-    if (rawFilepath.includes('urlencode')) console.log('producing', Object.keys(match.groups.filepath));
-    outputFiles.push({ ...match.groups })
-  })
+  try {
+    if (!rawFilepath.split(path.sep).some(s => s.startsWith('__'))) {
+      Array.from(
+        compiledTemplate(templateData)
+        .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
+      ).forEach(match => outputFiles.push({ ...match.groups }))
+    }
+  } catch (e) {
+    core.setFailed(`Error rendering '${rawFilepath}': ${e.message}`)
+    throw e
+  }
 })
-
-console.log('all output files:', outputFiles.map(o => o.filepath))
 
 // default directory for upload-pages-artifact, why not
 const OUTPUT_DIR = `_site`
@@ -248,4 +246,4 @@ outputFiles.forEach(async ({ filepath, content }) => {
 })
 
 // copy public files to output directory
-await fs.cp(path.resolve(config.publicDir), path.resolve(OUTPUT_DIR), { recursive: true })
+await fs.cp(path.resolve(config.PUBLIC_DIR), path.resolve(OUTPUT_DIR), { recursive: true })

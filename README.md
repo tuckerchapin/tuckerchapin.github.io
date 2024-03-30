@@ -19,11 +19,11 @@ files as tempaltes https://stackoverflow.com/questions/12014547/how-do-i-precomp
 - [ ] lock out non-posting users?
 - [ ] private?
 - [X] json -> slug.html -> templating engine and releasing?
-- [ ] closed issues get published
-- [ ] open issues are in "draft" and don’t get published
+- [X] closed issues get published
+- [X] open issues are in "draft" and don’t get published
 - [X] need to create a blog template
-- [ ] don’t mention issues in the syncing, creates clutter on the issue thread
-- [ ] open issues are "drafts" closed issues are publishable
+- [X] don’t mention issues in the syncing, creates clutter on the issue thread
+- [X] open issues are "drafts" closed issues are publishable
 - [ ] add reactions to the post, fork utterances?
 - [ ] eventually figure out how to fork
 - [X] use ncc to bundle deps?
