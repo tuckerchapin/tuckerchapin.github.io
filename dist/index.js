@@ -37661,15 +37661,16 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
   const compiledTemplate = handlebars__WEBPACK_IMPORTED_MODULE_3___default().compile(combinedTemplate)
   // what should we use as the partial's name?
   handlebars__WEBPACK_IMPORTED_MODULE_3___default().registerPartial(rawFilepath, compiledTemplate)
-  return compiledTemplate
+  return [rawFilepath, compiledTemplate]
 }))
 
 const outputFiles = []
-compiledTemplates.forEach((compiledTemplate) => {
+compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
   /* We compile and evaluate the template that includes the filepaths and directives as well as the file content.
      Then we split this back apart into potentially more than one file and write that out.
+     Filepaths ending in .hbs are not rendered, only compiled as as template/partial
   */
-  Array.from(
+  if (!rawFilepath.toLowerCase().endsWith('.hbs')) Array.from(
     compiledTemplate(templateData)
     .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
   ).forEach(match => outputFiles.push({ ...match.groups }))
