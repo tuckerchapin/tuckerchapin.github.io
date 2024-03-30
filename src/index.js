@@ -17,17 +17,42 @@ const config = {
   ISSUES_DIR: `issues`,
   PUBLIC_DIR: `public`,
   handlebarsHelpers: {
+    // essential helpers
     helperMissing: (...args) => {
-      // TODO optionally fail the task on failed handlebar evaluation
-      // why tf is handlebars so poorly documented? isn't this like widley used?
-      console.error(`missing helper`, JSON.stringify(args))
+      console.error(`missing helper`, JSON.stringify(args)) // full context in the logs
       core.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
+      // TODO throw error?
     },
     blockHelperMissing: (...args) => {
-      // TODO optionally fail the task on failed handlebar evaluation
-      console.error(`missing block helper`, JSON.stringify(args))
+      console.error(`missing block helper`, JSON.stringify(args)) // full context in the logs
       core.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
+      // TODO throw error?
     },
+    resolve: (...args) => {
+      /*
+        This resolves partial references using this handler so that you can import files with arbitrary paths
+      */
+      const [context, pathToResolve ] = args.reverse()
+      const templatePath = context.data.root.__templatePath
+      const errorMessage = `Couldn't resolve partial '${pathToResolve}' from '${templatePath}`
+
+      if (!pathToResolve) {
+        core.setFailed(errorMessage)
+        throw Error(errorMessage)
+        // TODO throw error?
+      }
+
+      // assemble the relative path for the reference based on the rendering template's path
+      const targetPartialKey = path.join(path.dirname(templatePath), pathToResolve)
+      if (targetPartialKey in handlebars.partials) {
+        return targetPartialKey
+      }
+
+      // if the resolved path isn't found, just passthrough the raw input
+      return pathToResolve
+    },
+
+    // general helpers
     urlencode: encodeURIComponent, // TODO should this be safe string'd?
     slugify: value => slugify(value, {
       lower: true,
@@ -36,10 +61,10 @@ const config = {
     marked: marked.parse,
     'inline-marked': marked.parseInline,
     length: value => value?.length || 0,
-    'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`)
+    'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
   },
   marked: {},
-  staticData: {
+  templateData: {
     projects: [
       {
         label: `Keebhunter`,
@@ -132,11 +157,11 @@ marked.use(config.marked)
 // get list of issue files
 const issueJsonFilenames = await fs.readdir(path.resolve(config.ISSUES_DIR)).catch(e => {
   core.warning(`Cannot read issues directory`, { title: github.job?.name })
-  console.error(e)
+  console.error(e) // full context in the logs
   return []
 })
 
-const templateData = config.staticData
+const templateData = config.templateData
 
 // read issue files
 const issueFiles = issueJsonFilenames
@@ -148,7 +173,7 @@ templateData.issues =
   (await Promise.all(issueFiles)
     .catch(e => {
       core.warning(`Cannot read issue files`, { title: github.job?.name })
-      console.error(e)
+      console.error(e) // full context in the logs
       return []
     }))
     .map(file => JSON.parse(file))
@@ -179,10 +204,9 @@ const rawFilepaths = await walkFs(config.TEMPLATE_DIR, config.TEMPLATE_DIR).catc
 // matches handlebar opening tags in the filepaths
 const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 
-/* TODO this whole section is kinda nasty: the block regexes, string interps, etc.
-        could use a second pass for refinement and robustness
-   TODO BIG FUCKING FAT TODO HERE: support partials in the filenames... that could get mindfucky as all hell, but also could be very powerful
-        not sure how much use there is for that, but intriguing
+/* TODO this section is a little nasty
+        moving the opening tags, adding closing tags, combining the url and the content, the delimiter, etc.
+        it works well so far, but I foresee it being a pain to maintain or causing weird edge cases
 */
 // compile the templates and register them all as partials
 const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath) => {
@@ -207,8 +231,10 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
     + templateBlocks.map(b => `{{/${b[1]}}}`).join()
 
   const compiledTemplate = handlebars.compile(combinedTemplate)
+
   // NOTE partials only template on the content, not the path, limitation?
   handlebars.registerPartial(rawFilepath, template)
+
   return [rawFilepath, compiledTemplate]
 }))
 
@@ -221,13 +247,13 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
   try {
     if (!rawFilepath.split(path.sep).some(s => s.startsWith(`__`))) {
       Array.from(
-        compiledTemplate(templateData)
+        compiledTemplate({ ...templateData, __templatePath: rawFilepath})
         .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
       ).forEach(match => outputFiles.push({ ...match.groups }))
     }
   } catch (e) {
     core.setFailed(`Error rendering '${rawFilepath}': ${e.message}`)
-    throw e
+    throw e // TODO better to have this or let it continue?
   }
 })
 
@@ -244,5 +270,6 @@ outputFiles.forEach(async ({ filepath, content }) => {
 // copy public files to output directory
 await fs.cp(path.resolve(config.PUBLIC_DIR), path.resolve(OUTPUT_DIR), { recursive: true })
 
+// TODO if above we let it continue should update the summary for failure
 core.summary.addRaw(`Rendered ${outputFiles.length} files for deployment:`, true)
 core.summary.addList(outputFiles.map(o => o.filepath), true)
