@@ -6,7 +6,7 @@
   "author": "Tucker Chapin <tuckerchapin@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev-build": "rm -rf issues _site && mkdir -p issues && git --work-tree=issues checkout issues -- . && node src/index.js && rm -rf issues",
+    "dev-build": "rm -rf issues _site && mkdir -p issues && git --work-tree=issues checkout issues -- . && node src/index.js",
     "build": "node dist/index.js"
   },
   "dependencies": {

@@ -41574,12 +41574,12 @@ const config = {
     helperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
       // why tf is handlebars so poorly documented? isn't this like widley used?
-      console.error('missing helper', JSON.stringify(args))
+      console.error(`missing helper`, JSON.stringify(args))
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
     },
     blockHelperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
-      console.error('missing block helper', JSON.stringify(args))
+      console.error(`missing block helper`, JSON.stringify(args))
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
     },
     urlencode: encodeURIComponent, // TODO should this be safe string'd?
@@ -41590,7 +41590,7 @@ const config = {
     marked: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parse */ .TU.parse,
     'inline-marked': marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parseInline */ .TU.parseInline,
     length: value => value?.length || 0,
-    'format-date': dateString => new Date(dateString).toLocaleDateString('en-US')
+    'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`)
   },
   marked: {},
   staticData: {
@@ -41606,9 +41606,9 @@ const config = {
         url: `https://tuckerchap.in/easy-cc-autofill/`
       },
       {
-        label: 'BetterVRV',
-        description: 'https://tuckerchap.in/BetterVRV/',
-        url: 'A suite of improvements to the VRV player and experience'
+        label: `BetterVRV`,
+        description: `https://tuckerchap.in/BetterVRV/`,
+        url: `A suite of improvements to the VRV player and experience`
       },
       {
         label: `Forza Horizon Season`,
@@ -41694,8 +41694,8 @@ const templateData = config.staticData
 
 // read issue files
 const issueFiles = issueJsonFilenames
-  .filter((filename) => filename.endsWith('.json'))
-  .map(filename => fs_promises__WEBPACK_IMPORTED_MODULE_0__.readFile(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.ISSUES_DIR, filename), 'utf8'))
+  .filter((filename) => filename.endsWith(`.json`))
+  .map(filename => fs_promises__WEBPACK_IMPORTED_MODULE_0__.readFile(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.ISSUES_DIR, filename), `utf8`))
 
 // parse issue files
 templateData.issues =
@@ -41740,13 +41740,13 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 */
 // compile the templates and register them all as partials
 const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath) => {
-  const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0__.readFile(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.TEMPLATE_DIR, rawFilepath), 'utf8')
+  const template = await fs_promises__WEBPACK_IMPORTED_MODULE_0__.readFile(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.TEMPLATE_DIR, rawFilepath), `utf8`)
 
   /* NOTE because we can't have / in a filename, so when using blocks in filenames we only have opening tags
           this moves opening tags to the start of the filepath and adds closing tags to the end
   */
   const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
-  const preppedFilepath = rawFilepath.replace(openBlockRe, '')
+  const preppedFilepath = rawFilepath.replace(openBlockRe, ``)
 
   /* NOTE Ok, time for a hacky solution.
           We want to be able to template the file structure AND the files themselves.
@@ -41773,7 +41773,7 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
      Files/directories that start with '__' are not rendered, so use these for internal partials
   */
   try {
-    if (!rawFilepath.split(path__WEBPACK_IMPORTED_MODULE_4__.sep).some(s => s.startsWith('__'))) {
+    if (!rawFilepath.split(path__WEBPACK_IMPORTED_MODULE_4__.sep).some(s => s.startsWith(`__`))) {
       Array.from(
         compiledTemplate(templateData)
         .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
@@ -41786,17 +41786,20 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
 })
 
 // default directory for upload-pages-artifact, why not
-const OUTPUT_DIR = `_site`
+const OUTPUT_DIR = (/* unused pure expression or super */ null && (`_site`))
 
 // write out the resulting compiled files
 outputFiles.forEach(async ({ filepath, content }) => {
-  filepath = path__WEBPACK_IMPORTED_MODULE_4__.resolve(OUTPUT_DIR, filepath)
+  filepath = __nccwpck_require__.ab + "_site/" + filepath
   await fs_promises__WEBPACK_IMPORTED_MODULE_0__.mkdir(path__WEBPACK_IMPORTED_MODULE_4__.dirname(filepath), { recursive: true })
   await fs_promises__WEBPACK_IMPORTED_MODULE_0__.writeFile(filepath, content)
 })
 
 // copy public files to output directory
-await fs_promises__WEBPACK_IMPORTED_MODULE_0__.cp(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.PUBLIC_DIR), path__WEBPACK_IMPORTED_MODULE_4__.resolve(OUTPUT_DIR), { recursive: true })
+await fs_promises__WEBPACK_IMPORTED_MODULE_0__.cp(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.PUBLIC_DIR), __nccwpck_require__.ab + "_site", { recursive: true })
+
+_actions_core__WEBPACK_IMPORTED_MODULE_1__.summary.addRaw(`Rendered ${outputFiles.length} files for deployment:`, true)
+_actions_core__WEBPACK_IMPORTED_MODULE_1__.summary.addList(outputFiles.map(o => o.filepath), true)
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
 

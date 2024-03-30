@@ -20,12 +20,12 @@ const config = {
     helperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
       // why tf is handlebars so poorly documented? isn't this like widley used?
-      console.error('missing helper', JSON.stringify(args))
+      console.error(`missing helper`, JSON.stringify(args))
       core.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
     },
     blockHelperMissing: (...args) => {
       // TODO optionally fail the task on failed handlebar evaluation
-      console.error('missing block helper', JSON.stringify(args))
+      console.error(`missing block helper`, JSON.stringify(args))
       core.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
     },
     urlencode: encodeURIComponent, // TODO should this be safe string'd?
@@ -36,7 +36,7 @@ const config = {
     marked: marked.parse,
     'inline-marked': marked.parseInline,
     length: value => value?.length || 0,
-    'format-date': dateString => new Date(dateString).toLocaleDateString('en-US')
+    'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`)
   },
   marked: {},
   staticData: {
@@ -52,9 +52,9 @@ const config = {
         url: `https://tuckerchap.in/easy-cc-autofill/`
       },
       {
-        label: 'BetterVRV',
-        description: 'https://tuckerchap.in/BetterVRV/',
-        url: 'A suite of improvements to the VRV player and experience'
+        label: `BetterVRV`,
+        description: `https://tuckerchap.in/BetterVRV/`,
+        url: `A suite of improvements to the VRV player and experience`
       },
       {
         label: `Forza Horizon Season`,
@@ -140,8 +140,8 @@ const templateData = config.staticData
 
 // read issue files
 const issueFiles = issueJsonFilenames
-  .filter((filename) => filename.endsWith('.json'))
-  .map(filename => fs.readFile(path.resolve(config.ISSUES_DIR, filename), 'utf8'))
+  .filter((filename) => filename.endsWith(`.json`))
+  .map(filename => fs.readFile(path.resolve(config.ISSUES_DIR, filename), `utf8`))
 
 // parse issue files
 templateData.issues =
@@ -186,13 +186,13 @@ const openBlockRe = /\{\{#(\w+)\s*(.*?)\}\}/g
 */
 // compile the templates and register them all as partials
 const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath) => {
-  const template = await fs.readFile(path.resolve(config.TEMPLATE_DIR, rawFilepath), 'utf8')
+  const template = await fs.readFile(path.resolve(config.TEMPLATE_DIR, rawFilepath), `utf8`)
 
   /* NOTE because we can't have / in a filename, so when using blocks in filenames we only have opening tags
           this moves opening tags to the start of the filepath and adds closing tags to the end
   */
   const templateBlocks = Array.from(rawFilepath.matchAll(openBlockRe))
-  const preppedFilepath = rawFilepath.replace(openBlockRe, '')
+  const preppedFilepath = rawFilepath.replace(openBlockRe, ``)
 
   /* NOTE Ok, time for a hacky solution.
           We want to be able to template the file structure AND the files themselves.
@@ -219,7 +219,7 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
      Files/directories that start with '__' are not rendered, so use these for internal partials
   */
   try {
-    if (!rawFilepath.split(path.sep).some(s => s.startsWith('__'))) {
+    if (!rawFilepath.split(path.sep).some(s => s.startsWith(`__`))) {
       Array.from(
         compiledTemplate(templateData)
         .matchAll(/<%%%%>(?<filepath>(?:\s|.)*?)<%%%%>(?<content>(?:\s|.)*?)<%%%%>/g)
@@ -243,3 +243,6 @@ outputFiles.forEach(async ({ filepath, content }) => {
 
 // copy public files to output directory
 await fs.cp(path.resolve(config.PUBLIC_DIR), path.resolve(OUTPUT_DIR), { recursive: true })
+
+core.summary.addRaw(`Rendered ${outputFiles.length} files for deployment:`, true)
+core.summary.addList(outputFiles.map(o => o.filepath), true)
