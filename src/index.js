@@ -257,6 +257,8 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
   }
 })
 
+core.notice(`Rendered ${outputFiles.length} files`)
+
 // default directory for upload-pages-artifact, why not
 const OUTPUT_DIR = `_site`
 
@@ -273,6 +275,5 @@ await fs.cp(path.resolve(config.PUBLIC_DIR), path.resolve(OUTPUT_DIR), { recursi
 // TODO if above we let it continue should update the summary for failure
 // https://github.com/actions/toolkit/blob/main/packages/core/README.md
 await core.summary
-  .addRaw(`Rendered ${outputFiles.length} files for deployment:`, true)
-  .addList(outputFiles.map(o => o.filepath), true)
+  .addList(outputFiles.map(o => o.filepath).sort(), true)
   .write()

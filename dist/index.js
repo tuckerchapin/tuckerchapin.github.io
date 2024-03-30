@@ -37705,6 +37705,8 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
   }
 })
 
+_actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(`Rendered ${outputFiles.length} files`)
+
 // default directory for upload-pages-artifact, why not
 const OUTPUT_DIR = `_site`
 
@@ -37720,8 +37722,7 @@ await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().cp(path__WEBPACK_IMPORT
 
 // TODO if above we let it continue should update the summary for failure
 // https://github.com/actions/toolkit/blob/main/packages/core/README.md
-await _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary.addRaw(`Rendered ${outputFiles.length} files for deployment:`, true)
-  .addList(outputFiles.map(o => o.filepath), true)
+await _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary.addList(outputFiles.map(o => o.filepath).sort(), true)
   .write()
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
