@@ -37719,6 +37719,7 @@ outputFiles.forEach(async ({ filepath, content }) => {
 await fs_promises__WEBPACK_IMPORTED_MODULE_0___default().cp(path__WEBPACK_IMPORTED_MODULE_4___default().resolve(config.PUBLIC_DIR), path__WEBPACK_IMPORTED_MODULE_4___default().resolve(OUTPUT_DIR), { recursive: true })
 
 // TODO if above we let it continue should update the summary for failure
+// https://github.com/actions/toolkit/blob/main/packages/core/README.md
 _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary.addRaw(`Rendered ${outputFiles.length} files for deployment:`, true)
 _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary.addList(outputFiles.map(o => o.filepath), true)
 __webpack_async_result__();

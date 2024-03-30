@@ -271,5 +271,6 @@ outputFiles.forEach(async ({ filepath, content }) => {
 await fs.cp(path.resolve(config.PUBLIC_DIR), path.resolve(OUTPUT_DIR), { recursive: true })
 
 // TODO if above we let it continue should update the summary for failure
+// https://github.com/actions/toolkit/blob/main/packages/core/README.md
 core.summary.addRaw(`Rendered ${outputFiles.length} files for deployment:`, true)
 core.summary.addList(outputFiles.map(o => o.filepath), true)
