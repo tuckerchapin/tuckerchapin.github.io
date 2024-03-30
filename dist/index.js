@@ -41786,17 +41786,17 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
 })
 
 // default directory for upload-pages-artifact, why not
-const OUTPUT_DIR = (/* unused pure expression or super */ null && (`_site`))
+const OUTPUT_DIR = `_site`
 
 // write out the resulting compiled files
 outputFiles.forEach(async ({ filepath, content }) => {
-  filepath = __nccwpck_require__.ab + "_site/" + filepath
+  filepath = path__WEBPACK_IMPORTED_MODULE_4__.resolve(OUTPUT_DIR, filepath)
   await fs_promises__WEBPACK_IMPORTED_MODULE_0__.mkdir(path__WEBPACK_IMPORTED_MODULE_4__.dirname(filepath), { recursive: true })
   await fs_promises__WEBPACK_IMPORTED_MODULE_0__.writeFile(filepath, content)
 })
 
 // copy public files to output directory
-await fs_promises__WEBPACK_IMPORTED_MODULE_0__.cp(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.PUBLIC_DIR), __nccwpck_require__.ab + "_site", { recursive: true })
+await fs_promises__WEBPACK_IMPORTED_MODULE_0__.cp(path__WEBPACK_IMPORTED_MODULE_4__.resolve(config.PUBLIC_DIR), path__WEBPACK_IMPORTED_MODULE_4__.resolve(OUTPUT_DIR), { recursive: true })
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
 
