@@ -75,6 +75,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const capitalize = s => s && s[0].toUpperCase() + s.slice(1)
             let changesSummary
             if (context.payload.changes) {
               changesSummary = ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => {
@@ -83,15 +84,15 @@ jobs:
                 return `${a}, ${c}`
               }, '')
             }
-            const message = `${context.payload.action} issue #${context.issue.number}${changesSummary || ''}`
-            core.notice(message)
-
+            const message = `${capitalize(context.payload.action)} issue #${context.issue.number}${changesSummary || ''}`
+            const filename = `issue-${context.issue.number}.json`
             const fs = require('fs')
             if (context.issue.state === 'deleted' || context.issue.state === 'transferred') {
-              fs.unlink(`issue-${context.issue.number}.json`)
-              core.warning(`Deleted issue-${context.issue.number}.json`)
+              fs.unlink(filename)
+              core.warning(message)
             } else {
-              fs.writeFileSync(`issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2))
+              fs.writeFileSync(filename, JSON.stringify(context.payload.issue, null, 2))
+              core.notice(message)
             }
 
             return `Issue sync: message`
