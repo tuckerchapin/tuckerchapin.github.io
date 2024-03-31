@@ -75,6 +75,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            console.log(context)
             const capitalize = s => s && s[0].toUpperCase() + s.slice(1)
             let changesSummary
             if (context.payload.changes) {
