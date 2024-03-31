@@ -29,9 +29,8 @@ const config = {
       // TODO throw error?
     },
     resolve: (...args) => {
-      /*
-        This resolves partial references using this handler so that you can import files with arbitrary paths
-      */
+      // Resolves paths to partials based on the current template's path
+
       const [context, pathToResolve ] = args.reverse()
       const templatePath = context.data.root.__templatePath
       const errorMessage = `Couldn't resolve partial '${pathToResolve}' from '${templatePath}`

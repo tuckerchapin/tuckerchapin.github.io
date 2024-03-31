@@ -43,8 +43,7 @@ jobs:
 
   sync-issues:
     name: Sync issues
-    # TODO hmm what happens if the issue is deleted... how do we get rid of it
-    if: ${{ github.event.issue.state == 'closed' }}
+    if: ${{ github.event.issue.state == 'closed' || github.event.issue.state == 'deleted' }}
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.issue.number }}
@@ -76,18 +75,18 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            require('fs')
-              .writeFileSync(`issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2));
-            // TODO when an issue is deleted, delete it (unsync)
-            let changesSummary = '';
+            const fs = require('fs')
+            if (context.issue.state === 'deleted') fs.unlink(`issue-${context.issue.number}.json`)
+            else fs.writeFileSync(`issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2))
+            let changesSummary
             if (context.payload.changes) {
               changesSummary = ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => {
-                if (i === 0) return c;
-                if (i === arr.length - 1) return `${a} & ${c}`;
-                return `${a}, ${c}`;
+                if (i === 0) return c
+                if (i === arr.length - 1) return `${a} & ${c}`
+                return `${a}, ${c}`
               }, '');
             }
-            return `Issue sync: ${context.payload.action} issue #${context.issue.number}${changesSummary}`;
+            return `Issue sync: ${context.payload.action} issue #${context.issue.number}${changesSummary || ''}`;
           result-encoding: string
 
       - name: Commit and push
@@ -142,7 +141,7 @@ jobs:
     # TODO it's very annoying that we cant access other jobs here
     # like the steps context jobs.build.result == 'success'
     # this condition could use some work
-    if: ${{ !failure() && !cancelled()}}
+    if: ${{ !failure() && !cancelled() }}
 
     runs-on: ubuntu-latest
     permissions:
