@@ -270,12 +270,63 @@ outputFiles.forEach(async ({ filepath, content }) => {
 })
 
 // copy public files to output directory
+const publicFilepaths = await walkFs(config.PUBLIC_DIR, config.PUBLIC_DIR).catch(() => {
+  core.setFailed(`Cannot read public directory '${config.PUBLIC_DIR}'`)
+  return []
+})
 await fs.cp(path.resolve(config.PUBLIC_DIR), path.resolve(OUTPUT_DIR), { recursive: true })
+
+// this is all just to pretty print the resulting files in the output summary
+// takes a list of paths and converts each path chunk to a nested object of files and dirs
+const pathListToHierarchy = (arr) => arr.reduce((a, c) => {
+  const file = path.basename(c)
+  const parts = file === c ? [] : path.dirname(c).split(path.sep)
+
+  let obj = a
+  let i = 0
+  while (i < parts.length) {
+    if (!(parts[i] in obj)) obj[parts[i]] = {}
+    obj = obj[parts[i++]]
+  }
+  obj[file] = {}
+
+  return a
+}, {})
+
+// prints out the file hierarchy without the full path and indented to indicate dir membership
+const prettyPrintNestedObject = (tree, fixedIndent=false, indent=0) => Object
+  .entries(tree)
+  .sort(([k1], [k2]) => k1 < k2 ? -1 : 1)
+  .map(([pathSegment, children], i, a) => {
+    const path = `${fixedIndent ? fixedIndent(indent, i, a) : ' '.repeat(indent)}${pathSegment}`
+    if (Object.keys(children).length === 0) return path
+    const nextIndent = fixedIndent ? indent + 1 : indent + pathSegment.length + 1
+    return `${path}/\n${prettyPrintNestedObject(children, fixedIndent, nextIndent)}`
+  })
+  .join('\n')
+
+const formattedBuildOutput = prettyPrintNestedObject(
+  pathListToHierarchy([
+    ...outputFiles.map(o => o.filepath + `*`),
+    ...publicFilepaths
+  ]),
+  (indent, i, a) => {
+    if (indent > 0) {
+      if (i === a.length - 1) return `${'    '.repeat(indent - 1)}└── `
+      return `${'    '.repeat(indent - 1)}└── `
+    }
+    return ``
+  }
+)
 
 // TODO if above we let it continue should update the summary for failure
 // https://github.com/actions/toolkit/blob/main/packages/core/README.md
 
 await core.summary
   .addRaw(`Build output:`, true)
-  .addList(outputFiles.map(o => o.filepath).sort(), true)
+  .addCodeBlock(formattedBuildOutput, true)
   .write()
+  .catch(e => {
+    core.warning(`Error writing to job summary: ${e.message}`, { title: github.job?.name })
+    console.log(`Build output:\n${formattedBuildOutput}`)
+  })

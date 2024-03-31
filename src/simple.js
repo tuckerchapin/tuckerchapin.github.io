@@ -16,12 +16,14 @@ const files = [
 'blog/index.html',
 'blog/index.html',
 'index.html',
+'zfolder/a.txt',
+'zfolder/x/y/z/b.txt',
 ]
 
 const filePathList = files.sort()
 let fileTree = filePathList.reduce((a, c) => {
-  const parts = path.dirname(c).split(path.sep)
   const file = path.basename(c)
+  const parts = file === c ? [] : path.dirname(c).split(path.sep)
 
   let obj = a
   let i = 0
@@ -29,41 +31,28 @@ let fileTree = filePathList.reduce((a, c) => {
     if (!(parts[i] in obj)) obj[parts[i]] = {}
     obj = obj[parts[i++]]
   }
-  // console.log(a)
   obj[file] = {}
-  // const removeParts = a.prev
-  // console.log(thisParts, baseName)
+
   return a
-  // const sharedParts = []
-
-  // console.log('removeParts', removeParts)
-  // console.log('thisParts', thisParts)
-
-  // let i = 0
-  // while (removeParts[i] && removeParts[i] === thisParts[i]) {
-  //   console.log(i, removeParts[i], thisParts[i])
-  //   sharedParts.push(removeParts[i++])
-  // }
-
-  // console.log('sharedParts', sharedParts)
-
-  // const remainingPath = []
-
-  // ${path.join(...thisParts.slice(i))}/
-
-  // if (sharedParts.length === 0) {
-  //   a.lines.push(`${' '.repeat(path.join(...sharedParts).length - 1)}${baseName}`)
-  //   a.prev = thisParts
-  // } else {
-  //   a.lines.push(`${' '.repeat(path.join(...sharedParts).length - 1)}${baseName}`)
-  //   a.prev = thisParts
-  // }
-  // // for (let i = 0; i < removeParts.length; i++) {
-  // //   if (removeParts[i] !== thisParts[i]) break
-  // //   thisParts.shift()
-  // // }
-
-  // return a
 }, {})
 
-console.log(fileTree)
+const prettyPrintNestedObject = (tree, fixedIndent=false, indent=0) => Object
+  .entries(tree)
+  .sort(([k1], [k2]) => k1 < k2 ? -1 : 1)
+  .map(([pathSegment, children], i, a) => {
+    const path = `${fixedIndent ? fixedIndent(indent, i, a) : ' '.repeat(indent)}${pathSegment}`
+    if (Object.keys(children).length === 0) return path
+    const nextIndent = fixedIndent ? indent + 1 : indent + pathSegment.length + 1
+    return `${path}/\n${stringifyTree(children, fixedIndent, nextIndent)}`
+  })
+  .join('\n')
+
+  // └──
+  // ├──
+console.log(stringifyTree(fileTree, (indent, i, a) => {
+  if (indent > 0) {
+    if (i === a.length - 1) return `${'    '.repeat(indent - 1)}└── `
+    return `${'    '.repeat(indent - 1)}└── `
+  }
+  return ``
+}))
