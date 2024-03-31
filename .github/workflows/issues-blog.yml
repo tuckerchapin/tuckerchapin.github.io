@@ -64,7 +64,7 @@ jobs:
           git config --local user.name "Github Action"
           git commit --allow-empty -m "Initial commit"
           git push -u origin issues
-          echo "::notice title=Created issues branch::No branch found, checked out new orphaned branch."
+          echo "::notice ::No branch found, created issues branch"
 
       # TODO filter out stuff from the blacklist/whitelist
       # delete issues not made by the opener?
@@ -78,6 +78,7 @@ jobs:
             const fs = require('fs')
             if (context.issue.state === 'deleted' || context.issue.state === 'transferred') {
               fs.unlink(`issue-${context.issue.number}.json`)
+              core.warning(`Deleted issue-${context.issue.number}.json`)
             } else {
               fs.writeFileSync(`issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2))
             }
@@ -103,7 +104,7 @@ jobs:
             git push
           else
             echo "changed=false" >> $GITHUB_OUTPUT
-            echo "::warning title=Nothing to commit::Not rebuilding or deploying."
+            echo "::warning ::Nothing to commit, not rebuilding or deploying"
           fi
 
   build:
