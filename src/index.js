@@ -58,8 +58,8 @@ const config = {
       lower: true,
       strict: true
     }),
-    marked: marked.parse,
-    'inline-marked': marked.parseInline,
+    marked: value => value ? marked.parse(value) : value,
+    'inline-marked': value => value ? marked.parseInline(value) : value,
     length: value => value?.length || 0,
     'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
   },

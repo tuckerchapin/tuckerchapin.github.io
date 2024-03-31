@@ -37506,8 +37506,8 @@ const config = {
       lower: true,
       strict: true
     }),
-    marked: marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parse */ .TU.parse,
-    'inline-marked': marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parseInline */ .TU.parseInline,
+    marked: value => value ? marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parse */ .TU.parse(value) : value,
+    'inline-marked': value => value ? marked__WEBPACK_IMPORTED_MODULE_6__/* .marked.parseInline */ .TU.parseInline(value) : value,
     length: value => value?.length || 0,
     'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
   },

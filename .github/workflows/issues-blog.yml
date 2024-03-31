@@ -13,12 +13,6 @@ on:
     types: [opened, edited, deleted, transferred, pinned, unpinned, closed, reopened, assigned, unassigned, labeled, unlabeled, locked, unlocked, milestoned, demilestoned]
   workflow_dispatch:
 
-# TODO happy for this to run concurrently when updating issues
-# but then don't want to build concurrently and instead want to pull again
-# TODO think through the concurrency
-
-# TODO fancier annotations/messaging, like how gh pages deploy adds the url
-
 jobs:
   # TODO commented out for now
   # https://docs.github.com/en/rest/collaborators/collaborators?apiVersion=2022-11-28#list-repository-collaborators
