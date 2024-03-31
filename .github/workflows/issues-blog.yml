@@ -75,6 +75,17 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            let changesSummary
+            if (context.payload.changes) {
+              changesSummary = ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => {
+                if (i === 0) return c
+                if (i === arr.length - 1) return `${a} & ${c}`
+                return `${a}, ${c}`
+              }, '')
+            }
+            const message = `${context.payload.action} issue #${context.issue.number}${changesSummary || ''}`
+            core.notice(message)
+
             const fs = require('fs')
             if (context.issue.state === 'deleted' || context.issue.state === 'transferred') {
               fs.unlink(`issue-${context.issue.number}.json`)
@@ -82,19 +93,13 @@ jobs:
             } else {
               fs.writeFileSync(`issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2))
             }
-            let changesSummary
-            if (context.payload.changes) {
-              changesSummary = ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => {
-                if (i === 0) return c
-                if (i === arr.length - 1) return `${a} & ${c}`
-                return `${a}, ${c}`
-              }, '');
-            }
-            return `Issue sync: ${context.payload.action} issue #${context.issue.number}${changesSummary || ''}`;
+
+            return `Issue sync: message`
           result-encoding: string
 
       - name: Commit and push
         run: |
+          echo $(git diff)
           if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
             git config --local user.email "action@github.com"
             git config --local user.name "Github Action"
