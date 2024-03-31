@@ -75,7 +75,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log(context)
             const capitalize = s => s && s[0].toUpperCase() + s.slice(1)
             let changesSummary
             if (context.payload.changes) {
@@ -88,7 +87,7 @@ jobs:
             const message = `${capitalize(context.payload.action)} issue #${context.issue.number}${changesSummary || ''}`
             const filename = `issue-${context.issue.number}.json`
             const fs = require('fs')
-            if (context.issue.state === 'deleted' || context.issue.state === 'transferred') {
+            if (context.payload.action === 'deleted' || context.payload.action === 'transferred') {
               fs.unlink(filename)
               core.warning(message)
             } else {
