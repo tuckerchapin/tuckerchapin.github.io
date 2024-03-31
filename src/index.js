@@ -319,12 +319,9 @@ const formattedBuildOutput = prettyPrintNestedObject(
   }
 )
 
-// TODO if above we let it continue should update the summary for failure
-// https://github.com/actions/toolkit/blob/main/packages/core/README.md
-
 await core.summary
-  .addRaw(`Build output:`, true)
-  .addCodeBlock(formattedBuildOutput, true)
+  // .addRaw(`Build output:`, true)
+  .addCodeBlock(formattedBuildOutput)
   .write()
   .catch(e => {
     core.warning(`Error writing to job summary: ${e.message}`, { title: github.job?.name })

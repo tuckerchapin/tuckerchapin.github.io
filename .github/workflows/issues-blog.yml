@@ -16,9 +16,6 @@ on:
 # TODO happy for this to run concurrently when updating issues
 # but then don't want to build concurrently and instead want to pull again
 # TODO think through the concurrency
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.issue.number }}
-  cancel-in-progress: true
 
 # TODO fancier annotations/messaging, like how gh pages deploy adds the url
 
@@ -55,6 +52,9 @@ jobs:
     # TODO hmm what happens if the issue is deleted... how do we get rid of it
     if: ${{ github.event.issue.state == 'closed' }}
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.issue.number }}
+      cancel-in-progress: true
     steps:
       - name: Checkout issues branch
         id: checkout-issues
@@ -111,6 +111,9 @@ jobs:
           fi
 
   build:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     name: Build static site
     # if sync doesn't run, fine, if sync does run, we need it
     needs: sync-issues
@@ -136,6 +139,9 @@ jobs:
         uses: actions/upload-pages-artifact@v3
 
   deploy:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     name: Deploy to Github Pages
 
     needs: build

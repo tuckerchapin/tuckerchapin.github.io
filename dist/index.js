@@ -37767,11 +37767,7 @@ const formattedBuildOutput = prettyPrintNestedObject(
   }
 )
 
-// TODO if above we let it continue should update the summary for failure
-// https://github.com/actions/toolkit/blob/main/packages/core/README.md
-
-await _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary.addRaw(`Build output:`, true)
-  .addCodeBlock(formattedBuildOutput, true)
+await _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary.addCodeBlock(formattedBuildOutput)
   .write()
   .catch(e => {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Error writing to job summary: ${e.message}`, { title: _actions_github__WEBPACK_IMPORTED_MODULE_2__.job?.name })
