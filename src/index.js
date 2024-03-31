@@ -319,7 +319,6 @@ const formattedBuildOutput = prettyPrintNestedObject(
 )
 
 await core.summary
-  // .addRaw(`Build output:`, true)
   .addCodeBlock(formattedBuildOutput)
   .write()
   .catch(e => {

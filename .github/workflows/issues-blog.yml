@@ -3,7 +3,6 @@ name: Issues Blog
 # run-name:
 
 on:
-  # TODO consider pushes on other branches or limiting to pushes on specific branches?
   push:
     paths:
       - dist/**
