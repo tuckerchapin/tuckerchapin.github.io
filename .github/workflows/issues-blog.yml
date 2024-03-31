@@ -43,7 +43,7 @@ jobs:
 
   sync-issues:
     name: Sync issues
-    if: ${{ github.event.issue.state == 'closed' || github.event.issue.state == 'deleted' }}
+    if: ${{ github.event.issue.state == 'closed' || github.event.issue.state == 'deleted' || github.event.issue.state == 'transferred' }}
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.issue.number }}
@@ -76,8 +76,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs')
-            if (context.issue.state === 'deleted') fs.unlink(`issue-${context.issue.number}.json`)
-            else fs.writeFileSync(`issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2))
+            if (context.issue.state === 'deleted' || context.issue.state === 'transferred') {
+              fs.unlink(`issue-${context.issue.number}.json`)
+            } else {
+              fs.writeFileSync(`issue-${context.issue.number}.json`, JSON.stringify(context.payload.issue, null, 2))
+            }
             let changesSummary
             if (context.payload.changes) {
               changesSummary = ' ' + Object.keys(context.payload.changes).reduce((a, c, i, arr) => {
