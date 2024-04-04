@@ -21,11 +21,11 @@ export const makeConfig = (handlebars) => ({
     // essential helpers
     helperMissing: (...args) => {
       console.error(`missing helper`, JSON.stringify(args)) // full context in the logs
-      core.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
+      core.setFailed(`Missing Handlebars helper ${args.reduce((a, c) => a?.name || c?.name, {})} in ${args.reverse()[0].data.root.__templatePath}`)
     },
     blockHelperMissing: (...args) => {
       console.error(`missing block helper`, JSON.stringify(args)) // full context in the logs
-      core.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
+      core.setFailed(`Missing Handlebars block helper ${args.reduce((a, c) => a?.name || c?.name, {})} in ${args.reverse()[0].data.root.__templatePath}`)
     },
     resolve: (...args) => {
       // Resolves paths to partials based on the current template's path

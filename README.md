@@ -6,7 +6,7 @@ ok so the big todo:
 - [X] figure out how to template files into each other as partials
   - [X] is there a way to register a partial resolver?
 - [ ] figure out how to support external configs, both of static json and custom helpers for extensions
-
+- [ ] null values cause issues, annoying
 
 - [X] open issue
     - [X] write markdown post in body
