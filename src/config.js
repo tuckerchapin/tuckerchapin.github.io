@@ -1,22 +1,20 @@
 import path from 'path'
-// TODO make this more like a normal config where it's overrideable/zippable with a default
-// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
-// TODO move config into separate file and support stuff
-// import config from '../blog-config.js'
 import slugify from 'slugify'
 import { marked } from 'marked'
 import * as core from '@actions/core'
 
-export const DEFAULT_CONFIG = {
+// TODO need to figure out how to make this publishable
+// breaking out this config is a big part of that
+
+// TODO marked extensions
+// https://marked.js.org/using_pro#use
+// marked.use(config.marked)
+
+export const makeConfig = (handlebars) => ({
   TEMPLATE_DIR: `template`,
   ISSUES_DIR: `issues`,
   PUBLIC_DIR: `public`,
   BUILD_DIR: `_site`,
-  templateData: {},
-}
-
-export const makeConfig = (handlebars) => ({
-  ...DEFAULT_CONFIG,
   handlebarsHelpers: {
     // essential helpers
     helperMissing: (...args) => {
@@ -48,7 +46,7 @@ export const makeConfig = (handlebars) => ({
     },
 
     // general helpers
-    urlencode: encodeURIComponent, // TODO should this be safe string'd?
+    urlencode: encodeURIComponent,
     slugify: value => slugify(value, {
       lower: true,
       strict: true
@@ -138,8 +136,3 @@ export const makeConfig = (handlebars) => ({
     ]
   },
 })
-
-// register marked extensions
-// TODO do we need to do this? or should this be externalized?
-// https://marked.js.org/using_pro#use
-// marked.use(config.marked)

@@ -37437,8 +37437,6 @@ __nccwpck_require__.d(__webpack_exports__, {
   "t": () => (/* binding */ makeConfig)
 });
 
-// UNUSED EXPORTS: DEFAULT_CONFIG
-
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(1017);
 var external_path_default = /*#__PURE__*/__nccwpck_require__.n(external_path_);
@@ -39881,24 +39879,22 @@ const lexer = _Lexer.lex;
 var core = __nccwpck_require__(3234);
 ;// CONCATENATED MODULE: ./src/config.js
 
-// TODO make this more like a normal config where it's overrideable/zippable with a default
-// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
-// TODO move config into separate file and support stuff
-// import config from '../blog-config.js'
 
 
 
 
-const DEFAULT_CONFIG = {
+// TODO need to figure out how to make this publishable
+// breaking out this config is a big part of that
+
+// TODO marked extensions
+// https://marked.js.org/using_pro#use
+// marked.use(config.marked)
+
+const makeConfig = (handlebars) => ({
   TEMPLATE_DIR: `template`,
   ISSUES_DIR: `issues`,
   PUBLIC_DIR: `public`,
   BUILD_DIR: `_site`,
-  templateData: {},
-}
-
-const makeConfig = (handlebars) => ({
-  ...DEFAULT_CONFIG,
   handlebarsHelpers: {
     // essential helpers
     helperMissing: (...args) => {
@@ -39930,7 +39926,7 @@ const makeConfig = (handlebars) => ({
     },
 
     // general helpers
-    urlencode: encodeURIComponent, // TODO should this be safe string'd?
+    urlencode: encodeURIComponent,
     slugify: value => slugify_default()(value, {
       lower: true,
       strict: true
@@ -40020,11 +40016,6 @@ const makeConfig = (handlebars) => ({
     ]
   },
 })
-
-// register marked extensions
-// TODO do we need to do this? or should this be externalized?
-// https://marked.js.org/using_pro#use
-// marked.use(config.marked)
 
 /***/ }),
 
