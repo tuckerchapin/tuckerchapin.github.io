@@ -3,155 +3,17 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import handlebars from 'handlebars'
 import path from 'path'
+import {
+  walkFs,
+  pathListToHierarchy,
+  prettyPrintNestedObject,
+} from './utils.js'
+import { makeConfig } from './config.js'
 
-/*=============================================*/
-// TODO make this more like a normal config where it's overrideable/zippable with a default
-// TODO currently this is getting build in ncc so we need to make it standalone and imported in the workflow
-// TODO move config into separate file and support stuff
-// import config from '../blog-config.js'
-import slugify from 'slugify'
-import { marked } from 'marked'
-
-const config = {
-  TEMPLATE_DIR: `template`,
-  ISSUES_DIR: `issues`,
-  PUBLIC_DIR: `public`,
-  handlebarsHelpers: {
-    // essential helpers
-    helperMissing: (...args) => {
-      console.error(`missing helper`, JSON.stringify(args)) // full context in the logs
-      core.setFailed(`Missing Handlebars helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
-      // TODO throw error?
-    },
-    blockHelperMissing: (...args) => {
-      console.error(`missing block helper`, JSON.stringify(args)) // full context in the logs
-      core.setFailed(`Missing Handlebars block helper: ${args.reduce((a, c) => a?.name || c?.name, {})}`)
-      // TODO throw error?
-    },
-    resolve: (...args) => {
-      // Resolves paths to partials based on the current template's path
-
-      const [context, pathToResolve ] = args.reverse()
-      const templatePath = context.data.root.__templatePath
-      const errorMessage = `Couldn't resolve partial '${pathToResolve}' from '${templatePath}`
-
-      if (!pathToResolve) {
-        core.setFailed(errorMessage)
-        throw Error(errorMessage)
-        // TODO throw error?
-      }
-
-      // assemble the relative path for the reference based on the rendering template's path
-      const targetPartialKey = path.join(path.dirname(templatePath), pathToResolve)
-      if (targetPartialKey in handlebars.partials) {
-        return targetPartialKey
-      }
-
-      // if the resolved path isn't found, just passthrough the raw input
-      return pathToResolve
-    },
-
-    // general helpers
-    urlencode: encodeURIComponent, // TODO should this be safe string'd?
-    slugify: value => slugify(value, {
-      lower: true,
-      strict: true
-    }),
-    marked: value => value ? marked.parse(value) : value,
-    'inline-marked': value => value ? marked.parseInline(value) : value,
-    length: value => value?.length || 0,
-    'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
-  },
-  marked: {},
-  templateData: {
-    projects: [
-      {
-        label: `Keebhunter`,
-        description: `Find your perfect keyboard`,
-        url: `https://keebhunter.com/`
-      },
-      {
-        label: `Easy CC Autofill`,
-        description: `Prompt your browser's autofill for saved credit cards`,
-        url: `https://tuckerchap.in/easy-cc-autofill/`
-      },
-      {
-        label: `BetterVRV`,
-        description: `https://tuckerchap.in/BetterVRV/`,
-        url: `A suite of improvements to the VRV player and experience`
-      },
-      {
-        label: `Forza Horizon Season`,
-        description: `What season is it in Edinburgh in Forza Horizon 4`,
-        url: `https://whatseasonisitinhorizon.com/`
-      },
-      {
-        label: `HoursWithoutYandi`,
-        description: `How long since we were promised Yandhi`,
-        url: `https://hourswithoutyandhi.com/`
-      },
-      {
-        label: `Fake Album Cover Generator`,
-        description: `Randomly generate a fake album`,
-        url: `https://fakealbumart.com`
-      },
-      {
-        label: `Clever Domain`,
-        description: `Generate a trendy domain name with unusual TLDs`,
-        disabled: true,
-        url: `http://cleverdoma.in/`
-      },
-    ],
-    work: [
-      {
-        name: `Staked`,
-        description: `Compound your crypto`,
-        url: `https://staked.us`
-      },
-      {
-        name: `FitMango`,
-        description: `On-demand personalized group training`,
-        url: `http://fitmango.com/`
-      },
-      {
-        name: `SideGuide`,
-        description: `Mobile-optimized campus tours`,
-        url: `https://side.guide`
-      },
-    ],
-    contactLinks: [
-      {
-        label: `blog`,
-        url: `/blog`
-      },
-      {
-        label: `mail`,
-        url: `mailto:site@tuckerchap.in`
-      },
-      {
-        label: `github`,
-        url: `https://github.com/tuckerchapin`
-      },
-      {
-        label: `linkedin`,
-        url: `https://www.linkedin.com/in/tuckerchapin`
-      },
-      {
-        label: `imdb`,
-        url: `https://www.imdb.com/name/nm5847740/`
-      },
-    ]
-  },
-}
-/*=============================================*/
+const config = makeConfig(handlebars)
 
 // register handlebar helpers from config
 Object.entries(config.handlebarsHelpers).forEach(([name, fn]) => handlebars.registerHelper(name, fn))
-
-// register marked extensions
-// TODO do we need to do this? or should this be externalized?
-// https://marked.js.org/using_pro#use
-marked.use(config.marked)
 
 // get list of issue files
 const issueJsonFilenames = await fs.readdir(path.resolve(config.ISSUES_DIR)).catch(e => {
@@ -160,14 +22,13 @@ const issueJsonFilenames = await fs.readdir(path.resolve(config.ISSUES_DIR)).cat
   return []
 })
 
-const templateData = config.templateData
-
 // read issue files
 const issueFiles = issueJsonFilenames
   .filter((filename) => filename.endsWith(`.json`))
   .map(filename => fs.readFile(path.resolve(config.ISSUES_DIR, filename), `utf8`))
 
 // parse issue files
+const templateData = config.templateData
 templateData.issues =
   (await Promise.all(issueFiles)
     .catch(e => {
@@ -180,19 +41,6 @@ templateData.issues =
 
 const publishableIssueLog = `${templateData.issues.length} publishable issue${templateData.issues.length === 1 ? '' : 's'}`
 templateData.issues.length ? core.notice(publishableIssueLog) : core.warning(publishableIssueLog)
-
-const walkFs = async (dir, relative=false) => (
-  await Promise.all(
-    (await fs.readdir(path.resolve(dir)))
-      .map(async (file) => {
-        file = path.resolve(dir, file)
-        const stat = await fs.stat(file)
-        if (stat && stat.isDirectory()) return await walkFs(file, relative)
-        if (relative) return path.relative(relative, file)
-        return file
-      })
-  )
-).flat(Infinity)
 
 // discover site templates
 const rawFilepaths = await walkFs(config.TEMPLATE_DIR, config.TEMPLATE_DIR).catch(() => {
@@ -231,7 +79,7 @@ const compiledTemplates = await Promise.all(rawFilepaths.map(async (rawFilepath)
 
   const compiledTemplate = handlebars.compile(combinedTemplate)
 
-  // NOTE partials only template on the content, not the path, limitation?
+  // NOTE partials only template on their content, not their path, limitation?
   handlebars.registerPartial(rawFilepath, template)
 
   return [rawFilepath, compiledTemplate]
@@ -252,76 +100,50 @@ compiledTemplates.forEach(([ rawFilepath, compiledTemplate ]) => {
     }
   } catch (e) {
     core.setFailed(`Error rendering '${rawFilepath}': ${e.message}`)
-    throw e // TODO better to have this or let it continue?
+    console.error(e) // full context in the logs
   }
 })
 
 core.notice(`Rendered ${outputFiles.length} files`)
 
-// default directory for upload-pages-artifact, why not
-const OUTPUT_DIR = `_site`
-
 // write out the resulting compiled files
 outputFiles.forEach(async ({ filepath, content }) => {
-  filepath = path.resolve(OUTPUT_DIR, filepath)
+  filepath = path.resolve(config.BUILD_DIR, filepath)
   await fs.mkdir(path.dirname(filepath), { recursive: true })
   await fs.writeFile(filepath, content)
 })
 
 // copy public files to output directory
-const publicFilepaths = await walkFs(config.PUBLIC_DIR, config.PUBLIC_DIR).catch(() => {
-  core.setFailed(`Cannot read public directory '${config.PUBLIC_DIR}'`)
-  return []
-})
-await fs.cp(path.resolve(config.PUBLIC_DIR), path.resolve(OUTPUT_DIR), { recursive: true })
+await fs.cp(path.resolve(config.PUBLIC_DIR), path.resolve(config.BUILD_DIR), { recursive: true })
 
-// this is all just to pretty print the resulting files in the output summary
-// takes a list of paths and converts each path chunk to a nested object of files and dirs
-const pathListToHierarchy = (arr) => arr.reduce((a, c) => {
-  const file = path.basename(c)
-  const parts = file === c ? [] : path.dirname(c).split(path.sep)
-
-  let obj = a
-  let i = 0
-  while (i < parts.length) {
-    if (!(parts[i] in obj)) obj[parts[i]] = {}
-    obj = obj[parts[i++]]
-  }
-  obj[file] = {}
-
-  return a
-}, {})
-
-// prints out the file hierarchy without the full path and indented to indicate dir membership
-const prettyPrintNestedObject = (tree, fixedIndent=false, indent=0) => Object
-  .entries(tree)
-  .sort(([k1], [k2]) => k1 < k2 ? -1 : 1)
-  .map(([pathSegment, children], i, a) => {
-    const path = `${fixedIndent ? fixedIndent(indent, i, a) : ' '.repeat(indent)}${pathSegment}`
-    if (Object.keys(children).length === 0) return path
-    const nextIndent = fixedIndent ? indent + 1 : indent + pathSegment.length + 1
-    return `${path}/\n${prettyPrintNestedObject(children, fixedIndent, nextIndent)}`
+// fancy file structure summary
+if (!process.exitCode) {
+  const publicFilepaths = await walkFs(config.PUBLIC_DIR, config.PUBLIC_DIR).catch(() => {
+    core.setFailed(`Cannot read public directory '${config.PUBLIC_DIR}'`)
+    return []
   })
-  .join('\n')
 
-const formattedBuildOutput = prettyPrintNestedObject(
-  pathListToHierarchy([
-    ...outputFiles.map(o => o.filepath + `*`),
-    ...publicFilepaths
-  ]),
-  (indent, i, a) => {
-    if (indent > 0) {
-      if (i === a.length - 1) return `${'    '.repeat(indent - 1)}└── `
-      return `${'    '.repeat(indent - 1)}└── `
+  const formattedBuildOutput = prettyPrintNestedObject(
+    pathListToHierarchy(
+      Array.from(new Set([
+        ...outputFiles.map(o => o.filepath + `*`),
+        ...publicFilepaths
+      ]))
+    ),
+    (indent, i, a) => {
+      if (indent > 0) {
+        if (i === a.length - 1) return `${'    '.repeat(indent - 1)}└── `
+        return `${'    '.repeat(indent - 1)}└── `
+      }
+      return ``
     }
-    return ``
-  }
-)
+  )
 
-await core.summary
-  .addCodeBlock(formattedBuildOutput)
-  .write()
-  .catch(e => {
-    core.warning(`Error writing to job summary: ${e.message}`, { title: github.job?.name })
-    console.log(`Build output:\n${formattedBuildOutput}`)
-  })
+  await core.summary
+    .addCodeBlock(formattedBuildOutput)
+    .write()
+    .catch(e => {
+      core.warning(`Error writing to job summary: ${e.message}`, { title: github.job?.name })
+      console.log(`Build output:\n${formattedBuildOutput}`)
+    })
+}
