@@ -70,8 +70,8 @@ export const makeConfig = (handlebars) => ({
       },
       {
         label: `BetterVRV`,
-        description: `https://tuckerchap.in/BetterVRV/`,
-        url: `A suite of improvements to the VRV player and experience`
+        description: `A suite of improvements to the VRV player and experience`,
+        url: `https://tuckerchap.in/BetterVRV/`
       },
       {
         label: `Forza Horizon Season`,
