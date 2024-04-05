@@ -29,6 +29,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # TODO check if user is allowed
+
       - name: Delete issue
         run: |
           gh issue delete $ISSUE --yes
@@ -45,6 +47,7 @@ jobs:
     name: Sync issues
     if: ${{ github.event.issue.state == 'closed' || github.event.issue.state == 'deleted' || github.event.issue.state == 'transferred' }}
     runs-on: ubuntu-latest
+    needs: check-auth
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.issue.number }}
       cancel-in-progress: true
