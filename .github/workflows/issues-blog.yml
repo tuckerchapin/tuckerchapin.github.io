@@ -20,26 +20,26 @@ jobs:
   # deletes issues opened by unauthorized users
   # so anyone who's not the owner, a contributor, or on the allowlist
   # this is a bit of a pain because we need a PAT to delete issues
-  # check-auth:
+  check-auth:
   #   # allows for public repos with a allowlist of authorized contributors
-  #   name: Delete unauthorized issues
-  #   if: ${{ github.event.action == 'opened' }}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
+    name: Delete unauthorized issues
+    if: ${{ github.event.action == 'opened' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-  #     - name: Delete issue
-  #       run: |
-  #         gh issue delete $ISSUE --yes
-  #         echo "::warning ::Deleted issue #$ISSUE opened by @$USER (not a contributor or in allowlist)"
-  #       env:
-  #         # TODO need a PAT here annoyingly
-  #         # GITHUB_TOKEN doesn't have admin rights...
-  #         # https://github.com/orgs/community/discussions/24302
-  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         ISSUE: ${{ github.event.issue.number }}
-  #         USER: ${{ github.event.sender.login }}
+      - name: Delete issue
+        run: |
+          gh issue delete $ISSUE --yes
+          echo "::warning ::Deleted issue #$ISSUE opened by @$USER (not a contributor or in allowlist)"
+        env:
+          # need a PAT here annoyingly
+          # GITHUB_TOKEN doesn't have admin rights...
+          # https://github.com/orgs/community/discussions/24302
+          GH_TOKEN: ${{ secrets.PAT }}
+          ISSUE: ${{ github.event.issue.number }}
+          USER: ${{ github.event.sender.login }}
 
   sync-issues:
     name: Sync issues
