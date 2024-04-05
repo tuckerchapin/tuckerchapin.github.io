@@ -2,7 +2,8 @@ name: Issues Blog
 
 # TODO need to figure out how to make this publishable
 # multiple jobs don't seem to be publishable
-# so this would need to be unified and simplified possibly
+# so this would need to be unified and simplified possibly to be a single job
+# or can just make the repo a template?
 
 on:
   push:
