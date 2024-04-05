@@ -145,12 +145,8 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     name: Deploy to Github Pages
-
     needs: build
-    # it's very annoying that we cant access other jobs here
-    # like the steps context jobs.build.result == 'success'
-    if: ${{ !failure() && !cancelled() }}
-
+    # if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       pages: write
