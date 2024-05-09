@@ -11181,6 +11181,77 @@ if ( true && require.extensions) {
 
 /***/ }),
 
+/***/ 9752:
+/***/ ((module) => {
+
+function Renderer (options) {
+  this.options = options || {};
+  this.whitespaceDelimiter = this.options.spaces ? ' ' : '\n';
+}
+
+Renderer.prototype.code = function(code, lang, escaped) {
+  return this.whitespaceDelimiter + this.whitespaceDelimiter + code + this.whitespaceDelimiter + this.whitespaceDelimiter;
+}
+Renderer.prototype.blockquote = function(quote) {
+  return '\t' + quote + this.whitespaceDelimiter;
+}
+Renderer.prototype.html = function(html) {
+  return html;
+}
+Renderer.prototype.heading = function(text, level, raw) {
+  return text;
+}
+Renderer.prototype.hr = function() {
+  return this.whitespaceDelimiter + this.whitespaceDelimiter;
+}
+Renderer.prototype.list = function(body, ordered) {
+  return body;
+}
+Renderer.prototype.listitem = function(text) {
+  return '\t' + text + this.whitespaceDelimiter;
+}
+Renderer.prototype.paragraph = function(text) {
+  return this.whitespaceDelimiter + text + this.whitespaceDelimiter;
+}
+Renderer.prototype.table = function(header, body) {
+  return  this.whitespaceDelimiter + header + this.whitespaceDelimiter + body + this.whitespaceDelimiter;
+}
+Renderer.prototype.tablerow = function(content) {
+  return content + this.whitespaceDelimiter;
+}
+Renderer.prototype.tablecell = function(content, flags) {
+  return content + '\t';
+}
+Renderer.prototype.strong = function(text) {
+  return text;
+}
+Renderer.prototype.em = function(text) {
+  return text;
+}
+Renderer.prototype.codespan = function(text) {
+  return text;
+}
+Renderer.prototype.br = function() {
+  return this.whitespaceDelimiter + this.whitespaceDelimiter;
+}
+Renderer.prototype.del = function(text) {
+  return text;
+}
+Renderer.prototype.link = function(href, title, text) {
+  return text;
+}
+Renderer.prototype.image = function(href, title, text) {
+  return text;
+}
+Renderer.prototype.text = function(text) {
+  return text;
+}
+
+module.exports = Renderer;
+
+
+/***/ }),
+
 /***/ 9181:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -39875,9 +39946,13 @@ const lexer = _Lexer.lex;
 
 //# sourceMappingURL=marked.esm.js.map
 
+// EXTERNAL MODULE: ./node_modules/marked-plaintext/index.js
+var marked_plaintext = __nccwpck_require__(9752);
+var marked_plaintext_default = /*#__PURE__*/__nccwpck_require__.n(marked_plaintext);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(3234);
 ;// CONCATENATED MODULE: ./src/config.js
+
 
 
 
@@ -39889,6 +39964,8 @@ var core = __nccwpck_require__(3234);
 // TODO marked extensions
 // https://marked.js.org/using_pro#use
 // marked.use(config.marked)
+const plaintextRenderer = new (marked_plaintext_default());
+
 
 const makeConfig = (handlebars) => ({
   TEMPLATE_DIR: `template`,
@@ -39933,8 +40010,10 @@ const makeConfig = (handlebars) => ({
     }),
     marked: value => value ? marked.parse(value) : value,
     'inline-marked': value => value ? marked.parseInline(value) : value,
+    'marked-plaintext': value => value ? marked.parse(value, { renderer: plaintextRenderer }) : value,
     length: value => value?.length || 0,
     'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
+    slice: (str, from, to) => str.slice(from, to),
   },
   templateData: {
     projects: [
@@ -39993,10 +40072,10 @@ const makeConfig = (handlebars) => ({
       },
     ],
     contactLinks: [
-      {
-        label: `blog`,
-        url: `/blog`
-      },
+      // {
+      //   label: `blog`,
+      //   url: `/blog`
+      // },
       {
         label: `mail`,
         url: `mailto:site@tuckerchap.in`

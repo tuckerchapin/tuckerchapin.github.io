@@ -1,7 +1,7 @@
 name: Issues Blog
 
-# TODO need to figure out how to make this publishable
-# multiple jobs don't seem to be publishable
+# TODO should figure out how to make this publishable
+# whole workflows/multiple jobs don't seem to be publishable
 # so this would need to be unified and simplified possibly to be a single job
 # or can just make the repo a template?
 
@@ -16,12 +16,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  # TODO commented out for now
-  # deletes issues opened by unauthorized users
-  # so anyone who's not the owner, a contributor, or on the allowlist
-  # this is a bit of a pain because we need a PAT to delete issues
+  # TODO set up an allowlist
   check-auth:
-  #   # allows for public repos with a allowlist of authorized contributors
     name: Delete unauthorized issues
     if: ${{ github.event.action == 'opened' }}
     runs-on: ubuntu-latest
@@ -29,12 +25,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # TODO check if user is allowed
-
       - name: Delete issue
+        if: ${{ github.event.issue.author_association != 'OWNER' && github.event.issue.author_association != 'CONTRIBUTOR'}}
         run: |
           gh issue delete $ISSUE --yes
-          echo "::warning ::Deleted issue #$ISSUE opened by @$USER (not a contributor or in allowlist)"
+          echo "::warning ::Deleted issue #$ISSUE opened by @$USER"
         env:
           # need a PAT here annoyingly
           # GITHUB_TOKEN doesn't have admin rights...
@@ -45,7 +40,6 @@ jobs:
 
   sync-issues:
     name: Sync issues
-    if: ${{ github.event.issue.state == 'closed' || github.event.issue.state == 'deleted' || github.event.issue.state == 'transferred' }}
     runs-on: ubuntu-latest
     needs: check-auth
     concurrency:
@@ -146,7 +140,7 @@ jobs:
       cancel-in-progress: true
     name: Deploy to Github Pages
     needs: build
-    # if: ${{ !failure() && !cancelled() }}
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       pages: write

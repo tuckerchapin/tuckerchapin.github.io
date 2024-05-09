@@ -1,6 +1,7 @@
 import path from 'path'
 import slugify from 'slugify'
 import { marked } from 'marked'
+import markedPlaintext from 'marked-plaintext'
 import * as core from '@actions/core'
 
 // TODO need to figure out how to make this publishable
@@ -9,6 +10,8 @@ import * as core from '@actions/core'
 // TODO marked extensions
 // https://marked.js.org/using_pro#use
 // marked.use(config.marked)
+const plaintextRenderer = new markedPlaintext;
+
 
 export const makeConfig = (handlebars) => ({
   TEMPLATE_DIR: `template`,
@@ -53,8 +56,10 @@ export const makeConfig = (handlebars) => ({
     }),
     marked: value => value ? marked.parse(value) : value,
     'inline-marked': value => value ? marked.parseInline(value) : value,
+    'marked-plaintext': value => value ? marked.parse(value, { renderer: plaintextRenderer }) : value,
     length: value => value?.length || 0,
     'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
+    slice: (str, from, to) => str.slice(from, to),
   },
   templateData: {
     projects: [
@@ -113,10 +118,10 @@ export const makeConfig = (handlebars) => ({
       },
     ],
     contactLinks: [
-      {
-        label: `blog`,
-        url: `/blog`
-      },
+      // {
+      //   label: `blog`,
+      //   url: `/blog`
+      // },
       {
         label: `mail`,
         url: `mailto:site@tuckerchap.in`

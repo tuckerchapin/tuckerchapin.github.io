@@ -12,3 +12,4 @@
 - [ ] tissue isn’t a bad tool name lol
 - [ ] redirects from old slugs?
     - [ ] redirects from id to slug?
+- [ ] label pages where you can see  all posts under a label
