@@ -40012,7 +40012,7 @@ const makeConfig = (handlebars) => ({
     }),
     marked: value => value ? `<div class="marked marked-block">${marked.parse(value)}</div>` : value,
     'inline-marked': value => value ? `<span class="marked marked-inline">${marked.parseInline(value)}</span>` : value,
-    'marked-plaintext': value => value ? marked.parse(value, { renderer: plaintextRenderer }) : value,
+    'plaintext-marked': value => value ? marked.parse(value, { renderer: plaintextRenderer }) : value,
     length: value => value?.length || 0,
     'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
     slice: (str, from, to) => str.slice(from, to),
@@ -40039,17 +40039,19 @@ const makeConfig = (handlebars) => ({
       },
       {
         label: `Forza Horizon Season`,
-        description: `What season is it in Edinburgh in Forza Horizon 4`,
+        description: `What season is it in Edinburgh`,
         url: `https://whatseasonisitinhorizon.com/`
       },
       {
         label: `HoursWithoutYandi`,
         description: `How long since we were promised Yandhi`,
+        disabled: true,
         url: `https://hourswithoutyandhi.com/`
       },
       {
         label: `Fake Album Cover Generator`,
         description: `Randomly generate a fake album`,
+        disabled: true,
         url: `https://fakealbumart.com`
       },
       {
@@ -40082,7 +40084,7 @@ const makeConfig = (handlebars) => ({
         url: `/blog`,
       },
       {
-        label: `mail`,
+        label: `contact`,
         url: `mailto:site@tuckerchap.in`
       },
       {
@@ -40162,6 +40164,7 @@ templateData.issues =
     // unpublished posts are open or closed as not planned
     // open posts that were closed at one point shouldn't be updated
     .filter(i => i.closed_at && i.state_reason === 'completed')
+    .sort((a, b) => new Date(b.closed_at) - new Date(a.closed_at))
 
 const publishableIssueLog = `${templateData.issues.length} publishable issue${templateData.issues.length === 1 ? '' : 's'}`
 templateData.issues.length ? _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(publishableIssueLog) : _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(publishableIssueLog)

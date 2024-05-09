@@ -1,13 +1,21 @@
-{{#> __layout.html}}
-
-{{#if (length issues)}}
-  <div id="blog">
-    <div class="section-title">Blog</div>
-    {{#each issues}}
-        {{> __components/postcard.html}}
-    {{/each}}
-  </div>
-{{/if}}
-{{> __components/projects.html}}
-
-{{/__layout.html}}
+{{#> __components/html.html}}
+  {{#> __components/head.html}}
+    <title>Tucker Chapin</title>
+  {{/ __components/head.html}}
+  <body>
+    <div class="app two">
+      {{> __components/name.html}}
+      {{> __components/contacts.html}}
+      {{> __components/projects.html}}
+      {{#if (length issues)}}
+        <div id="blog">
+          <div class="section-title">Recent posts</div>
+          {{#each (slice issues 0 5)}}
+              {{> __components/postcard.html}}
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+    {{> __components/goatcounter.html}}
+  </body>
+{{/ __components/html.html}}

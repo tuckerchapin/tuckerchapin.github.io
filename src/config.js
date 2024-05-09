@@ -58,7 +58,7 @@ export const makeConfig = (handlebars) => ({
     }),
     marked: value => value ? `<div class="marked marked-block">${marked.parse(value)}</div>` : value,
     'inline-marked': value => value ? `<span class="marked marked-inline">${marked.parseInline(value)}</span>` : value,
-    'marked-plaintext': value => value ? marked.parse(value, { renderer: plaintextRenderer }) : value,
+    'plaintext-marked': value => value ? marked.parse(value, { renderer: plaintextRenderer }) : value,
     length: value => value?.length || 0,
     'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
     slice: (str, from, to) => str.slice(from, to),
@@ -85,17 +85,19 @@ export const makeConfig = (handlebars) => ({
       },
       {
         label: `Forza Horizon Season`,
-        description: `What season is it in Edinburgh in Forza Horizon 4`,
+        description: `What season is it in Edinburgh`,
         url: `https://whatseasonisitinhorizon.com/`
       },
       {
         label: `HoursWithoutYandi`,
         description: `How long since we were promised Yandhi`,
+        disabled: true,
         url: `https://hourswithoutyandhi.com/`
       },
       {
         label: `Fake Album Cover Generator`,
         description: `Randomly generate a fake album`,
+        disabled: true,
         url: `https://fakealbumart.com`
       },
       {
@@ -128,7 +130,7 @@ export const makeConfig = (handlebars) => ({
         url: `/blog`,
       },
       {
-        label: `mail`,
+        label: `contact`,
         url: `mailto:site@tuckerchap.in`
       },
       {

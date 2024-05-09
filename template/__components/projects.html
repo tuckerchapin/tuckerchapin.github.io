@@ -3,11 +3,9 @@
     <div class="section-title">Projects</div>
   {{/if}}
   {{#each @root.projects}}
-    <div class="project">
-      <a class="title {{#if disabled}}disabled{{/if}}" href="{{url}}">{{label}}</a>
-      {{#if (not (length @root.issues))}}
-        <span class="description">{{description}}</span>
-      {{/if}}
+    <div class="project {{#if disabled}}disabled{{/if}}">
+      <a class="title" href="{{url}}" title="{{label}}">{{label}}</a>
+      <span class="description">{{description}}</span>
     </div>
   {{/each}}
 </div>

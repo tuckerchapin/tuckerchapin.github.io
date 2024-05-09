@@ -9,6 +9,8 @@
 - [ ] label pages where you can see all posts under a label
 - [ ] individual post pages
 - [ ] label/tag collections
+- [ ] icons for contacts?
+- [ ] style markdown posts
 
 Make more shareable:
 - [ ] issue management

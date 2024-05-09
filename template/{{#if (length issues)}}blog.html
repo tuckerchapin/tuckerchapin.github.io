@@ -1,11 +1,16 @@
 {{#> __components/html.html}}
   {{#> __components/head.html}}
+    <title>Blog - Tucker Chapin</title>
   {{/ __components/head.html}}
   <body>
-    <div id="app">
+    <div class="app one">
       {{> __components/name.html}}
       {{> __components/contacts.html}}
-      {{> @partial-block}}
+      <div id="blog">
+        {{#each issues}}
+            {{> __components/postcard.html preview=true}}
+        {{/each}}
+      </div>
     </div>
     {{> __components/goatcounter.html}}
   </body>

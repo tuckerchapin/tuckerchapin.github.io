@@ -2,7 +2,7 @@
   <a class="title" href="{{> __snippets/post-url.hbs}}" title="{{title}}">{{{inline-marked title}}}</a>
   <div class="post-stats">
     <span class="post-date">{{format-date closed_at}}</span>
-    {{#if comments}}
+    {{#if preview}}
       <a class="post-comments" href="{{> __snippets/post-url.hbs}}" title="{{comments}} comments">
         {{comments}} <i class="fa-solid fa-comments"></i>
       </a>
@@ -12,7 +12,9 @@
       <a class="post-tag" style="color: #{{color}}">{{name}}</a>
     {{/each}}
   </div>
-  <div class="post-preview">
-    {{{slice (marked-plaintext body) 0 250}}}
-  </div>
+  {{#if (and preview (slice (plaintext-marked body) 0 250))}}
+    <div class="post-preview">
+      {{{slice (plaintext-marked body) 0 250}}}
+    </div>
+  {{/if}}
 </div>
