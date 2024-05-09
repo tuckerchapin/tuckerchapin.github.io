@@ -19,7 +19,7 @@ jobs:
   # TODO set up an allowlist
   check-auth:
     name: Delete unauthorized issues
-    if: ${{ github.event.issue.author_association != 'OWNER' && github.event.issue.author_association != 'CONTRIBUTOR'}}
+    if: ${{ github.event.action == 'opened' && github.event.issue.author_association != 'OWNER' && github.event.issue.author_association != 'CONTRIBUTOR'}}
     runs-on: ubuntu-latest
     steps:
       - run: |
