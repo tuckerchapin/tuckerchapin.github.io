@@ -136,7 +136,7 @@ jobs:
       cancel-in-progress: true
     name: Deploy to Github Pages
     needs: build
-    if: ${{ !failure() && !cancelled() }}
+    if: always() && needs.build.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       pages: write
