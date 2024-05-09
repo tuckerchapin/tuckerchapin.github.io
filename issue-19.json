@@ -4,7 +4,7 @@
   "assignees": [],
   "author_association": "OWNER",
   "body": "Gotta have a body!",
-  "closed_at": null,
+  "closed_at": "2024-05-09T05:38:12Z",
   "comments": 0,
   "comments_url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/19/comments",
   "created_at": "2024-04-04T22:47:09Z",
@@ -41,11 +41,11 @@
     "url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/19/reactions"
   },
   "repository_url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io",
-  "state": "open",
-  "state_reason": "reopened",
+  "state": "closed",
+  "state_reason": "not_planned",
   "timeline_url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/19/timeline",
   "title": "Test post please ignore",
-  "updated_at": "2024-05-09T05:34:34Z",
+  "updated_at": "2024-05-09T05:38:12Z",
   "url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/19",
   "user": {
     "avatar_url": "https://avatars.githubusercontent.com/u/9058954?v=4",
