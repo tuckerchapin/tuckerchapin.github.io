@@ -85,7 +85,7 @@ jobs:
               core.notice(message)
             }
 
-            return `Issue sync: message`
+            return `Issue sync: ${message}`
           result-encoding: string
 
       - name: Commit and push
