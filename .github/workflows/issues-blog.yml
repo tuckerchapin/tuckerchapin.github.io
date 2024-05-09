@@ -19,15 +19,10 @@ jobs:
   # TODO set up an allowlist
   check-auth:
     name: Delete unauthorized issues
-    if: ${{ github.event.action == 'opened' }}
+    if: ${{ github.event.issue.author_association != 'OWNER' && github.event.issue.author_association != 'CONTRIBUTOR'}}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Delete issue
-        if: ${{ github.event.issue.author_association != 'OWNER' && github.event.issue.author_association != 'CONTRIBUTOR'}}
-        run: |
+      - run: |
           gh issue delete $ISSUE --yes
           echo "::warning ::Deleted issue #$ISSUE opened by @$USER"
         env:
