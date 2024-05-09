@@ -139,11 +139,11 @@ body {
 
   .app.one #blog {
     max-width: 600px;
+    min-width: 100%;
     justify-self: center;
   }
 
   #blog-post {
-    max-width: 100%;
   }
 
   .postcard {
