@@ -40014,6 +40014,7 @@ const makeConfig = (handlebars) => ({
     length: value => value?.length || 0,
     'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
     slice: (str, from, to) => str.slice(from, to),
+    not: value => !value,
   },
   templateData: {
     projects: [

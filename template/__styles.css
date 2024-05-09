@@ -37,7 +37,12 @@ body {
   display: grid;
   grid-template-areas:
     "title title contacts"
-    "blog blog projects";
+    {{#if (length issues)}}
+    "blog blog projects"
+    {{else}}
+    "projects projects projects"
+    {{/if}}
+    ;
   grid-template-columns: min-content 1fr min-content;
   grid-template-rows: min-content 1fr;
   row-gap: 40px;
@@ -153,7 +158,7 @@ body {
         white-space: nowrap;
       }
 
-      .post .post-label {
+      .post .post-tag {
         border: 1px solid;
         border-radius: 100px;
         padding: 2px 8px;
@@ -182,7 +187,7 @@ body {
       "title"
       "contacts"
       "projects"
-      "blog"
+      {{#if (length issues)}}"blog"{{/if}}
       ;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, min-content);
