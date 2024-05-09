@@ -42,10 +42,10 @@
   },
   "repository_url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io",
   "state": "open",
-  "state_reason": null,
+  "state_reason": "reopened",
   "timeline_url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/25/timeline",
   "title": "Ok we're making a new issue",
-  "updated_at": "2024-05-09T02:36:41Z",
+  "updated_at": "2024-05-09T05:33:17Z",
   "url": "https://api.github.com/repos/tuckerchapin/tuckerchapin.github.io/issues/25",
   "user": {
     "avatar_url": "https://avatars.githubusercontent.com/u/9058954?v=4",
