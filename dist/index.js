@@ -39964,6 +39964,7 @@ var core = __nccwpck_require__(3234);
 // TODO marked extensions
 // https://marked.js.org/using_pro#use
 // marked.use(config.marked)
+marked.use({ gfm: true })
 const plaintextRenderer = new (marked_plaintext_default());
 
 
@@ -40004,17 +40005,20 @@ const makeConfig = (handlebars) => ({
 
     // general helpers
     urlencode: encodeURIComponent,
+    stringify: JSON.stringify,
     slugify: value => slugify_default()(value, {
       lower: true,
       strict: true
     }),
-    marked: value => value ? marked.parse(value) : value,
-    'inline-marked': value => value ? marked.parseInline(value) : value,
+    marked: value => value ? `<div class="marked marked-block">${marked.parse(value)}</div>` : value,
+    'inline-marked': value => value ? `<span class="marked marked-inline">${marked.parseInline(value)}</span>` : value,
     'marked-plaintext': value => value ? marked.parse(value, { renderer: plaintextRenderer }) : value,
     length: value => value?.length || 0,
     'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
     slice: (str, from, to) => str.slice(from, to),
     not: value => !value,
+    equals: (a, b) => a == b,
+    and: (a, b) => a && b,
   },
   templateData: {
     projects: [
@@ -40072,11 +40076,11 @@ const makeConfig = (handlebars) => ({
         url: `https://side.guide`
       },
     ],
-    contactLinks: [
-      // {
-      //   label: `blog`,
-      //   url: `/blog`
-      // },
+    'contact-links': [
+      {
+        label: `blog`,
+        url: `/blog`,
+      },
       {
         label: `mail`,
         url: `mailto:site@tuckerchap.in`
@@ -40152,7 +40156,12 @@ templateData.issues =
       return []
     }))
     .map(file => JSON.parse(file))
-    .filter(f => f)
+    // TODO tune this filter
+    // we want to be able to keep posts up that are closed, but only in their closed state
+    // we want to be able to edit and draft posts
+    // unpublished posts are open or closed as not planned
+    // open posts that were closed at one point shouldn't be updated
+    .filter(i => i.closed_at && i.state_reason === 'completed')
 
 const publishableIssueLog = `${templateData.issues.length} publishable issue${templateData.issues.length === 1 ? '' : 's'}`
 templateData.issues.length ? _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice(publishableIssueLog) : _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(publishableIssueLog)

@@ -15,3 +15,6 @@ Make more shareable:
   - [ ] create a whitelisting/auth system
   - [ ] delete foreign issues
 - [ ] figure out how to support external configs, both of static json and custom helpers for extensions
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css">

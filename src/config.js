@@ -10,6 +10,7 @@ import * as core from '@actions/core'
 // TODO marked extensions
 // https://marked.js.org/using_pro#use
 // marked.use(config.marked)
+marked.use({ gfm: true })
 const plaintextRenderer = new markedPlaintext;
 
 
@@ -50,17 +51,20 @@ export const makeConfig = (handlebars) => ({
 
     // general helpers
     urlencode: encodeURIComponent,
+    stringify: JSON.stringify,
     slugify: value => slugify(value, {
       lower: true,
       strict: true
     }),
-    marked: value => value ? marked.parse(value) : value,
-    'inline-marked': value => value ? marked.parseInline(value) : value,
+    marked: value => value ? `<div class="marked marked-block">${marked.parse(value)}</div>` : value,
+    'inline-marked': value => value ? `<span class="marked marked-inline">${marked.parseInline(value)}</span>` : value,
     'marked-plaintext': value => value ? marked.parse(value, { renderer: plaintextRenderer }) : value,
     length: value => value?.length || 0,
     'format-date': dateString => new Date(dateString).toLocaleDateString(`en-US`),
     slice: (str, from, to) => str.slice(from, to),
     not: value => !value,
+    equals: (a, b) => a == b,
+    and: (a, b) => a && b,
   },
   templateData: {
     projects: [
@@ -118,11 +122,11 @@ export const makeConfig = (handlebars) => ({
         url: `https://side.guide`
       },
     ],
-    contactLinks: [
-      // {
-      //   label: `blog`,
-      //   url: `/blog`
-      // },
+    'contact-links': [
+      {
+        label: `blog`,
+        url: `/blog`,
+      },
       {
         label: `mail`,
         url: `mailto:site@tuckerchap.in`

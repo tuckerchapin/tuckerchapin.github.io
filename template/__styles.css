@@ -37,7 +37,7 @@ body {
   display: grid;
   grid-template-areas:
     "title title contacts"
-    {{#if (length issues)}}
+    {{#if (length @root.issues)}}
     "blog blog projects"
     {{else}}
     "projects projects projects"
@@ -58,13 +58,15 @@ body {
   font-size: 2.5em;
   font-weight: 500;
   white-space: nowrap;
+  text-decoration: none;
+  color: var(--project__title);
 }
 
 #contacts {
   grid-area: contacts;
   align-self: flex-end;
   display: grid;
-  grid-template-columns: repeat({{length contactLinks}}, min-content);
+  grid-template-columns: repeat({{length @root.contact-links}}, min-content);
   column-gap: 10px;
   align-items: baseline;
 }
@@ -125,7 +127,7 @@ body {
   row-gap: 8px;
 }
 
-  .post {
+  .postcard {
     display: grid;
     grid-template-areas:
       "title"
@@ -134,38 +136,40 @@ body {
     row-gap: 8px;
   }
 
-    .post .title {
+    .postcard .title {
       grid-area: title;
     }
 
-    .post .post-stats {
+    .postcard .post-stats {
       grid-area: stats;
       display: flex;
-      flex-direction: row;
+      flex-flow: row wrap;
       column-gap: 8px;
+      row-gap: 8px;
       align-items: center;
     }
 
-      .post .post-date {
+      .postcard .post-date {
         color: var(--project__description);
         font-weight: 300;
         white-space: nowrap;
       }
 
-      .post .post-comments {
+      .postcard .post-comments {
         text-decoration: none;
         color: var(--project__title);
         white-space: nowrap;
       }
 
-      .post .post-tag {
+      .postcard .post-tag {
         border: 1px solid;
         border-radius: 100px;
         padding: 2px 8px;
         font-size: 0.75em;
+        white-space: nowrap;
       }
 
-    .post .post-preview {
+    .postcard .post-preview {
       grid-area: preview;
       display: -webkit-box;
       -webkit-line-clamp: 3;
@@ -174,12 +178,6 @@ body {
       text-overflow: ellipsis;
     }
 
-    /* .post .title {
-      text-decoration: none;
-    }
-
-    .post */
-
 @media (max-width: 800px) {
   #app {
     display: grid;
@@ -187,7 +185,7 @@ body {
       "title"
       "contacts"
       "projects"
-      {{#if (length issues)}}"blog"{{/if}}
+      {{#if (length @root.issues)}}"blog"{{/if}}
       ;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, min-content);

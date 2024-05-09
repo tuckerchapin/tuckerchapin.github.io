@@ -37,7 +37,12 @@ templateData.issues =
       return []
     }))
     .map(file => JSON.parse(file))
-    .filter(f => f)
+    // TODO tune this filter
+    // we want to be able to keep posts up that are closed, but only in their closed state
+    // we want to be able to edit and draft posts
+    // unpublished posts are open or closed as not planned
+    // open posts that were closed at one point shouldn't be updated
+    .filter(i => i.closed_at && i.state_reason === 'completed')
 
 const publishableIssueLog = `${templateData.issues.length} publishable issue${templateData.issues.length === 1 ? '' : 's'}`
 templateData.issues.length ? core.notice(publishableIssueLog) : core.warning(publishableIssueLog)

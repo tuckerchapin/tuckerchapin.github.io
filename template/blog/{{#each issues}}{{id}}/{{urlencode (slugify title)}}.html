@@ -1,21 +1,28 @@
-<html>
-  <head>
-    <title>Tucker Chapin - {{title}}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css">
-  </head>
+{{#> __components/html.html}}
+  {{#> __components/head.html}}
+  {{/ __components/head.html}}
   <body>
-      <div>
-        <div>
-          {{{inline-marked title}}}
+    <div id="app">
+      {{> __components/name.html}}
+      {{> __components/contacts.html}}
+      <div id="blog">
+        <div id="blog-post">
+          <div>
+            <div>
+              {{{inline-marked title}}}
+            </div>
+            {{{marked body}}}
+          </div>
+          <script src="https://utteranc.es/client.js"
+            repo="tuckerchapin/tuckerchapin.github.io"
+            issue-number={{number}}
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+          </script>
         </div>
-        {{{marked body}}}
       </div>
-      <script src="https://utteranc.es/client.js"
-        repo="tuckerchapin/tuckerchapin.github.io"
-        issue-number={{number}}
-        theme="github-dark"
-        crossorigin="anonymous"
-        async>
-</script>
+    </div>
+    {{> __components/goatcounter.html}}
   </body>
-</html>
+{{/ __components/html.html}}

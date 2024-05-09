@@ -1,0 +1,13 @@
+<div id="projects">
+  {{#if (length @root.issues)}}
+    <div class="section-title">Projects</div>
+  {{/if}}
+  {{#each @root.projects}}
+    <div class="project">
+      <a class="title {{#if disabled}}disabled{{/if}}" href="{{url}}">{{label}}</a>
+      {{#if (not (length @root.issues))}}
+        <span class="description">{{description}}</span>
+      {{/if}}
+    </div>
+  {{/each}}
+</div>

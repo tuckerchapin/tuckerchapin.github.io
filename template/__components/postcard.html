@@ -1,0 +1,18 @@
+<div class="postcard">
+  <a class="title" href="{{> __snippets/post-url.hbs}}" title="{{title}}">{{{inline-marked title}}}</a>
+  <div class="post-stats">
+    <span class="post-date">{{format-date closed_at}}</span>
+    {{#if comments}}
+      <a class="post-comments" href="{{> __snippets/post-url.hbs}}" title="{{comments}} comments">
+        {{comments}} <i class="fa-solid fa-comments"></i>
+      </a>
+    {{/if}}
+    {{#each (slice labels 0 3)}}
+      <!-- TODO: add linking to label pages for projects -->
+      <a class="post-tag" style="color: #{{color}}">{{name}}</a>
+    {{/each}}
+  </div>
+  <div class="post-preview">
+    {{{slice (marked-plaintext body) 0 250}}}
+  </div>
+</div>
