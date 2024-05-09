@@ -42,6 +42,7 @@ jobs:
     name: Sync issues
     runs-on: ubuntu-latest
     needs: check-auth
+    if: always() && (needs.check-auth.result == 'skipped' || needs.check-auth.result == 'success')
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.issue.number }}
       cancel-in-progress: true
